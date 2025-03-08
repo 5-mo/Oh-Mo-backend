@@ -4,30 +4,22 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.DynamicUpdate;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Entity
 @Getter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @DynamicUpdate
-public class Question {
+public class SubQuestion {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "question_id")
+    @Column(name = "sub_question_id")
     private Long id;
 
-    private String questionContent;
-
-    private String emoji;
+    private String sub_question;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private User user;
-
-    @OneToMany(mappedBy = "question", cascade = CascadeType.ALL)
-    private List<SubQuestion> subQuestionList = new ArrayList<>();
+    @JoinColumn(name = "question_id")
+    private Question question;
 }
