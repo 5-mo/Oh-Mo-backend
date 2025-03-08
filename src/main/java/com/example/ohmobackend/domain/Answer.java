@@ -24,7 +24,7 @@ public class Answer {
     private Date date;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "question_id")
-    private Question question;
+    @JoinColumn(name = "sub_question_id")
+    private SubQuestion subQuestion;
 }
 
