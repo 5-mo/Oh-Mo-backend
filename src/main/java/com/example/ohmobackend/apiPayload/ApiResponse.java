@@ -1,6 +1,7 @@
 package com.example.ohmobackend.apiPayload;
 
 import com.example.ohmobackend.apiPayload.code.BaseCode;
+import com.example.ohmobackend.apiPayload.code.status.ErrorStatus;
 import com.example.ohmobackend.apiPayload.code.status.SuccessStatus;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -24,12 +25,8 @@ public class ApiResponse<T> {
         return new ApiResponse<>(true, status.getCode(), status.getMessage(), result);
     }
 
-    public static <T> ApiResponse<T> of(BaseCode code, T result){
-        return new ApiResponse<>(true, code.getReasonHttpStatus().getCode() , code.getReasonHttpStatus().getMessage(), result);
-    }
-
     // 실패한 경우 응답 생성
-    public static <T> ApiResponse<T> onFailure(String code, String message, T data){
-        return new ApiResponse<>(false, code, message, data);
+    public static <T> ApiResponse<T> onFailure(ErrorStatus status, T data){
+        return new ApiResponse<>(false, status.getCode(), status.getMessage(), data);
     }
 }

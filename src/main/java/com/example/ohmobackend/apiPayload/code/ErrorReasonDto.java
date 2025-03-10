@@ -14,13 +14,6 @@ public class ErrorReasonDto {
     private final String message;
     private final String detail;
 
-    public static class ErrorReasonDtoBuilder {
-        public ErrorReasonDtoBuilder detail(String detail) {
-            this.detail = detail;
-            return this;
-        }
-    }
-
     public boolean getIsSuccess(){return isSuccess;}
 
 }
