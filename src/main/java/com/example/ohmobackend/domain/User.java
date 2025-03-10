@@ -30,6 +30,8 @@ public class User {
     @Column(nullable = false)
     private String password;
 
+    private boolean diaryStatus;
+
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<UserCategory> userCategoryList = new ArrayList<>();
 
@@ -38,5 +40,9 @@ public class User {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Diary> diaryList = new ArrayList<>();
+
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<Daylog> daylogList = new ArrayList<>();
 
 }

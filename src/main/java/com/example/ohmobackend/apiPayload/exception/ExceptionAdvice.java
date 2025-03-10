@@ -1,7 +1,6 @@
 package com.example.ohmobackend.apiPayload.exception;
 
 import com.example.ohmobackend.apiPayload.ApiResponse;
-import com.example.ohmobackend.apiPayload.code.ErrorReasonDto;
 import com.example.ohmobackend.apiPayload.code.status.ErrorStatus;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
