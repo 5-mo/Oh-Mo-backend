@@ -20,11 +20,14 @@ public class User {
     @Column(name = "user_id")
     private Long id;
 
-    private String nickName;
+    @Column(length = 20, nullable = false)
+    private String nickname;
 
+    @Column(length = 25, nullable = false)
     private String email;
 
     @Setter
+    @Column(nullable = false)
     private String password;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)

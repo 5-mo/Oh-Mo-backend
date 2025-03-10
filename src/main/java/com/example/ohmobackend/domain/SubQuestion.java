@@ -4,6 +4,9 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.DynamicUpdate;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Getter
 @Builder
@@ -22,4 +25,7 @@ public class SubQuestion {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "question_id")
     private Question question;
+
+    @OneToMany(mappedBy = "subQuestion", cascade = CascadeType.ALL)
+    private List<Answer> answerList = new ArrayList<>();
 }
