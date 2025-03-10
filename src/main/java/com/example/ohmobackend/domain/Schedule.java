@@ -1,5 +1,6 @@
 package com.example.ohmobackend.domain;
 
+import com.example.ohmobackend.domain.enums.ScheduleType;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.DynamicUpdate;
@@ -33,6 +34,9 @@ public class Schedule {
     private boolean status;
 
     private Date routineEndDate;
+
+    @Enumerated(EnumType.STRING)
+    private ScheduleType scheduleType;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_category_id")
