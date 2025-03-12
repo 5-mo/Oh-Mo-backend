@@ -1,7 +1,7 @@
 package com.example.ohmobackend.security.filter;
 
 import com.example.ohmobackend.apiPayload.code.BaseErrorCode;
-import com.example.ohmobackend.apiPayload.exception.handler.AuthHandler;
+import com.example.ohmobackend.apiPayload.exception.handler.MemberHandler;
 import com.example.ohmobackend.security.provider.TokenProvider;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -36,7 +36,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         }
         try {
             filterChain.doFilter(request, response);
-        } catch (AuthHandler ex) {
+        } catch (MemberHandler ex) {
             setJsonResponse(response, ex.getErrorReasonHttpStatus().getHttpStatus().value(),
                     ex.getCode());
         } catch (Exception e) {

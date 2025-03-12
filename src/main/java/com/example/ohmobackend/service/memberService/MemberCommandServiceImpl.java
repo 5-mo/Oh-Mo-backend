@@ -1,7 +1,7 @@
 package com.example.ohmobackend.service.memberService;
 
 import com.example.ohmobackend.apiPayload.code.status.ErrorStatus;
-import com.example.ohmobackend.apiPayload.exception.handler.AuthHandler;
+import com.example.ohmobackend.apiPayload.exception.handler.MemberHandler;
 import com.example.ohmobackend.converter.MemberConverter;
 import com.example.ohmobackend.domain.Member;
 import com.example.ohmobackend.repository.MemberRepository;
@@ -30,8 +30,11 @@ public class MemberCommandServiceImpl implements MemberCommandService {
 
     @Override
     public MemberResponseDto.SignupResponseDto signup(MemberRequestDto.SignupRequestDto request) {
-        Member member = MemberConverter.toEntity(request, bCryptPasswordEncoder.encode(request.getPassword()));
+        if (memberRepository.existsByEmail(request.getEmail())) {
+            throw new MemberHandler(ErrorStatus.MEMBER_ALREADY_EXISTS);
+        }
 
+        Member member = MemberConverter.toEntity(request, bCryptPasswordEncoder.encode(request.getPassword()));
         Member newMember = memberRepository.save(member);
 
         return MemberConverter.toDto(newMember);
@@ -52,7 +55,7 @@ public class MemberCommandServiceImpl implements MemberCommandService {
         JwtToken jwtToken = tokenProvider.generateTokenDto(authentication);
 
         Member member = memberRepository.findByEmail(authentication.getName())
-                        .orElseThrow(() -> new AuthHandler(ErrorStatus.MEMBER_NOT_FOUND));
+                        .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
         member.updateRefreshToken(jwtToken.getRefreshToken());
 
         return MemberConverter.toLoginResponseDto(member, jwtToken);

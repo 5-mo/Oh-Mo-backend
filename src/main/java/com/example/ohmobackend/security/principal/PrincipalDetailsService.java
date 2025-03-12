@@ -1,7 +1,7 @@
 package com.example.ohmobackend.security.principal;
 
 import com.example.ohmobackend.apiPayload.code.status.ErrorStatus;
-import com.example.ohmobackend.apiPayload.exception.handler.AuthHandler;
+import com.example.ohmobackend.apiPayload.exception.handler.MemberHandler;
 import com.example.ohmobackend.domain.Member;
 import com.example.ohmobackend.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +21,7 @@ public class PrincipalDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         Member member = userRepository.findByEmail(email)
-                .orElseThrow(() -> new AuthHandler(ErrorStatus.MEMBER_NOT_FOUND));
+                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
         return new PrincipalDetails(member);
     }
