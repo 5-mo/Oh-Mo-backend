@@ -14,7 +14,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @DynamicUpdate
-public class UserCategory {
+public class MemberCategory {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,7 +30,7 @@ public class UserCategory {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
-    private User user;
+    private Member user;
 
     @OneToMany(mappedBy = "userCategory", cascade = CascadeType.ALL)
     private List<Schedule> scheduleList = new ArrayList<>();

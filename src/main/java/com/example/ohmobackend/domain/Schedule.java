@@ -40,7 +40,7 @@ public class Schedule {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_category_id")
-    private UserCategory userCategory;
+    private MemberCategory userCategory;
 
     @OneToMany(mappedBy = "schedule", cascade = CascadeType.ALL)
     private List<RoutineWeek> routineWeekList = new ArrayList<>();
