@@ -5,6 +5,7 @@ import com.example.ohmobackend.apiPayload.code.status.SuccessStatus;
 import com.example.ohmobackend.service.memberService.MemberCommandService;
 import com.example.ohmobackend.web.dto.memberDto.MemberRequestDto;
 import com.example.ohmobackend.web.dto.memberDto.MemberResponseDto;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,18 +17,21 @@ public class MemberController {
     final MemberCommandService memberCommandService;
 
     @PostMapping("/signup")
+    @Operation(summary = "이메일 회원 가입 API",description = "이메일 회원 가입 API 입니다.")
     public ApiResponse<MemberResponseDto.SignupResponseDto> signup(@RequestBody MemberRequestDto.SignupRequestDto request) {
         MemberResponseDto.SignupResponseDto responseDto = memberCommandService.signup(request);
         return ApiResponse.onSuccess(SuccessStatus.MEMBER_SIGNUP_OK, responseDto);
     }
 
     @PostMapping("/login")
+    @Operation(summary = "이메일 로그인 API",description = "이메일 로그인 API 입니다.")
     public ApiResponse<MemberResponseDto.LoginResponseDto> login(@RequestBody MemberRequestDto.LoginRequestDto request) {
         MemberResponseDto.LoginResponseDto responseDto = memberCommandService.login(request);
         return ApiResponse.onSuccess(SuccessStatus.MEMBER_LOGIN_OK, responseDto);
     }
 
     @GetMapping("/test")
+    @Operation(summary = "테스트 API",description = "테스트")
     public String test() {
         return "테스트";
     }
