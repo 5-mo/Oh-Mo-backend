@@ -25,6 +25,8 @@ class WebSecurityConfig {
                 .authorizeHttpRequests((auth) -> auth // 인증, 인가 설정
                         .requestMatchers("/api/member/signup").permitAll()
                         .requestMatchers("/api/member/login").permitAll()
+                        .requestMatchers("/", "/api-docs/**", "/api-docs/swagger-config/*", "/swagger-ui/*", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
+                        .requestMatchers("/api/member/test").permitAll()
                         .anyRequest().authenticated())  // 위에서 설정한 url 이외의 요청에 대해서 인증이 성공된 상태만 접근 가능
                 .build();
     }
