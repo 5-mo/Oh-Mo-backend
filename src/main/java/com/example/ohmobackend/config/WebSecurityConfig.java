@@ -1,5 +1,7 @@
 package com.example.ohmobackend.config;
 
+import com.example.ohmobackend.security.filter.JwtTokenFilter;
+import com.example.ohmobackend.security.provider.TokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -8,11 +10,15 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
 class WebSecurityConfig {
+
+    private final TokenProvider tokenProvider;
+
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -27,7 +33,9 @@ class WebSecurityConfig {
                         .requestMatchers("/api/member/login").permitAll()
                         .requestMatchers("/", "/api-docs/**", "/api-docs/swagger-config/*", "/swagger-ui/*", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
                         .requestMatchers("/api/member/test").permitAll()
-                        .anyRequest().authenticated())  // 위에서 설정한 url 이외의 요청에 대해서 인증이 성공된 상태만 접근 가능
+                        .anyRequest().authenticated())
+                .addFilterBefore(new JwtTokenFilter(tokenProvider)
+                        , UsernamePasswordAuthenticationFilter.class)// 위에서 설정한 url 이외의 요청에 대해서 인증이 성공된 상태만 접근 가능
                 .build();
     }
 

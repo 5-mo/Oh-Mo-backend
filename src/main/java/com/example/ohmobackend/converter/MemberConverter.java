@@ -4,7 +4,6 @@ import com.example.ohmobackend.domain.Member;
 import com.example.ohmobackend.security.JwtToken;
 import com.example.ohmobackend.web.dto.memberDto.MemberRequestDto;
 import com.example.ohmobackend.web.dto.memberDto.MemberResponseDto;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 public class MemberConverter {
 

@@ -1,7 +1,6 @@
 package com.example.ohmobackend.apiPayload.code.status;
 
 import com.example.ohmobackend.apiPayload.code.BaseCode;
-import com.example.ohmobackend.apiPayload.code.ErrorReasonDto;
 import com.example.ohmobackend.apiPayload.code.ReasonDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -14,7 +13,10 @@ public enum SuccessStatus implements BaseCode {
     // 유저 관련 응답
     MEMBER_OK(HttpStatus.OK, "MEMBER_1000", "성공입니다."),
     MEMBER_SIGNUP_OK(HttpStatus.OK, "AUTH2000", "회원 가입이 완료되었습니다."),
-    MEMBER_LOGIN_OK(HttpStatus.OK, "AUTH2001", "로그인이 완료되었습니다.");
+    MEMBER_LOGIN_OK(HttpStatus.OK, "AUTH2001", "로그인이 완료되었습니다."),
+
+    // 카텍소리 관련 응답
+    MEMBER_CATEGORY_OK(HttpStatus.OK, "CATEGORY2000", "카테고리 등록이 완료되었습니다.");
 
     private final HttpStatus httpStatus;
     private final String code;

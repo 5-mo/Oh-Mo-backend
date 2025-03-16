@@ -18,7 +18,7 @@ public class MemberCategory {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "user_category_id")
+    @Column(name = "member_category_id")
     private Long id;
 
     private String categoryName;
@@ -29,8 +29,8 @@ public class MemberCategory {
     private ScheduleType scheduleType;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private Member user;
+    @JoinColumn(name = "member_id")
+    private Member member;
 
     @OneToMany(mappedBy = "userCategory", cascade = CascadeType.ALL)
     private List<Schedule> scheduleList = new ArrayList<>();

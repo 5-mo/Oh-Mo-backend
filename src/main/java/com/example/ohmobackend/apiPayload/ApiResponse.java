@@ -1,6 +1,5 @@
 package com.example.ohmobackend.apiPayload;
 
-import com.example.ohmobackend.apiPayload.code.BaseCode;
 import com.example.ohmobackend.apiPayload.code.status.ErrorStatus;
 import com.example.ohmobackend.apiPayload.code.status.SuccessStatus;
 import com.fasterxml.jackson.annotation.JsonInclude;
