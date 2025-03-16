@@ -1,7 +1,8 @@
 package com.example.ohmobackend.security.provider;
 
+import com.example.ohmobackend.apiPayload.code.status.ErrorStatus;
+import com.example.ohmobackend.apiPayload.exception.handler.AuthHandler;
 import com.example.ohmobackend.security.JwtToken;
-import com.example.ohmobackend.security.principal.PrincipalDetails;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -16,7 +17,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
-import java.util.*;
+import java.util.Collections;
+import java.util.Date;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Component
@@ -90,14 +93,17 @@ public class TokenProvider {
             return true;
         } catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
             log.info("잘못된 JWT 서명입니다.");
+            throw new AuthHandler(ErrorStatus.INVALID_TOKEN);
         } catch (ExpiredJwtException e) {
             log.info("만료된 JWT 토큰입니다.");
+            throw new AuthHandler(ErrorStatus.EXPIRED_TOKEN);
         } catch (UnsupportedJwtException e) {
             log.info("지원되지 않는 JWT 토큰입니다.");
+            throw new AuthHandler(ErrorStatus.INVALID_TOKEN);
         } catch (IllegalArgumentException e) {
             log.info("JWT 토큰이 잘못되었습니다.");
+            throw new AuthHandler(ErrorStatus.INVALID_TOKEN);
         }
-        return false;
     }
 
     public boolean refreshTokenPeriodCheck(String token) {
@@ -118,5 +124,9 @@ public class TokenProvider {
         } catch (ExpiredJwtException e) {
             return e.getClaims();
         }
+    }
+
+    public String getEmail(String token) {
+        return parseClaims(token).getSubject();
     }
 }
