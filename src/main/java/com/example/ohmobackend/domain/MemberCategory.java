@@ -32,6 +32,6 @@ public class MemberCategory {
     @JoinColumn(name = "member_id")
     private Member member;
 
-    @OneToMany(mappedBy = "userCategory", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "memberCategory", cascade = CascadeType.ALL)
     private List<Schedule> scheduleList = new ArrayList<>();
 }
