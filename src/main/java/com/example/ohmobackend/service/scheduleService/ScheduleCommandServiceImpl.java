@@ -42,10 +42,30 @@ public class ScheduleCommandServiceImpl implements ScheduleCommandService {
         List<LocalDate> dates = getDates(startDate, endDate, requestDto.getRoutineWeek()); // 반복 요일에 해당하는 날짜 리스트
 
         List<Schedule> schedules = dates.stream()
-                .map(date -> ScheduleConverter.toEntity(requestDto, memberCategory, date, ScheduleType.ROUTINE))
+                .map(date -> ScheduleConverter.routineToEntity(requestDto, memberCategory, date))
                 .collect(Collectors.toList());
 
         scheduleRepository.saveAll(schedules);
+    }
+
+    @Override
+    public void addTodo(ScheduleRequestDto.TodoRequestDto requestDto, Member member) {
+        MemberCategory memberCategory = memberCategoryRepository.findById(requestDto.getCategoryId())
+                .orElseThrow(() -> new ScheduleHandler(ErrorStatus.MEMBER_CATEGORY_NOT_FOUND));
+
+        if(!member.equals(memberCategory.getMember())) {
+            throw new MemberCategoryHandler(ErrorStatus.INVALID_MEMBER_CATEGORY);
+        }
+
+        if(memberCategory.getScheduleType() != ScheduleType.TO_DO) {
+            throw new MemberCategoryHandler(ErrorStatus.MEMBER_CATEGORY_NOT_TO_DO_TYPE);
+        }
+
+        if(requestDto.getAlarm() && requestDto.getTime() == null) {
+            throw new ScheduleHandler(ErrorStatus.MISSING_TIME);
+        }
+
+        scheduleRepository.save(ScheduleConverter.todoToEntity(requestDto, memberCategory));
     }
 
     // 반복되는 요일에 해당하는 날짜들 반환

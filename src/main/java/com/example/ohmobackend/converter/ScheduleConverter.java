@@ -9,11 +9,10 @@ import java.time.LocalDate;
 
 public class ScheduleConverter {
 
-    static public Schedule toEntity(
+    static public Schedule routineToEntity(
             ScheduleRequestDto.RoutineRequestDto requestDto,
             MemberCategory memberCategory,
-            LocalDate date,
-            ScheduleType scheduleType) {
+            LocalDate date) {
         return Schedule.builder()
                 .date(date)
                 .time(requestDto.getTime())
@@ -21,7 +20,21 @@ public class ScheduleConverter {
                 .content(requestDto.getContent())
                 .status(false)
                 .routineEndDate(requestDto.getEndDate())
-                .scheduleType(scheduleType)
+                .scheduleType(ScheduleType.ROUTINE)
+                .memberCategory(memberCategory)
+                .build();
+    }
+
+    static public Schedule todoToEntity(
+            ScheduleRequestDto.TodoRequestDto requestDto,
+            MemberCategory memberCategory) {
+        return Schedule.builder()
+                .date(requestDto.getDate())
+                .time(requestDto.getTime())
+                .alarm(requestDto.getAlarm())
+                .content(requestDto.getContent())
+                .status(false)
+                .scheduleType(ScheduleType.TO_DO)
                 .memberCategory(memberCategory)
                 .build();
     }

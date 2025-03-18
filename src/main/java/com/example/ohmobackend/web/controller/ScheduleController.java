@@ -24,8 +24,15 @@ public class ScheduleController {
 
     @PostMapping("/routine")
     @Operation(summary = "루틴 등록 API",description = "루틴 등록 API 입니다.")
-    public ApiResponse<Object> signup(@RequestBody ScheduleRequestDto.RoutineRequestDto request, @AuthUser Member member) {
+    public ApiResponse<Object> addRoutine(@RequestBody ScheduleRequestDto.RoutineRequestDto request, @AuthUser Member member) {
         scheduleCommandService.addRoutine(request, member);
-        return ApiResponse.onSuccess(SuccessStatus.MEMBER_SIGNUP_OK, null);
+        return ApiResponse.onSuccess(SuccessStatus.SCHEDULE_ROUTINE_OK, null);
+    }
+
+    @PostMapping("/todo")
+    @Operation(summary = "투두 등록 API",description = "투두 등록 API 입니다.")
+    public ApiResponse<Object> addTodo(@RequestBody ScheduleRequestDto.TodoRequestDto request, @AuthUser Member member) {
+        scheduleCommandService.addTodo(request, member);
+        return ApiResponse.onSuccess(SuccessStatus.SCHEDULE_TO_DO_OK, null);
     }
 }
