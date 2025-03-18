@@ -37,6 +37,14 @@ public class ScheduleCommandServiceImpl implements ScheduleCommandService {
             throw new MemberCategoryHandler(ErrorStatus.INVALID_MEMBER_CATEGORY);
         }
 
+        if(memberCategory.getScheduleType() != ScheduleType.ROUTINE) {
+            throw new MemberCategoryHandler(ErrorStatus.MEMBER_CATEGORY_NOT_TO_DO_TYPE);
+        }
+
+        if(requestDto.getAlarm() && requestDto.getTime() == null) {
+            throw new ScheduleHandler(ErrorStatus.MISSING_TIME);
+        }
+
         LocalDate startDate = LocalDate.now();  // 시작 날짜 (오늘)
         LocalDate endDate = requestDto.getEndDate();
         List<LocalDate> dates = getDates(startDate, endDate, requestDto.getRoutineWeek()); // 반복 요일에 해당하는 날짜 리스트
