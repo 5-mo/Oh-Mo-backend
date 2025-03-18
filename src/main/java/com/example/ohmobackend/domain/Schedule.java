@@ -5,9 +5,9 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.DynamicUpdate;
 
-import java.sql.Time;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @Entity
@@ -23,9 +23,9 @@ public class Schedule {
     @Column(name = "schedule_id")
     private Long id;
 
-    private Date date;
+    private LocalDate date;
 
-    private Time time;
+    private LocalTime time;
 
     private boolean alarm;
 
@@ -33,14 +33,14 @@ public class Schedule {
 
     private boolean status;
 
-    private Date routineEndDate;
+    private LocalDate routineEndDate;
 
     @Enumerated(EnumType.STRING)
     private ScheduleType scheduleType;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_category_id")
-    private MemberCategory userCategory;
+    @JoinColumn(name = "member_category_id")
+    private MemberCategory memberCategory;
 
     @OneToMany(mappedBy = "schedule", cascade = CascadeType.ALL)
     private List<RoutineWeek> routineWeekList = new ArrayList<>();

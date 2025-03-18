@@ -1,9 +1,10 @@
 package com.example.ohmobackend.domain;
 
-import com.example.ohmobackend.domain.enums.Week;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.DynamicUpdate;
+
+import java.time.DayOfWeek;
 
 @Entity
 @Getter
@@ -19,7 +20,7 @@ public class RoutineWeek {
     private Long id;
 
     @Enumerated(EnumType.STRING)
-    private Week week;
+    private DayOfWeek week;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "schedule_id")
