@@ -2,7 +2,6 @@ package com.example.ohmobackend.converter;
 
 import com.example.ohmobackend.domain.Member;
 import com.example.ohmobackend.domain.MemberCategory;
-import com.example.ohmobackend.domain.enums.ScheduleType;
 import com.example.ohmobackend.web.dto.memberCategoryDto.MemberCategoryDtoRequest;
 import com.example.ohmobackend.web.dto.memberCategoryDto.MemberCategoryResponseDto;
 
