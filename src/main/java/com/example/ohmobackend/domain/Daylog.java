@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.DynamicUpdate;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 @Entity
 @Getter
@@ -19,7 +19,7 @@ public class Daylog {
     @Column(name = "daylog_id")
     private Long id;
 
-    private Date date;
+    private LocalDate date;
 
     private String emoji;
 
