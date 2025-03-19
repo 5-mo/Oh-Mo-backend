@@ -2,7 +2,6 @@ package com.example.ohmobackend.converter;
 
 import com.example.ohmobackend.domain.Member;
 import com.example.ohmobackend.domain.MemberCategory;
-import com.example.ohmobackend.domain.enums.ScheduleType;
 import com.example.ohmobackend.web.dto.memberCategoryDto.MemberCategoryDtoRequest;
 import com.example.ohmobackend.web.dto.memberCategoryDto.MemberCategoryResponseDto;
 
@@ -12,7 +11,7 @@ public class MemberCategoryConverter {
         return MemberCategory.builder()
                 .categoryName(request.getCategoryName())
                 .color(request.getColor())
-                .scheduleType(ScheduleType.valueOf(request.getScheduleType()))
+                .scheduleType(request.getScheduleType())
                 .member(member)
                 .build();
     }
@@ -22,7 +21,7 @@ public class MemberCategoryConverter {
                 .id(memberCategory.getId())
                 .categoryName(memberCategory.getCategoryName())
                 .color(memberCategory.getColor())
-                .scheduleType(memberCategory.getScheduleType().toString())
+                .scheduleType(memberCategory.getScheduleType())
                 .build();
     }
 }
