@@ -12,7 +12,7 @@ public class MemberCategoryConverter {
         return MemberCategory.builder()
                 .categoryName(request.getCategoryName())
                 .color(request.getColor())
-                .scheduleType(ScheduleType.valueOf(request.getScheduleType()))
+                .scheduleType(request.getScheduleType())
                 .member(member)
                 .build();
     }
@@ -22,7 +22,7 @@ public class MemberCategoryConverter {
                 .id(memberCategory.getId())
                 .categoryName(memberCategory.getCategoryName())
                 .color(memberCategory.getColor())
-                .scheduleType(memberCategory.getScheduleType().toString())
+                .scheduleType(memberCategory.getScheduleType())
                 .build();
     }
 }

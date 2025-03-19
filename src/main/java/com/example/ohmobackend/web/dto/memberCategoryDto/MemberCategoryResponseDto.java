@@ -1,5 +1,6 @@
 package com.example.ohmobackend.web.dto.memberCategoryDto;
 
+import com.example.ohmobackend.domain.enums.ScheduleType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -15,6 +16,6 @@ public class MemberCategoryResponseDto {
         private Long id;
         private String categoryName;
         private String color;
-        private String scheduleType;
+        private ScheduleType scheduleType;
     }
 }
