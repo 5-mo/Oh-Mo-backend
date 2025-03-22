@@ -1,6 +1,7 @@
 package com.example.ohmobackend.domain;
 
 import com.example.ohmobackend.domain.enums.ScheduleType;
+import com.example.ohmobackend.web.dto.memberCategoryDto.MemberCategoryResponseDto;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.DynamicUpdate;

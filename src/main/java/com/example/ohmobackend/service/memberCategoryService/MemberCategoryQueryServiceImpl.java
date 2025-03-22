@@ -22,6 +22,8 @@ public class MemberCategoryQueryServiceImpl implements MemberCategoryQueryServic
     public List<MemberCategoryResponseDto.CategoryResponseDto> getMemberCategory(ScheduleType scheduleType, Member member) {
         List<MemberCategory> categoryList = memberCategoryRepository.findByMemberAndScheduleType(member, scheduleType);
 
-        return categoryList.stream().map(memberCategory -> MemberCategoryConverter.toAddCategoryResponseDto(memberCategory)).collect(Collectors.toList());
+        return categoryList.stream()
+                .map(memberCategory -> MemberCategoryConverter.toAddCategoryResponseDto(memberCategory))
+                .collect(Collectors.toList());
     }
 }
