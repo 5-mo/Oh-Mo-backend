@@ -31,7 +31,8 @@ public enum ErrorStatus implements BaseErrorCode {
 
     // 일정 관련
     MISSING_TIME(HttpStatus.BAD_REQUEST, "SCHEDULE4001", "시간이 누락되었습니다."),
-    SCHEDULE_NOT_FOUND(HttpStatus.BAD_REQUEST, "SCHEDULE4002", "일정을 찾을 수 없습니다.");
+    SCHEDULE_NOT_FOUND(HttpStatus.BAD_REQUEST, "SCHEDULE4002", "일정을 찾을 수 없습니다."),
+    SCHEDULE_NOT_EXIST(HttpStatus.BAD_REQUEST, "SCHEDULE4003", "일정이 없습니다.");
 
     private final HttpStatus httpStatus;
     private final String code;

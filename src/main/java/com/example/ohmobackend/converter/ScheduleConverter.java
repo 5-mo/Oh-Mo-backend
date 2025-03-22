@@ -4,8 +4,10 @@ import com.example.ohmobackend.domain.MemberCategory;
 import com.example.ohmobackend.domain.Schedule;
 import com.example.ohmobackend.domain.enums.ScheduleType;
 import com.example.ohmobackend.web.dto.scheduleDto.ScheduleRequestDto;
+import com.example.ohmobackend.web.dto.scheduleDto.ScheduleResponseDto;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 
 public class ScheduleConverter {
 
@@ -36,6 +38,20 @@ public class ScheduleConverter {
                 .status(false)
                 .scheduleType(ScheduleType.TO_DO)
                 .memberCategory(memberCategory)
+                .build();
+    }
+
+    static public ScheduleResponseDto.ScheduleDto toScheduleDto(
+            Schedule schedule) {
+        return ScheduleResponseDto.ScheduleDto.builder()
+                .scheduleId(schedule.getId())
+                .date(schedule.getDate())
+                .time(schedule.getTime() != null ? schedule.getTime() : LocalTime.MIDNIGHT)
+                .alarm(schedule.isAlarm())
+                .content(schedule.getContent())
+                .status(schedule.isStatus())
+                .scheduleType(schedule.getScheduleType())
+                .category(MemberCategoryConverter.toAddCategoryResponseDto(schedule.getMemberCategory()))
                 .build();
     }
 
