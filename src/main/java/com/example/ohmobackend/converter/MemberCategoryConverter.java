@@ -16,8 +16,8 @@ public class MemberCategoryConverter {
                 .build();
     }
 
-    public static MemberCategoryResponseDto.addCategoryResponseDto toAddCategoryResponseDto(MemberCategory memberCategory) {
-        return MemberCategoryResponseDto.addCategoryResponseDto.builder()
+    public static MemberCategoryResponseDto.CategoryResponseDto toAddCategoryResponseDto(MemberCategory memberCategory) {
+        return MemberCategoryResponseDto.CategoryResponseDto.builder()
                 .id(memberCategory.getId())
                 .categoryName(memberCategory.getCategoryName())
                 .color(memberCategory.getColor())

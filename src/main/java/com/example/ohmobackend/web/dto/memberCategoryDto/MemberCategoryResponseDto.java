@@ -12,7 +12,7 @@ public class MemberCategoryResponseDto {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class addCategoryResponseDto {
+    public static class CategoryResponseDto {
         private Long id;
         private String categoryName;
         private String color;
