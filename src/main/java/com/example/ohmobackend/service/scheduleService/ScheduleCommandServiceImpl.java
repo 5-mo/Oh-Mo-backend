@@ -13,6 +13,7 @@ import com.example.ohmobackend.repository.ScheduleRepository;
 import com.example.ohmobackend.web.dto.scheduleDto.ScheduleRequestDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -74,6 +75,15 @@ public class ScheduleCommandServiceImpl implements ScheduleCommandService {
         }
 
         scheduleRepository.save(ScheduleConverter.todoToEntity(requestDto, memberCategory));
+    }
+
+    @Override
+    @Transactional
+    public void updateScheduleStatus(Long scheduleId) {
+        Schedule schedule = scheduleRepository.findById(scheduleId)
+                .orElseThrow(() -> new ScheduleHandler(ErrorStatus.SCHEDULE_NOT_FOUND));
+
+        schedule.updateStatus();
     }
 
     // 반복되는 요일에 해당하는 날짜들 반환

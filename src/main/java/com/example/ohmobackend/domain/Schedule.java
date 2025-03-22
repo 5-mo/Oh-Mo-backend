@@ -45,4 +45,7 @@ public class Schedule {
     @OneToMany(mappedBy = "schedule", cascade = CascadeType.ALL)
     private List<RoutineWeek> routineWeekList = new ArrayList<>();
 
+    public void updateStatus() {
+        this.status = !this.status;
+    }
 }
