@@ -16,7 +16,8 @@ public enum SuccessStatus implements BaseCode {
     MEMBER_LOGIN_OK(HttpStatus.OK, "AUTH2001", "로그인이 완료되었습니다."),
 
     // 카텍고리 관련 응답
-    MEMBER_CATEGORY_OK(HttpStatus.OK, "CATEGORY2000", "카테고리 등록이 완료되었습니다."),
+    MEMBER_CATEGORY_REGISTER_OK(HttpStatus.OK, "CATEGORY2000", "카테고리 등록이 완료되었습니다."),
+    MEMBER_CATEGORY_OK(HttpStatus.OK, "CATEGORY2001", "카테고리 조회가 완료되었습니다."),
 
     // 스케줄 관련 응답
     SCHEDULE_ROUTINE_OK(HttpStatus.OK, "SCHEDULE2000", "루틴 일정이 등록이 완료되었습니다"),
