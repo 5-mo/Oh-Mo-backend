@@ -56,7 +56,7 @@ public class ScheduleController {
 
     @GetMapping("/by-month")
     @Operation(summary = "월별 일정 조회 API", description = "월별 일정 조회 API 입니다.")
-    public ApiResponse<List<ScheduleResponseDto.ScheduleByMonthDto>> getScheduleListByMonth(@RequestParam(name = "yearMonth")String yearMonth, @AuthUser Member member) {
+    public ApiResponse<List<ScheduleResponseDto.ScheduleByMonthDto>> getScheduleListByMonth(@RequestParam(name = "year-month")String yearMonth, @AuthUser Member member) {
         List<ScheduleResponseDto.ScheduleByMonthDto> scheduleDtoList = scheduleQueryService.getScheduleListByMonth(yearMonth, member);
         return ApiResponse.onSuccess(SuccessStatus.SCHEDULE_OK, scheduleDtoList);
     }
