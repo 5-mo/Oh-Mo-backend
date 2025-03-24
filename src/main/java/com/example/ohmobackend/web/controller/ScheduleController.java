@@ -47,10 +47,17 @@ public class ScheduleController {
         return ApiResponse.onSuccess(SuccessStatus.SCHEDULE_UPDATE_STATUS_OK, null);
     }
 
-    @GetMapping("/")
-    @Operation(summary = "상태 변경 API", description = "상태 변경 API 입니다.")
+    @GetMapping("/by-date")
+    @Operation(summary = "일별 일정 조회 API", description = "일별 일정 조회 API 입니다.")
     public ApiResponse<List<ScheduleResponseDto.ScheduleDto>> getScheduleList(@RequestParam(name = "date")LocalDate date, @RequestParam(name = "type")ScheduleType scheduleType, @AuthUser Member member) {
         List<ScheduleResponseDto.ScheduleDto> scheduleDtoList = scheduleQueryService.getScheduleList(date, member, scheduleType);
+        return ApiResponse.onSuccess(SuccessStatus.SCHEDULE_OK, scheduleDtoList);
+    }
+
+    @GetMapping("/by-month")
+    @Operation(summary = "월별 일정 조회 API", description = "월별 일정 조회 API 입니다.")
+    public ApiResponse<List<ScheduleResponseDto.ScheduleByMonthDto>> getScheduleListByMonth(@RequestParam(name = "yearMonth")String yearMonth, @AuthUser Member member) {
+        List<ScheduleResponseDto.ScheduleByMonthDto> scheduleDtoList = scheduleQueryService.getScheduleListByMonth(yearMonth, member);
         return ApiResponse.onSuccess(SuccessStatus.SCHEDULE_OK, scheduleDtoList);
     }
 }

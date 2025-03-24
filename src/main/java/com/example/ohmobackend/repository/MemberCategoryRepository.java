@@ -10,4 +10,5 @@ import java.util.List;
 public interface MemberCategoryRepository extends JpaRepository<MemberCategory, Long> {
 
     public List<MemberCategory> findByMemberAndScheduleType(Member member, ScheduleType scheduleType);
+    public List<MemberCategory> findByMember(Member member);
 }

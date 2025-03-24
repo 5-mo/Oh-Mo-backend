@@ -3,11 +3,14 @@ package com.example.ohmobackend.converter;
 import com.example.ohmobackend.domain.MemberCategory;
 import com.example.ohmobackend.domain.Schedule;
 import com.example.ohmobackend.domain.enums.ScheduleType;
+import com.example.ohmobackend.web.dto.memberCategoryDto.MemberCategoryResponseDto;
 import com.example.ohmobackend.web.dto.scheduleDto.ScheduleRequestDto;
 import com.example.ohmobackend.web.dto.scheduleDto.ScheduleResponseDto;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class ScheduleConverter {
 
@@ -52,6 +55,24 @@ public class ScheduleConverter {
                 .status(schedule.isStatus())
                 .scheduleType(schedule.getScheduleType())
                 .category(MemberCategoryConverter.toAddCategoryResponseDto(schedule.getMemberCategory()))
+                .build();
+    }
+
+    static public ScheduleResponseDto.ScheduleByMonthDto toScheduleByMonthDto(List<Schedule> scheduleList, LocalDate date) {
+
+        List<MemberCategoryResponseDto.CategoryResponseDto> categoryList = scheduleList.stream()
+                .map(schedule -> MemberCategoryConverter.toAddCategoryResponseDto(schedule.getMemberCategory()))
+                .collect(Collectors.toMap(
+                        category -> category.getId(),  // 중복을 제거할 기준 필드
+                        category -> category,
+                        (existing, replacement) -> existing))
+                .values()
+                .stream()
+                .collect(Collectors.toList());
+
+        return ScheduleResponseDto.ScheduleByMonthDto.builder()
+                .date(date)
+                .categoryList(categoryList)
                 .build();
     }
 

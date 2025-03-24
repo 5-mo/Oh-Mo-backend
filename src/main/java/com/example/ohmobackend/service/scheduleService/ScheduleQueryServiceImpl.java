@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -33,13 +34,10 @@ public class ScheduleQueryServiceImpl implements ScheduleQueryService {
             throw new MemberCategoryHandler(ErrorStatus.MEMBER_CATEGORY_NOT_FOUND);
         }
 
-        System.out.println(memberCategoryList.get(0).getId());
-
         List<Schedule> scheduleList = memberCategoryList.stream()
                 .map(memberCategory -> {
                     List<Schedule> schedules = scheduleRepository.findByMemberCategoryAndDate(memberCategory, date);
                     if (schedules.isEmpty()) {
-                        System.out.println(date);
                         throw new ScheduleHandler(ErrorStatus.SCHEDULE_NOT_EXIST);
                     }
                     return schedules;
@@ -49,6 +47,42 @@ public class ScheduleQueryServiceImpl implements ScheduleQueryService {
 
         return scheduleList.stream()
                 .map(schedule -> ScheduleConverter.toScheduleDto(schedule))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<ScheduleResponseDto.ScheduleByMonthDto> getScheduleListByMonth(String yearMonth, Member member) {
+        List<MemberCategory> memberCategoryList = memberCategoryRepository.findByMember(member);
+
+        if (memberCategoryList.isEmpty()) {
+            throw new MemberCategoryHandler(ErrorStatus.MEMBER_CATEGORY_NOT_FOUND);
+        }
+
+        List<Schedule> scheduleList = memberCategoryList.stream()
+                .map(memberCategory -> {
+                    List<Schedule> schedules = scheduleRepository.findByMemberCategoryAndMonth(memberCategory, yearMonth);
+                    if (schedules.isEmpty()) {
+                        throw new ScheduleHandler(ErrorStatus.SCHEDULE_NOT_EXIST);
+                    }
+                    return schedules;
+                })
+                .flatMap(List::stream)  // List<Schedule>을 평탄화하여 하나의 스트림으로 변환
+                .collect(Collectors.toList());
+
+        // 날짜별로 그룹화
+        Map<LocalDate, List<Schedule>> groupedByDate = scheduleList.stream()
+                .collect(Collectors.groupingBy(Schedule::getDate));
+
+        // 날짜순으로 정렬
+        List<LocalDate> sortedDates = groupedByDate.keySet().stream()
+                .sorted()
+                .collect(Collectors.toList());
+
+        return sortedDates.stream()
+                .map(date -> {
+                    List<Schedule> schedulesForDate = groupedByDate.get(date);
+                    return ScheduleConverter.toScheduleByMonthDto(schedulesForDate, date);
+                })
                 .collect(Collectors.toList());
     }
 }

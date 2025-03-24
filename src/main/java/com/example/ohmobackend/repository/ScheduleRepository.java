@@ -12,4 +12,7 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Long> {
 
     @Query("SELECT s FROM Schedule s WHERE s.memberCategory = :memberCategory AND s.date = :date")
     public List<Schedule> findByMemberCategoryAndDate(MemberCategory memberCategory, LocalDate date);
+
+    @Query("SELECT s FROM Schedule s WHERE s.memberCategory = :memberCategory AND FUNCTION('DATE_FORMAT', s.date, '%Y-%m') = :month")
+    public List<Schedule> findByMemberCategoryAndMonth(MemberCategory memberCategory, String month);
 }
