@@ -10,4 +10,6 @@ import java.util.List;
 public interface ScheduleQueryService {
 
     public List<ScheduleResponseDto.ScheduleDto> getScheduleList(LocalDate date, Member member, ScheduleType scheduleType);
+
+    public List<ScheduleResponseDto.ScheduleByMonthDto> getScheduleListByMonth(String month, Member member);
 }
