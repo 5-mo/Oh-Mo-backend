@@ -11,6 +11,7 @@ import com.example.ohmobackend.domain.enums.ScheduleType;
 import com.example.ohmobackend.repository.MemberCategoryRepository;
 import com.example.ohmobackend.repository.ScheduleRepository;
 import com.example.ohmobackend.web.dto.scheduleDto.ScheduleRequestDto;
+import com.example.ohmobackend.web.dto.scheduleDto.ScheduleResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -84,6 +85,17 @@ public class ScheduleCommandServiceImpl implements ScheduleCommandService {
                 .orElseThrow(() -> new ScheduleHandler(ErrorStatus.SCHEDULE_NOT_FOUND));
 
         schedule.updateStatus();
+    }
+
+    @Override
+    @Transactional
+    public ScheduleResponseDto.ScheduleDto updateScheduleDate(ScheduleRequestDto.UpdateTodoDateRequestDto requestDto) {
+        Schedule schedule = scheduleRepository.findById(requestDto.getScheduleId())
+                .orElseThrow(() -> new ScheduleHandler(ErrorStatus.SCHEDULE_NOT_FOUND));
+
+        schedule.updateDate(requestDto.getDate());
+
+        return ScheduleConverter.toScheduleDto(schedule);
     }
 
     // 반복되는 요일에 해당하는 날짜들 반환
