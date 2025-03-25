@@ -93,6 +93,9 @@ public class ScheduleCommandServiceImpl implements ScheduleCommandService {
         Schedule schedule = scheduleRepository.findById(requestDto.getScheduleId())
                 .orElseThrow(() -> new ScheduleHandler(ErrorStatus.SCHEDULE_NOT_FOUND));
 
+        if(schedule.getScheduleType() == ScheduleType.ROUTINE) {
+            throw new ScheduleHandler(ErrorStatus.SCHEDULE_NOT_TO_DO_TYPE);
+        }
         schedule.updateDate(requestDto.getDate());
 
         return ScheduleConverter.toScheduleDto(schedule);
