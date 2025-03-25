@@ -48,4 +48,8 @@ public class Schedule {
     public void updateStatus() {
         this.status = !this.status;
     }
+
+    public void updateDate(LocalDate date) {
+        this.date = date;
+    }
 }

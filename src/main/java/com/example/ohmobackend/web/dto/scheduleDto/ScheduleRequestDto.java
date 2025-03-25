@@ -37,4 +37,10 @@ public class ScheduleRequestDto {
         private String content;
         private LocalDate date;
     }
+
+    @Getter
+    public static class UpdateTodoDateRequestDto {
+        private Long scheduleId;
+        private LocalDate date;
+    }
 }
