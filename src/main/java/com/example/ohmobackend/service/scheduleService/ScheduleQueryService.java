@@ -11,5 +11,7 @@ public interface ScheduleQueryService {
 
     public List<ScheduleResponseDto.ScheduleDto> getScheduleList(LocalDate date, Member member, ScheduleType scheduleType);
 
+    public List<ScheduleResponseDto.ScheduleDto> getCompleteTodoList(LocalDate date, Member member);
+
     public List<ScheduleResponseDto.ScheduleByMonthDto> getScheduleListByMonth(String month, Member member);
 }

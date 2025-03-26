@@ -67,4 +67,11 @@ public class ScheduleController {
         ScheduleResponseDto.ScheduleDto response = scheduleCommandService.updateScheduleDate(request);
         return ApiResponse.onSuccess(SuccessStatus.SCHEDULE_UPDATE_DATE_OK, response);
     }
+
+    @GetMapping("/todo/complete")
+    @Operation(summary = "일별 완료한 투두 조회 API", description = "일별 완료한 투두 조회 API 입니다.")
+    public ApiResponse<List<ScheduleResponseDto.ScheduleDto>> getCompleteTodoList(@RequestParam(name = "date")LocalDate date, @AuthUser Member member) {
+        List<ScheduleResponseDto.ScheduleDto> scheduleDtoList = scheduleQueryService.getCompleteTodoList(date, member);
+        return ApiResponse.onSuccess(SuccessStatus.SCHEDULE_OK, scheduleDtoList);
+    }
 }

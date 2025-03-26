@@ -43,6 +43,7 @@ public class ScheduleCommandServiceImpl implements ScheduleCommandService {
             throw new MemberCategoryHandler(ErrorStatus.MEMBER_CATEGORY_NOT_TO_DO_TYPE);
         }
 
+        // 알람 설정이 true 이지만 시간이 없을 경우
         if(requestDto.getAlarm() && requestDto.getTime() == null) {
             throw new ScheduleHandler(ErrorStatus.MISSING_TIME);
         }
@@ -71,6 +72,7 @@ public class ScheduleCommandServiceImpl implements ScheduleCommandService {
             throw new MemberCategoryHandler(ErrorStatus.MEMBER_CATEGORY_NOT_TO_DO_TYPE);
         }
 
+        // 알람 설정이 true 이지만 시간이 없을 경우
         if(requestDto.getAlarm() && requestDto.getTime() == null) {
             throw new ScheduleHandler(ErrorStatus.MISSING_TIME);
         }
