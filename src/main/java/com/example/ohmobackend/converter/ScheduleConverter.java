@@ -1,6 +1,5 @@
 package com.example.ohmobackend.converter;
 
-import com.example.ohmobackend.domain.Member;
 import com.example.ohmobackend.domain.MemberCategory;
 import com.example.ohmobackend.domain.Schedule;
 import com.example.ohmobackend.domain.enums.ScheduleType;
@@ -18,8 +17,7 @@ public class ScheduleConverter {
     static public Schedule routineToEntity(
             ScheduleRequestDto.RoutineRequestDto requestDto,
             MemberCategory memberCategory,
-            LocalDate date,
-            Member member) {
+            LocalDate date) {
         return Schedule.builder()
                 .date(date)
                 .time(requestDto.getTime())
@@ -29,14 +27,12 @@ public class ScheduleConverter {
                 .routineEndDate(requestDto.getEndDate())
                 .scheduleType(ScheduleType.ROUTINE)
                 .memberCategory(memberCategory)
-                .member(member)
                 .build();
     }
 
     static public Schedule todoToEntity(
             ScheduleRequestDto.TodoRequestDto requestDto,
-            MemberCategory memberCategory,
-            Member member) {
+            MemberCategory memberCategory) {
         return Schedule.builder()
                 .date(requestDto.getDate())
                 .time(requestDto.getTime())
@@ -45,7 +41,6 @@ public class ScheduleConverter {
                 .status(false)
                 .scheduleType(ScheduleType.TO_DO)
                 .memberCategory(memberCategory)
-                .member(member)
                 .build();
     }
 

@@ -53,7 +53,7 @@ public class ScheduleCommandServiceImpl implements ScheduleCommandService {
         List<LocalDate> dates = getDates(startDate, endDate, requestDto.getRoutineWeek()); // 반복 요일에 해당하는 날짜 리스트
 
         List<Schedule> schedules = dates.stream()
-                .map(date -> ScheduleConverter.routineToEntity(requestDto, memberCategory, date, member))
+                .map(date -> ScheduleConverter.routineToEntity(requestDto, memberCategory, date))
                 .collect(Collectors.toList());
 
         scheduleRepository.saveAll(schedules);
@@ -77,7 +77,7 @@ public class ScheduleCommandServiceImpl implements ScheduleCommandService {
             throw new ScheduleHandler(ErrorStatus.MISSING_TIME);
         }
 
-        scheduleRepository.save(ScheduleConverter.todoToEntity(requestDto, memberCategory, member));
+        scheduleRepository.save(ScheduleConverter.todoToEntity(requestDto, memberCategory));
     }
 
     @Override

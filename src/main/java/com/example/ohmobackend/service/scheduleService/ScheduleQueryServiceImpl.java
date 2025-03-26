@@ -15,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.YearMonth;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -28,7 +29,16 @@ public class ScheduleQueryServiceImpl implements ScheduleQueryService {
 
     @Override
     public List<ScheduleResponseDto.ScheduleDto> getScheduleList(LocalDate date, Member member, ScheduleType scheduleType) {
-        List<Schedule> scheduleList = scheduleRepository.findByMemberAndDateAndScheduleType(member, date, scheduleType);
+        List<MemberCategory> memberCategoryList = memberCategoryRepository.findByMemberAndScheduleType(member, scheduleType);
+
+        if (memberCategoryList.isEmpty()) {
+            throw new MemberCategoryHandler(ErrorStatus.MEMBER_CATEGORY_NOT_FOUND);
+        }
+
+        List<Schedule> scheduleList = memberCategoryList.stream()
+                .map(memberCategory -> scheduleRepository.findByMemberCategoryAndDate(memberCategory, date))
+                .flatMap(List::stream)  // List<Schedule>을 평탄화하여 하나의 스트림으로 변환
+                .collect(Collectors.toList());
 
         if (scheduleList.isEmpty()) {
             throw new ScheduleHandler(ErrorStatus.SCHEDULE_NOT_EXIST);
@@ -41,7 +51,16 @@ public class ScheduleQueryServiceImpl implements ScheduleQueryService {
 
     @Override
     public List<ScheduleResponseDto.ScheduleDto> getCompleteTodoList(LocalDate date, Member member) {
-        List<Schedule> scheduleList = scheduleRepository.findByMemberAndDateAndScheduleTypeAndStatusIsTrue(member, date, ScheduleType.TO_DO);
+        List<MemberCategory> memberCategoryList = memberCategoryRepository.findByMemberAndScheduleType(member, ScheduleType.TO_DO);
+
+        if (memberCategoryList.isEmpty()) {
+            throw new MemberCategoryHandler(ErrorStatus.MEMBER_CATEGORY_NOT_FOUND);
+        }
+
+        List<Schedule> scheduleList = memberCategoryList.stream()
+                .map(memberCategory -> scheduleRepository.findByMemberCategoryAndDateAndStatusIsTrue(memberCategory, date))
+                .flatMap(List::stream)  // List<Schedule>을 평탄화하여 하나의 스트림으로 변환
+                .collect(Collectors.toList());
 
         if (scheduleList.isEmpty()) {
             throw new ScheduleHandler(ErrorStatus.SCHEDULE_NOT_EXIST);
@@ -54,6 +73,9 @@ public class ScheduleQueryServiceImpl implements ScheduleQueryService {
 
     @Override
     public List<ScheduleResponseDto.ScheduleByMonthDto> getScheduleListByMonth(String yearMonth, Member member) {
+        LocalDate firstDayOfMonth = YearMonth.parse(yearMonth).atDay(1);
+        LocalDate lastDayOfMonth = YearMonth.parse(yearMonth).atEndOfMonth();
+
         List<MemberCategory> memberCategoryList = memberCategoryRepository.findByMember(member);
 
         if (memberCategoryList.isEmpty()) {
@@ -61,15 +83,13 @@ public class ScheduleQueryServiceImpl implements ScheduleQueryService {
         }
 
         List<Schedule> scheduleList = memberCategoryList.stream()
-                .map(memberCategory -> {
-                    List<Schedule> schedules = scheduleRepository.findByMemberCategoryAndMonth(memberCategory, yearMonth);
-                    if (schedules.isEmpty()) {
-                        throw new ScheduleHandler(ErrorStatus.SCHEDULE_NOT_EXIST);
-                    }
-                    return schedules;
-                })
+                .map(memberCategory -> scheduleRepository.findByMemberCategoryAndMonth(memberCategory, firstDayOfMonth, lastDayOfMonth))
                 .flatMap(List::stream)  // List<Schedule>을 평탄화하여 하나의 스트림으로 변환
                 .collect(Collectors.toList());
+
+        if (scheduleList.isEmpty()) {
+            throw new ScheduleHandler(ErrorStatus.SCHEDULE_NOT_EXIST);
+        }
 
         // 날짜별로 그룹화
         Map<LocalDate, List<Schedule>> groupedByDate = scheduleList.stream()
