@@ -28,22 +28,24 @@ public class ScheduleQueryServiceImpl implements ScheduleQueryService {
 
     @Override
     public List<ScheduleResponseDto.ScheduleDto> getScheduleList(LocalDate date, Member member, ScheduleType scheduleType) {
-        List<MemberCategory> memberCategoryList = memberCategoryRepository.findByMemberAndScheduleType(member, scheduleType);
+        List<Schedule> scheduleList = scheduleRepository.findByMemberAndDateAndScheduleType(member, date, scheduleType);
 
-        if (memberCategoryList.isEmpty()) {
-            throw new MemberCategoryHandler(ErrorStatus.MEMBER_CATEGORY_NOT_FOUND);
+        if (scheduleList.isEmpty()) {
+            throw new ScheduleHandler(ErrorStatus.SCHEDULE_NOT_EXIST);
         }
 
-        List<Schedule> scheduleList = memberCategoryList.stream()
-                .map(memberCategory -> {
-                    List<Schedule> schedules = scheduleRepository.findByMemberCategoryAndDate(memberCategory, date);
-                    if (schedules.isEmpty()) {
-                        throw new ScheduleHandler(ErrorStatus.SCHEDULE_NOT_EXIST);
-                    }
-                    return schedules;
-                })
-                .flatMap(List::stream)  // List<Schedule>을 평탄화하여 하나의 스트림으로 변환
+        return scheduleList.stream()
+                .map(schedule -> ScheduleConverter.toScheduleDto(schedule))
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<ScheduleResponseDto.ScheduleDto> getCompleteTodoList(LocalDate date, Member member) {
+        List<Schedule> scheduleList = scheduleRepository.findByMemberAndDateAndScheduleTypeAndStatusIsTrue(member, date, ScheduleType.TO_DO);
+
+        if (scheduleList.isEmpty()) {
+            throw new ScheduleHandler(ErrorStatus.SCHEDULE_NOT_EXIST);
+        }
 
         return scheduleList.stream()
                 .map(schedule -> ScheduleConverter.toScheduleDto(schedule))
