@@ -43,6 +43,7 @@ public class ScheduleCommandServiceImpl implements ScheduleCommandService {
             throw new MemberCategoryHandler(ErrorStatus.MEMBER_CATEGORY_NOT_TO_DO_TYPE);
         }
 
+        // 알람 설정이 true 이지만 시간이 없을 경우
         if(requestDto.getAlarm() && requestDto.getTime() == null) {
             throw new ScheduleHandler(ErrorStatus.MISSING_TIME);
         }
@@ -52,7 +53,7 @@ public class ScheduleCommandServiceImpl implements ScheduleCommandService {
         List<LocalDate> dates = getDates(startDate, endDate, requestDto.getRoutineWeek()); // 반복 요일에 해당하는 날짜 리스트
 
         List<Schedule> schedules = dates.stream()
-                .map(date -> ScheduleConverter.routineToEntity(requestDto, memberCategory, date))
+                .map(date -> ScheduleConverter.routineToEntity(requestDto, memberCategory, date, member))
                 .collect(Collectors.toList());
 
         scheduleRepository.saveAll(schedules);
@@ -71,11 +72,12 @@ public class ScheduleCommandServiceImpl implements ScheduleCommandService {
             throw new MemberCategoryHandler(ErrorStatus.MEMBER_CATEGORY_NOT_TO_DO_TYPE);
         }
 
+        // 알람 설정이 true 이지만 시간이 없을 경우
         if(requestDto.getAlarm() && requestDto.getTime() == null) {
             throw new ScheduleHandler(ErrorStatus.MISSING_TIME);
         }
 
-        scheduleRepository.save(ScheduleConverter.todoToEntity(requestDto, memberCategory));
+        scheduleRepository.save(ScheduleConverter.todoToEntity(requestDto, memberCategory, member));
     }
 
     @Override
