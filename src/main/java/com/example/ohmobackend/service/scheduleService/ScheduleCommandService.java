@@ -4,8 +4,6 @@ import com.example.ohmobackend.domain.Member;
 import com.example.ohmobackend.web.dto.scheduleDto.ScheduleRequestDto;
 import com.example.ohmobackend.web.dto.scheduleDto.ScheduleResponseDto;
 
-import java.time.LocalDate;
-
 public interface ScheduleCommandService {
 
     public void addRoutine(ScheduleRequestDto.RoutineRequestDto requestDto, Member member);
