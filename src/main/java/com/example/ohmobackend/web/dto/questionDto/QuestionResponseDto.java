@@ -14,10 +14,20 @@ public class QuestionResponseDto {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class QuestionDto{
+    public static class QuestionWithAnswerResponseDto{
         private Long id;
         private String questionContent;
         private String emoji;
         private List<AnswerResponseDto.AnswerDto> answerList;
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class QuestionDto{
+        private Long id;
+        private String questionContent;
+        private String emoji;
     }
 }

@@ -3,7 +3,6 @@ package com.example.ohmobackend.service.questionService;
 import com.example.ohmobackend.apiPayload.code.status.ErrorStatus;
 import com.example.ohmobackend.apiPayload.exception.handler.QuestionHandler;
 import com.example.ohmobackend.converter.QuestionConverter;
-import com.example.ohmobackend.domain.Answer;
 import com.example.ohmobackend.domain.Member;
 import com.example.ohmobackend.domain.Question;
 import com.example.ohmobackend.repository.AnswerRepository;
@@ -31,10 +30,7 @@ public class QuestionQueryServiceImpl implements QuestionQueryService {
         }
 
         return questions.stream()
-                .map(question -> {
-                    List<Answer> answers = answerRepository.findAllByQuestion(question);
-                    return QuestionConverter.toQuestionResponseDto(question, answers);
-                })
+                .map(QuestionConverter::toQuestionResponseDto)
                 .collect(Collectors.toList());
     }
 }
