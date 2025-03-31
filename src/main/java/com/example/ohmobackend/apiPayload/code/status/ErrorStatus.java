@@ -38,10 +38,6 @@ public enum ErrorStatus implements BaseErrorCode {
     // 짏문 관련
     QUESTION_NOT_FOUND(HttpStatus.BAD_REQUEST, "QUESTION4001", "등록된 질문이 없습니다.");
 
-
-
-
-
     private final HttpStatus httpStatus;
     private final String code;
     private final String message;
