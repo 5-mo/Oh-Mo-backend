@@ -19,6 +19,6 @@ public class QuestionCommandServiceImpl implements QuestionCommandService{
     public QuestionResponseDto.QuestionDto addQuestion(Member member, QuestionRequestDto.QuestionRegisterDto request) {
         Question question = QuestionConverter.questionDtoToEntity(request, member);
         questionRepository.save(question);
-        return QuestionConverter.toQuestionResponseDto(question);
+        return QuestionConverter.toQuestionResponseDto(question, null);
     }
 }

@@ -32,9 +32,9 @@ public class QuestionController {
     }
 
     @GetMapping("/")
-    @Operation(summary = "질문 등록 API", description = "질문 등록 API 입니다.")
+    @Operation(summary = "질문 및 답변 조회 API", description = "질문 및 답변 조회 API 입니다.")
     public ApiResponse<List<QuestionResponseDto.QuestionDto>> getQuestions(@AuthUser Member member) {
         List<QuestionResponseDto.QuestionDto> response = questionQueryService.getQuestions(member);
-        return ApiResponse.onSuccess(SuccessStatus.QUESTION_REGISTER_OK, response);
+        return ApiResponse.onSuccess(SuccessStatus.QUESTION_OK, response);
     }
 }

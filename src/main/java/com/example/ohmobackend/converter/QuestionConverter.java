@@ -1,5 +1,6 @@
 package com.example.ohmobackend.converter;
 
+import com.example.ohmobackend.domain.Answer;
 import com.example.ohmobackend.domain.Member;
 import com.example.ohmobackend.domain.Question;
 import com.example.ohmobackend.web.dto.answerDto.AnswerResponseDto;
@@ -19,11 +20,10 @@ public class QuestionConverter {
                 .build();
     }
 
-    public static QuestionResponseDto.QuestionDto toQuestionResponseDto(Question question) {
-        List<AnswerResponseDto.AnswerDto> answerDtoList =
-                (question.getAnswerList() == null || question.getAnswerList().isEmpty())
+    public static QuestionResponseDto.QuestionDto toQuestionResponseDto(Question question, List<Answer> answers) {
+        List<AnswerResponseDto.AnswerDto> answerDtoList = (answers == null)
                         ? null
-                        : question.getAnswerList().stream()
+                        : answers.stream()
                         .map(AnswerConverter::toAnswerResponseDto)
                         .collect(Collectors.toList());
 
