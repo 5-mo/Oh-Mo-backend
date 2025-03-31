@@ -24,7 +24,11 @@ public enum SuccessStatus implements BaseCode {
     SCHEDULE_TO_DO_OK(HttpStatus.OK, "SCHEDULE2001", "투두 일정이 등록이 완료되었습니다"),
     SCHEDULE_UPDATE_STATUS_OK(HttpStatus.OK, "SCHEDULE2002", "스케줄 상태 변경이 완료되었습니다."),
     SCHEDULE_OK(HttpStatus.OK, "SCHEDULE2003", "스케줄 조회가 완료되었습니다."),
-    SCHEDULE_UPDATE_DATE_OK(HttpStatus.OK, "SCHEDULE2004", "스케줄 날짜 변경이 완료되었습니다.");
+    SCHEDULE_UPDATE_DATE_OK(HttpStatus.OK, "SCHEDULE2004", "스케줄 날짜 변경이 완료되었습니다."),
+
+    // 질문 관련 응답
+    QUESTION_REGISTER_OK(HttpStatus.OK, "QUESTION2000", "질문 등록이 완료되었습니다."),
+    QUESTION_OK(HttpStatus.OK, "QUESTION2001", "질문 조회가 완료되었습니다.");
 
     private final HttpStatus httpStatus;
     private final String code;

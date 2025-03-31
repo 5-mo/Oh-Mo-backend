@@ -1,18 +1,13 @@
 package com.example.ohmobackend.service.memberCategoryService;
 
 import com.example.ohmobackend.converter.MemberCategoryConverter;
-import com.example.ohmobackend.converter.MemberConverter;
 import com.example.ohmobackend.domain.Member;
 import com.example.ohmobackend.domain.MemberCategory;
-import com.example.ohmobackend.domain.enums.ScheduleType;
 import com.example.ohmobackend.repository.MemberCategoryRepository;
 import com.example.ohmobackend.web.dto.memberCategoryDto.MemberCategoryDtoRequest;
 import com.example.ohmobackend.web.dto.memberCategoryDto.MemberCategoryResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
