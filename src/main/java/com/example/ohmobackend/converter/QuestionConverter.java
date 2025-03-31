@@ -21,7 +21,7 @@ public class QuestionConverter {
 
     public static QuestionResponseDto.QuestionDto toQuestionResponseDto(Question question) {
         List<AnswerResponseDto.AnswerDto> answerDtoList =
-                (question.getAnswerList().isEmpty())
+                (question.getAnswerList() == null || question.getAnswerList().isEmpty())
                         ? null
                         : question.getAnswerList().stream()
                         .map(AnswerConverter::toAnswerResponseDto)
