@@ -22,7 +22,7 @@ public class AnswerController {
 
     final AnswerCommandService answerCommandService;
 
-    @PostMapping("/")
+    @PostMapping()
     @Operation(summary = "질문 답 등록 API",description = "질문 답 등록 API 입니다.")
     public ApiResponse<AnswerResponseDto.AnswerDto> addAnswer(@RequestBody AnswerRequestDto.AddAnswerDto request, @AuthUser Member member) {
         AnswerResponseDto.AnswerDto responseDto = answerCommandService.addAnswer(member, request);

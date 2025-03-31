@@ -23,7 +23,7 @@ public class MemberCategoryController {
     final MemberCategoryCommandService memberCategoryCommandService;
     final MemberCategoryQueryService memberCategoryQueryService;
 
-    @PostMapping("/")
+    @PostMapping()
     @Operation(summary = "카테고리 등록 API", description = "카테고리 등록 API 입니다.")
     public ApiResponse<MemberCategoryResponseDto.CategoryResponseDto> addMemberCategory(
             @RequestBody MemberCategoryDtoRequest.addCategoryRequest request, @AuthUser Member member) {
@@ -31,7 +31,7 @@ public class MemberCategoryController {
         return ApiResponse.onSuccess(SuccessStatus.MEMBER_CATEGORY_REGISTER_OK, responseDto);
     }
 
-    @GetMapping("/")
+    @GetMapping()
     @Operation(summary = "카테고리 조회 API", description = "카테고리 조회 API 입니다.")
     public ApiResponse<List<MemberCategoryResponseDto.CategoryResponseDto>> getMemberCategory(
             @RequestParam(name = "schedule-type") ScheduleType scheduleType, @AuthUser Member member) {

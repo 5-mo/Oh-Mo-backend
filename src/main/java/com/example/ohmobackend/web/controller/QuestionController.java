@@ -25,14 +25,14 @@ public class QuestionController {
     final QuestionCommandService questionCommandService;
     final QuestionQueryService questionQueryService;
 
-    @PostMapping("/")
+    @PostMapping()
     @Operation(summary = "질문 등록 API", description = "질문 등록 API 입니다.")
     public ApiResponse<Object> addQuestion(@RequestBody QuestionRequestDto.QuestionRegisterDto request, @AuthUser Member member) {
         questionCommandService.addQuestion(member, request);
         return ApiResponse.onSuccess(SuccessStatus.QUESTION_REGISTER_OK, null);
     }
 
-    @GetMapping("/")
+    @GetMapping()
     @Operation(summary = "질문 조회 API", description = "질문들만 조회하는 API 입니다.")
     public ApiResponse<List<QuestionResponseDto.QuestionDto>> getQuestions(@AuthUser Member member) {
         List<QuestionResponseDto.QuestionDto> response = questionQueryService.getQuestions(member);
