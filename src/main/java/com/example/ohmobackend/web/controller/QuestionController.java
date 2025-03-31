@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -35,6 +36,13 @@ public class QuestionController {
     @Operation(summary = "질문 조회 API", description = "질문들만 조회하는 API 입니다.")
     public ApiResponse<List<QuestionResponseDto.QuestionDto>> getQuestions(@AuthUser Member member) {
         List<QuestionResponseDto.QuestionDto> response = questionQueryService.getQuestions(member);
+        return ApiResponse.onSuccess(SuccessStatus.QUESTION_OK, response);
+    }
+
+    @GetMapping("/answer")
+    @Operation(summary = "일별 질문 및 답변 조회 API", description = "일별 질문 및 답변 조회 API 입니다.")
+    public ApiResponse<List<QuestionResponseDto.QuestionWithAnswerResponseDto>> getAnswers(@AuthUser Member member, @RequestParam(name = "date") LocalDate date) {
+        List<QuestionResponseDto.QuestionWithAnswerResponseDto> response = questionQueryService.getQuestionsWithAnswers(member, date);
         return ApiResponse.onSuccess(SuccessStatus.QUESTION_OK, response);
     }
 }
