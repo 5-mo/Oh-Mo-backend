@@ -30,9 +30,12 @@ public enum SuccessStatus implements BaseCode {
     QUESTION_REGISTER_OK(HttpStatus.OK, "QUESTION2000", "질문 등록이 완료되었습니다."),
     QUESTION_OK(HttpStatus.OK, "QUESTION2001", "질문 조회가 완료되었습니다."),
 
-
     // 답 관련 응답
-    ANSWER_REGISTER_OK(HttpStatus.OK, "ANSWER2000", "답 등록이 완료되었습니다.");
+    ANSWER_REGISTER_OK(HttpStatus.OK, "ANSWER2000", "답 등록이 완료되었습니다."),
+
+    // 데이로그 관련 응답
+    EMOJI_REGISTER_OK(HttpStatus.OK, "DAY_LOG2000", "이모지 등록이 완료되었습니다.");
+
 
     private final HttpStatus httpStatus;
     private final String code;
