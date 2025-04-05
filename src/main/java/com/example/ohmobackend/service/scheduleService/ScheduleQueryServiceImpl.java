@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.YearMonth;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -105,6 +106,29 @@ public class ScheduleQueryServiceImpl implements ScheduleQueryService {
                     List<Schedule> schedulesForDate = groupedByDate.get(date);
                     return ScheduleConverter.toScheduleByMonthDto(schedulesForDate, date);
                 })
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<ScheduleResponseDto.ScheduleDto> getScheduleListByKeyword(String keyword, Member member) {
+        List<MemberCategory> memberCategoryList = memberCategoryRepository.findByMember(member);
+
+        if (memberCategoryList.isEmpty()) {
+            throw new MemberCategoryHandler(ErrorStatus.MEMBER_CATEGORY_NOT_FOUND);
+        }
+
+        List<Schedule> scheduleList = memberCategoryList.stream()
+                .map(memberCategory -> scheduleRepository.findByMemberCategoryAndTitleContaining(memberCategory, keyword))
+                .flatMap(List::stream)  // List<Schedule>을 평탄화하여 하나의 스트림으로 변환
+                .sorted(Comparator.comparing(Schedule::getDate))
+                .collect(Collectors.toList());
+
+        if (scheduleList.isEmpty()) {
+            throw new ScheduleHandler(ErrorStatus.SCHEDULE_NOT_EXIST);
+        }
+
+        return scheduleList.stream()
+                .map(schedule -> ScheduleConverter.toScheduleDto(schedule))
                 .collect(Collectors.toList());
     }
 }

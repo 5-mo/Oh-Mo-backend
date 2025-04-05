@@ -74,4 +74,11 @@ public class ScheduleController {
         List<ScheduleResponseDto.ScheduleDto> scheduleDtoList = scheduleQueryService.getCompleteTodoList(date, member);
         return ApiResponse.onSuccess(SuccessStatus.SCHEDULE_OK, scheduleDtoList);
     }
+
+    @GetMapping("")
+    @Operation(summary = "검색어로 스케줄 조회 API", description = "검색어로 스케줄 조회 API 입니다.")
+    public ApiResponse<List<ScheduleResponseDto.ScheduleDto>> getScheduleList(@RequestParam(name = "query")String keyword, @AuthUser Member member) {
+        List<ScheduleResponseDto.ScheduleDto> scheduleDtoList = scheduleQueryService.getScheduleListByKeyword(keyword, member);
+        return ApiResponse.onSuccess(SuccessStatus.SCHEDULE_OK, scheduleDtoList);
+    }
 }
