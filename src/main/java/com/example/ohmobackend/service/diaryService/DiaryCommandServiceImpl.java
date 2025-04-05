@@ -8,6 +8,7 @@ import com.example.ohmobackend.web.dto.diaryDto.DiaryRequestDto;
 import com.example.ohmobackend.web.dto.diaryDto.DiaryResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -16,8 +17,15 @@ public class DiaryCommandServiceImpl implements DiaryCommandService{
     final DiaryRepository diaryRepository;
 
     @Override
+    @Transactional
     public DiaryResponseDto.AddDiaryResponseDto addDiary(Member member, DiaryRequestDto.AddDiaryRequestDto requestDto) {
-        Diary diary = DiaryConverter.toEntity(member, requestDto);
+        Diary diary = diaryRepository.findByMemberAndDate(member, requestDto.getDate());
+
+        if(diary == null) {
+            diary = DiaryConverter.toEntity(member, requestDto);
+        } else {
+            diary.updateContent(requestDto.getContent());
+        }
 
         diaryRepository.save(diary);
 
