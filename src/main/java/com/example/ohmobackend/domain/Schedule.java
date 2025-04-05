@@ -29,6 +29,8 @@ public class Schedule {
 
     private boolean alarm;
 
+    private LocalTime alarmTime;
+
     private String content;
 
     private boolean status;
@@ -51,5 +53,9 @@ public class Schedule {
 
     public void updateDate(LocalDate date) {
         this.date = date;
+    }
+
+    public void updateAlarmTime(LocalTime time) {
+        this.alarmTime = time;
     }
 }
