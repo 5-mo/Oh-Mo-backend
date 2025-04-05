@@ -23,7 +23,7 @@ public class DayLogController {
 
     final DayLogCommandService dayLogCommandService;
 
-    @PostMapping()
+    @PostMapping("/emoji")
     @Operation(summary = "이모지 등록 API", description = "이모지 등록 API 입니다.")
     public ApiResponse<DayLogResponseDto.AddDayLogResponseDto> addEmoji(@RequestBody DayLogRequestDto.AddDayLogRequestDto request, @AuthUser Member member) {
         DayLogResponseDto.AddDayLogResponseDto responseDto = dayLogCommandService.addDayLog(member, request);
