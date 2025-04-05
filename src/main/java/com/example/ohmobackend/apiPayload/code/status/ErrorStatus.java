@@ -35,7 +35,7 @@ public enum ErrorStatus implements BaseErrorCode {
     SCHEDULE_NOT_EXIST(HttpStatus.BAD_REQUEST, "SCHEDULE4003", "일정이 없습니다."),
     SCHEDULE_NOT_TO_DO_TYPE(HttpStatus.BAD_REQUEST, "SCHEDULE4004", "일정이 투두가 아닙니다."),
 
-    // 짏문 관련
+    // 질문 관련
     QUESTION_NOT_FOUND(HttpStatus.BAD_REQUEST, "QUESTION4001", "등록된 질문이 없습니다.");
 
     private final HttpStatus httpStatus;
