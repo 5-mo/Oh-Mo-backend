@@ -82,10 +82,10 @@ public class ScheduleController {
         return ApiResponse.onSuccess(SuccessStatus.SCHEDULE_OK, scheduleDtoList);
     }
 
-    @PatchMapping ("/todo")
-    @Operation(summary = "투두 날짜 변경 API", description = "투두 날짜 변경 API 입니다.")
-    public ApiResponse<ScheduleResponseDto.ScheduleDto> updateScheduleAlarmTime(@RequestBody ScheduleRequestDto.UpdateScheduleAlarmTimeDto request, @AuthUser Member member) {
-        ScheduleResponseDto.ScheduleDto response = scheduleCommandService.updateScheduleAlarmTime(request);
-        return ApiResponse.onSuccess(SuccessStatus.SCHEDULE_UPDATE_ALARM_TIME_OK, response);
+    @PatchMapping ("/alarm")
+    @Operation(summary = "알람 시간 등록 API", description = "알람 시간 등록 API 입니다.")
+    public ApiResponse<Object> updateScheduleAlarmTime(@RequestBody ScheduleRequestDto.UpdateScheduleAlarmTimeDto request, @AuthUser Member member) {
+        scheduleCommandService.updateScheduleAlarmTime(request);
+        return ApiResponse.onSuccess(SuccessStatus.SCHEDULE_UPDATE_ALARM_TIME_OK, null);
     }
 }

@@ -14,5 +14,5 @@ public interface ScheduleCommandService {
 
     public ScheduleResponseDto.ScheduleDto updateScheduleDate(ScheduleRequestDto.UpdateTodoDateRequestDto requestDto);
 
-    public ScheduleResponseDto.ScheduleDto updateScheduleAlarmTime(ScheduleRequestDto.UpdateScheduleAlarmTimeDto requestDto);
+    public void updateScheduleAlarmTime(ScheduleRequestDto.UpdateScheduleAlarmTimeDto requestDto);
 }
