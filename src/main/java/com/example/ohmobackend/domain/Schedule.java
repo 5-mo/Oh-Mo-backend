@@ -56,6 +56,7 @@ public class Schedule {
     }
 
     public void updateAlarmTime(LocalTime time) {
+        this.alarm = true;
         this.alarmTime = time;
     }
 }

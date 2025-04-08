@@ -43,4 +43,10 @@ public class ScheduleRequestDto {
         private Long scheduleId;
         private LocalDate date;
     }
+
+    @Getter
+    public static class UpdateScheduleAlarmTimeDto {
+        private Long scheduleId;
+        private LocalTime time;
+    }
 }

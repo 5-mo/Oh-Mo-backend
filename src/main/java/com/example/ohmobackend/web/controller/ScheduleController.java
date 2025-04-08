@@ -81,4 +81,11 @@ public class ScheduleController {
         List<ScheduleResponseDto.ScheduleDto> scheduleDtoList = scheduleQueryService.getScheduleListByKeyword(keyword, member);
         return ApiResponse.onSuccess(SuccessStatus.SCHEDULE_OK, scheduleDtoList);
     }
+
+    @PatchMapping ("/todo")
+    @Operation(summary = "투두 날짜 변경 API", description = "투두 날짜 변경 API 입니다.")
+    public ApiResponse<ScheduleResponseDto.ScheduleDto> updateScheduleAlarmTime(@RequestBody ScheduleRequestDto.UpdateScheduleAlarmTimeDto request, @AuthUser Member member) {
+        ScheduleResponseDto.ScheduleDto response = scheduleCommandService.updateScheduleAlarmTime(request);
+        return ApiResponse.onSuccess(SuccessStatus.SCHEDULE_UPDATE_ALARM_TIME_OK, response);
+    }
 }

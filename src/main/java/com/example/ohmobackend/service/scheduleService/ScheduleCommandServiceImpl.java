@@ -103,6 +103,15 @@ public class ScheduleCommandServiceImpl implements ScheduleCommandService {
         return ScheduleConverter.toScheduleDto(schedule);
     }
 
+    @Override
+    public ScheduleResponseDto.ScheduleDto updateScheduleAlarmTime(ScheduleRequestDto.UpdateScheduleAlarmTimeDto requestDto) {
+        Schedule schedule = scheduleRepository.findById(requestDto.getScheduleId())
+                .orElseThrow(() -> new ScheduleHandler(ErrorStatus.SCHEDULE_NOT_FOUND));
+
+        schedule.updateAlarmTime(requestDto.getTime());
+        return null;
+    }
+
     // 반복되는 요일에 해당하는 날짜들 반환
     public static List<LocalDate> getDates(LocalDate startDate, LocalDate endDate, List<DayOfWeek> weeks) {
         List<LocalDate> dates = new ArrayList<>();
