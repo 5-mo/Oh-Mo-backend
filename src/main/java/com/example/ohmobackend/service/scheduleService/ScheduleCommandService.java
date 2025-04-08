@@ -13,4 +13,6 @@ public interface ScheduleCommandService {
     public void updateScheduleStatus(Long scheduleId);
 
     public ScheduleResponseDto.ScheduleDto updateScheduleDate(ScheduleRequestDto.UpdateTodoDateRequestDto requestDto);
+
+    public void updateScheduleAlarmTime(ScheduleRequestDto.UpdateScheduleAlarmTimeDto requestDto);
 }

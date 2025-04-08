@@ -31,8 +31,10 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Long> {
     );
 
     @Query("SELECT s FROM Schedule s WHERE s.memberCategory = :memberCategory AND s.content LIKE %:keyword%")
-    List<Schedule> findByMemberCategoryAndTitleContaining(
+    public List<Schedule> findByMemberCategoryAndTitleContaining(
             @Param("memberCategory") MemberCategory memberCategory,
             @Param("keyword") String keyword
     );
+
+    public List<Schedule> findByContent(String content);
 }
