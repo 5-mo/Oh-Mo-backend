@@ -45,4 +45,13 @@ public class ScheduleResponseDto {
         private String content;
         private List<ScheduleResponseDto.ScheduleDto> scheduleList;
     }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class ScheduleCompletionRateByMonthDto {
+        private LocalDate date;
+        private double rate;
+    }
 }

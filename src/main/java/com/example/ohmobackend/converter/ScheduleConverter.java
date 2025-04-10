@@ -88,4 +88,11 @@ public class ScheduleConverter {
                 .build();
     }
 
+    static public ScheduleResponseDto.ScheduleCompletionRateByMonthDto toScheduleCompletionRateByMonthDto(LocalDate date, double rate) {
+        return ScheduleResponseDto.ScheduleCompletionRateByMonthDto.builder()
+                .date(date)
+                .rate(rate)
+                .build();
+    }
+
 }
