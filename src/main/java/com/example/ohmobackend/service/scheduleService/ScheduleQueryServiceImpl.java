@@ -131,4 +131,47 @@ public class ScheduleQueryServiceImpl implements ScheduleQueryService {
                 .map(schedule -> ScheduleConverter.toScheduleDto(schedule))
                 .collect(Collectors.toList());
     }
+
+
+    // 데이 로그 화면에서 루틴 완료 상태 조회
+    @Override
+    public List<ScheduleResponseDto.RoutineStatusByContentDto> getRoutineStatusList(LocalDate startDate, LocalDate endDate, Member member) {
+        List<MemberCategory> memberCategoryList = memberCategoryRepository.findByMemberAndScheduleType(member, ScheduleType.ROUTINE);
+
+        if (memberCategoryList.isEmpty()) {
+            throw new MemberCategoryHandler(ErrorStatus.MEMBER_CATEGORY_ROUTINE_NOT_FOUND);
+        }
+
+        List<Schedule> scheduleList = memberCategoryList.stream()
+                .map(memberCategory -> scheduleRepository.findByMemberCategoryAndDateBetween(memberCategory, startDate, endDate))
+                .flatMap(List::stream)  // List<Schedule>을 평탄화하여 하나의 스트림으로 변환
+                .collect(Collectors.toList());
+
+        if (scheduleList.isEmpty()) {
+            throw new ScheduleHandler(ErrorStatus.SCHEDULE_NOT_EXIST);
+        }
+
+        // 루틴 이름별로 그룹화
+        Map<String, List<Schedule>> groupedByContent = scheduleList.stream()
+                .collect(Collectors.groupingBy(
+                        Schedule::getContent,
+                        Collectors.collectingAndThen(
+                                Collectors.toList(),
+                                list -> list.stream()
+                                        .sorted(Comparator.comparing(Schedule::getDate))
+                                        .collect(Collectors.toList())
+                        )
+                ));
+
+        List<String> sortedContents = groupedByContent.keySet().stream()
+                .sorted()
+                .collect(Collectors.toList());
+
+        return sortedContents.stream()
+                .map(content -> {
+                    List<Schedule> schedulesForContent = groupedByContent.get(content);
+                    return ScheduleConverter.toRoutineStatusByContentDto(schedulesForContent, content);
+                })
+                .collect(Collectors.toList());
+    }
 }

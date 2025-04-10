@@ -36,4 +36,13 @@ public class ScheduleResponseDto {
         private LocalDate date;
         private List<MemberCategoryResponseDto.CategoryResponseDto> categoryList;
     }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class RoutineStatusByContentDto {
+        private String content;
+        private List<ScheduleResponseDto.ScheduleDto> scheduleList;
+    }
 }

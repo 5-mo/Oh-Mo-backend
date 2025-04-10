@@ -28,6 +28,7 @@ public enum ErrorStatus implements BaseErrorCode {
     INVALID_MEMBER_CATEGORY(HttpStatus.BAD_REQUEST, "MEMBER_CATEGORY4002", "사용자의 카테고리가 아닙니다."),
     MEMBER_CATEGORY_NOT_ROUTINE_TYPE(HttpStatus.BAD_REQUEST, "MEMBER_CATEGORY4003", "카테고리가 루틴이 아닙니다."),
     MEMBER_CATEGORY_NOT_TO_DO_TYPE(HttpStatus.BAD_REQUEST, "MEMBER_CATEGORY4004", "카테고리가 투두가 아닙니다."),
+    MEMBER_CATEGORY_ROUTINE_NOT_FOUND(HttpStatus.BAD_REQUEST, "MEMBER_CATEGORY4005", "등록된 루틴이 없습니다."),
 
     // 일정 관련
     MISSING_TIME(HttpStatus.BAD_REQUEST, "SCHEDULE4001", "시간이 누락되었습니다."),
