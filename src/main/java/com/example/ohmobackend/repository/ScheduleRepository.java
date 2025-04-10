@@ -37,4 +37,11 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Long> {
     );
 
     public List<Schedule> findByContent(String content);
+
+    @Query("SELECT s FROM Schedule s WHERE s.memberCategory = :memberCategory AND s.date BETWEEN :startDate AND :endDate")
+    List<Schedule> findByMemberCategoryAndDateBetween(
+            @Param("memberCategory") MemberCategory memberCategory,
+            @Param("startDate") LocalDate startDate,
+            @Param("endDate") LocalDate endDate
+    );
 }

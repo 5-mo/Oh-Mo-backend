@@ -131,4 +131,97 @@ public class ScheduleQueryServiceImpl implements ScheduleQueryService {
                 .map(schedule -> ScheduleConverter.toScheduleDto(schedule))
                 .collect(Collectors.toList());
     }
+
+
+    // 데이 로그 화면에서 루틴 완료 상태 조회
+    @Override
+    public List<ScheduleResponseDto.RoutineStatusByContentDto> getRoutineStatusList(LocalDate startDate, LocalDate endDate, Member member) {
+        List<MemberCategory> memberCategoryList = memberCategoryRepository.findByMemberAndScheduleType(member, ScheduleType.ROUTINE);
+
+        if (memberCategoryList.isEmpty()) {
+            throw new MemberCategoryHandler(ErrorStatus.MEMBER_CATEGORY_ROUTINE_NOT_FOUND);
+        }
+
+        List<Schedule> scheduleList = memberCategoryList.stream()
+                .map(memberCategory -> scheduleRepository.findByMemberCategoryAndDateBetween(memberCategory, startDate, endDate))
+                .flatMap(List::stream)  // List<Schedule>을 평탄화하여 하나의 스트림으로 변환
+                .collect(Collectors.toList());
+
+        if (scheduleList.isEmpty()) {
+            throw new ScheduleHandler(ErrorStatus.SCHEDULE_NOT_EXIST);
+        }
+
+        // 루틴 이름별로 그룹화
+        Map<String, List<Schedule>> groupedByContent = scheduleList.stream()
+                .collect(Collectors.groupingBy(
+                        Schedule::getContent,
+                        Collectors.collectingAndThen(
+                                Collectors.toList(),
+                                list -> list.stream()
+                                        .sorted(Comparator.comparing(Schedule::getDate))
+                                        .collect(Collectors.toList())
+                        )
+                ));
+
+        List<String> sortedContents = groupedByContent.keySet().stream()
+                .sorted()
+                .collect(Collectors.toList());
+
+        return sortedContents.stream()
+                .map(content -> {
+                    List<Schedule> schedulesForContent = groupedByContent.get(content);
+                    return ScheduleConverter.toRoutineStatusByContentDto(schedulesForContent, content);
+                })
+                .collect(Collectors.toList());
+    }
+
+    // 데이로그 completion rate 조회
+    @Override
+    public List<ScheduleResponseDto.ScheduleCompletionRateByMonthDto> getScheduleCompletionReteByMonth(String yearMonth, Member member) {
+        LocalDate firstDayOfMonth = YearMonth.parse(yearMonth).atDay(1);
+        LocalDate lastDayOfMonth = YearMonth.parse(yearMonth).atEndOfMonth();
+
+        List<MemberCategory> memberCategoryList = memberCategoryRepository.findByMember(member);
+
+        if (memberCategoryList.isEmpty()) {
+            throw new MemberCategoryHandler(ErrorStatus.MEMBER_CATEGORY_NOT_FOUND);
+        }
+
+        List<Schedule> scheduleList = memberCategoryList.stream()
+                .map(memberCategory -> scheduleRepository.findByMemberCategoryAndMonth(memberCategory, firstDayOfMonth, lastDayOfMonth))
+                .flatMap(List::stream)  // List<Schedule>을 평탄화하여 하나의 스트림으로 변환
+                .collect(Collectors.toList());
+
+        if (scheduleList.isEmpty()) {
+            throw new ScheduleHandler(ErrorStatus.SCHEDULE_NOT_EXIST);
+        }
+
+        // 날짜별로 그룹화
+        Map<LocalDate, List<Schedule>> groupedByDate = scheduleList.stream()
+                .collect(Collectors.groupingBy(Schedule::getDate));
+
+        Map<LocalDate, Double> completionRateByDate = groupedByDate.entrySet().stream()
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        entry -> {
+                            List<Schedule> schedules = entry.getValue();
+                            long total = schedules.size();
+                            long completed = schedules.stream().filter(Schedule::isStatus).count();
+                            return total == 0 ? 0.0 : Math.round(((double) completed / total) * 100 * 100.0) / 100.0;
+                        }
+                ));
+
+        // 날짜순으로 정렬
+        List<LocalDate> sortedDates = groupedByDate.keySet().stream()
+                .sorted()
+                .collect(Collectors.toList());
+
+        return sortedDates.stream()
+                .map(date -> {
+                    double rate = completionRateByDate.get(date);
+                    System.out.println(date+":"+rate);
+                    return ScheduleConverter.toScheduleCompletionRateByMonthDto(date, rate);
+                })
+                .collect(Collectors.toList());
+    }
 }

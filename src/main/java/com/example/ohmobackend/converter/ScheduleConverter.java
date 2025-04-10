@@ -78,4 +78,21 @@ public class ScheduleConverter {
                 .build();
     }
 
+    static public ScheduleResponseDto.RoutineStatusByContentDto toRoutineStatusByContentDto(List<Schedule> scheduleList, String content) {
+        List<ScheduleResponseDto.ScheduleDto> scheduleDtoList = scheduleList.stream()
+                .map(ScheduleConverter::toScheduleDto).collect(Collectors.toList());
+
+        return ScheduleResponseDto.RoutineStatusByContentDto.builder()
+                .content(content)
+                .scheduleList(scheduleDtoList)
+                .build();
+    }
+
+    static public ScheduleResponseDto.ScheduleCompletionRateByMonthDto toScheduleCompletionRateByMonthDto(LocalDate date, double rate) {
+        return ScheduleResponseDto.ScheduleCompletionRateByMonthDto.builder()
+                .date(date)
+                .rate(rate)
+                .build();
+    }
+
 }

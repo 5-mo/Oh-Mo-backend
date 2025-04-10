@@ -88,4 +88,18 @@ public class ScheduleController {
         scheduleCommandService.updateScheduleAlarmTime(request);
         return ApiResponse.onSuccess(SuccessStatus.SCHEDULE_UPDATE_ALARM_TIME_OK, null);
     }
+
+    @GetMapping("routine/status")
+    @Operation(summary = "Day Log 주차별 루틴 상태 조회 API", description = "Day Log 주차별 루틴 상태 조회 API 입니다.")
+    public ApiResponse<List<ScheduleResponseDto.RoutineStatusByContentDto>> getRoutineStatus(@RequestParam(name = "start-date")LocalDate startDate, @RequestParam(name = "end-date")LocalDate endDate, @AuthUser Member member) {
+        List<ScheduleResponseDto.RoutineStatusByContentDto> routineStatusByContentList = scheduleQueryService.getRoutineStatusList(startDate, endDate, member);
+        return ApiResponse.onSuccess(SuccessStatus.SCHEDULE_ROUTINE_STATUS_OK, routineStatusByContentList);
+    }
+
+    @GetMapping("/completion-rate")
+    @Operation(summary = "Day Log 주차별 루틴 상태 조회 API", description = "Day Log 주차별 루틴 상태 조회 API 입니다.")
+    public ApiResponse<List<ScheduleResponseDto.ScheduleCompletionRateByMonthDto>> getScheduleCompletionRateByMonth(@RequestParam(name = "year-month")String yearMonth, @AuthUser Member member) {
+        List<ScheduleResponseDto.ScheduleCompletionRateByMonthDto> routineStatusByContentList = scheduleQueryService.getScheduleCompletionReteByMonth(yearMonth, member);
+        return ApiResponse.onSuccess(SuccessStatus.SCHEDULE_COMPLETION_RATE_OK, routineStatusByContentList);
+    }
 }

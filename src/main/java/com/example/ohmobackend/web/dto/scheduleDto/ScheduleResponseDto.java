@@ -36,4 +36,22 @@ public class ScheduleResponseDto {
         private LocalDate date;
         private List<MemberCategoryResponseDto.CategoryResponseDto> categoryList;
     }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class RoutineStatusByContentDto {
+        private String content;
+        private List<ScheduleResponseDto.ScheduleDto> scheduleList;
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class ScheduleCompletionRateByMonthDto {
+        private LocalDate date;
+        private double rate;
+    }
 }
