@@ -34,6 +34,7 @@ jobs:
           username: ${{ secrets.EC2_SSH_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
+            mkdir -p /home/ubuntu/Oh-Mo-backend
             cat <<EOF > /home/ubuntu/Oh-Mo-backend/.env
             DATABASE_USERNAME=${{ secrets.DATABASE_USERNAME }}
             DATABASE_PASSWORD=${{ secrets.DATABASE_PASSWORD }}
