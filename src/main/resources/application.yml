@@ -22,4 +22,4 @@ spring:
         default_batch_fetch_size: 1000${}
 
 jwt:
-  secret: 4418607030a3ec9c5821253b158042e8b241d6b46830325eaa4d8246b423e3f2
+  secret: ${JWT_SECRET_KEY}
