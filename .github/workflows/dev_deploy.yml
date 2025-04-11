@@ -57,8 +57,10 @@ jobs:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_SSH_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
+          envs: COMPOSE
           script: |
             sudo docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+            sudo docker-compose -f $COMPOSE down --rmi all
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/ohmo
-            docker-compose up -d
+            sudo docker-compose -f $COMPOSE up -d
             
