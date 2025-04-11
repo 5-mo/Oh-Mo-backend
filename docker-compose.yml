@@ -4,6 +4,8 @@ services:
   app:
     image: ${DOCKER_USERNAME}/ohmo
     container_name: springboot-app
+    env_file:
+      - .env
     depends_on:
       - db
     ports:
