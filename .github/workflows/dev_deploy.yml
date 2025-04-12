@@ -36,7 +36,7 @@ jobs:
           script: |
             cd /home/ubuntu/Oh-Mo-backend
             echo "${{ secrets.ENV_VARS }}" > .env
-          
+      
 
       # copy docker-compose.yml to EC2
       - name: Copy docker-compose.yml to EC2
@@ -60,7 +60,8 @@ jobs:
           envs: COMPOSE
           script: |
             sudo docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
-            sudo docker-compose -f $COMPOSE down --rmi all
+            sudo docker-compose -f $COMPOSE stop
+            sudo docker-compose -f $COMPOSE rm -f app
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/ohmo
             sudo docker-compose -f $COMPOSE up -d
             
