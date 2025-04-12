@@ -27,6 +27,7 @@ public class MemberConverter {
         return MemberResponseDto.LoginResponseDto.builder()
                 .memberId(member.getId())
                 .email(member.getEmail())
+                .nickname(member.getNickname())
                 .token(jwtToken)
                 .build();
     }

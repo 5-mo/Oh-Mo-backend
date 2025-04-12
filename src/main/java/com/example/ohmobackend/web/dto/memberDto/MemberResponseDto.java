@@ -24,6 +24,7 @@ public class MemberResponseDto {
     public static class LoginResponseDto {
         private Long memberId;
         private String email;
+        private String nickname;
         private JwtToken token;
     }
 }
