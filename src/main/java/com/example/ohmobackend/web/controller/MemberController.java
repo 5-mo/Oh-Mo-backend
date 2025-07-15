@@ -33,7 +33,7 @@ public class MemberController {
     @GetMapping("/test")
     @Operation(summary = "테스트 API",description = "테스트")
     public String test() {
-        return "테스트";
+        return "테스트ㅡㅡ";
     }
 
 }
