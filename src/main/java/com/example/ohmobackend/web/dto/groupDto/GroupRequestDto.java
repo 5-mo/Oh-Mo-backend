@@ -1,14 +1,14 @@
 package com.example.ohmobackend.web.dto.groupDto;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 public class GroupRequestDto {
 
-    @Setter
     @Getter
+    @Setter
     @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class AddGroupRequestDto {
         private String groupName;
         private String groupCode;
