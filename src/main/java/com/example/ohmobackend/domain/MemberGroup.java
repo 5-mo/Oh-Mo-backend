@@ -1,5 +1,6 @@
 package com.example.ohmobackend.domain;
 
+import com.example.ohmobackend.domain.enums.GroupRole;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.DynamicUpdate;
@@ -10,14 +11,15 @@ import org.hibernate.annotations.DynamicUpdate;
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @DynamicUpdate
-public class UserGroup {
+public class MemberGroup {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "user_group_id")
+    @Column(name = "member_group_id")
     private Long id;
 
-    private String role;
+    @Enumerated(EnumType.STRING)
+    private GroupRole role;
 
     private String nickName;
 

@@ -2,10 +2,8 @@ package com.example.ohmobackend.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.apache.catalina.User;
 import org.hibernate.annotations.DynamicUpdate;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,6 +26,8 @@ public class Group {
 
     private String groupColor;
 
+    private int numPeople;
+
     @OneToMany(mappedBy = "group", cascade = CascadeType.ALL)
     private List<Schedule> scheduleList = new ArrayList<>();
 
@@ -35,5 +35,5 @@ public class Group {
     private List<Notice> noticeList = new ArrayList<>();
 
     @OneToMany(mappedBy = "group", cascade = CascadeType.ALL)
-    private List<UserGroup> userGroupList = new ArrayList<>();
+    private List<MemberGroup> userGroupList = new ArrayList<>();
 }

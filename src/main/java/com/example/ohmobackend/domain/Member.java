@@ -47,7 +47,7 @@ public class Member {
     private List<Daylog> daylogList = new ArrayList<>();
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
-    private List<UserGroup> userGroupList = new ArrayList<>();
+    private List<MemberGroup> userGroupList = new ArrayList<>();
 
     public void updateRefreshToken(String updateRefreshToken) {
         this.refreshToken = updateRefreshToken;
