@@ -44,6 +44,10 @@ public class Schedule {
     @JoinColumn(name = "member_category_id")
     private MemberCategory memberCategory;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "group_id")
+    private Group group;
+
     @OneToMany(mappedBy = "schedule", cascade = CascadeType.ALL)
     private List<RoutineWeek> routineWeekList = new ArrayList<>();
 

@@ -41,7 +41,10 @@ public enum ErrorStatus implements BaseErrorCode {
     QUESTION_NOT_FOUND(HttpStatus.BAD_REQUEST, "QUESTION4001", "등록된 질문이 없습니다."),
 
     // 일기 관련
-    DIARY_NOT_FOUND(HttpStatus.BAD_REQUEST, "DIARY4001", "등록된 일기가 없습니다.");
+    DIARY_NOT_FOUND(HttpStatus.BAD_REQUEST, "DIARY4001", "등록된 일기가 없습니다."),
+
+    // 그룹 관련
+    GROUP_INVALID_CODE(HttpStatus.BAD_REQUEST, "GROUP4001", "그룹코드는 4자리입니다.");
 
     private final HttpStatus httpStatus;
     private final String code;

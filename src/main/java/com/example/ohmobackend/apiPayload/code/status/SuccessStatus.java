@@ -41,7 +41,12 @@ public enum SuccessStatus implements BaseCode {
 
     // 일기 관련 응답
     DIARY_REGISTER_OK(HttpStatus.OK, "DIARY_2000", "일기 등록이 완료되었습니다."),
-    DIARY_OK(HttpStatus.OK, "DIARY_2001", "일기 조회가 완료되었습니다.");
+    DIARY_OK(HttpStatus.OK, "DIARY_2001", "일기 조회가 완료되었습니다."),
+
+    // 그룹 관련
+    GROUP_REGISTER_OK(HttpStatus.OK, "GROUP_2000", "그룹 등록이 완료되었습니다.")
+
+    ;
 
 
     private final HttpStatus httpStatus;
