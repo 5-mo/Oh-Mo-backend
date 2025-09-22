@@ -21,7 +21,7 @@ public class MemberGroup {
     @Enumerated(EnumType.STRING)
     private GroupRole role;
 
-    private String nickName;
+    private String nickname;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "group_id")

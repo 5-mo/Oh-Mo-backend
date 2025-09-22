@@ -10,7 +10,7 @@ public class MemberGroupConverter {
     public static MemberGroup managerToMemberGroupEntity(Member member, Group group, String nickname) {
         return MemberGroup.builder()
                 .role(GroupRole.MANAGER)
-                .nickName(nickname)
+                .nickname(nickname)
                 .group(group)
                 .member(member)
                 .build();
