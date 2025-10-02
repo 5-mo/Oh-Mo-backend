@@ -48,9 +48,6 @@ public class Schedule {
     @JoinColumn(name = "group_id")
     private Group group;
 
-    @OneToMany(mappedBy = "schedule", cascade = CascadeType.ALL)
-    private List<RoutineWeek> routineWeekList = new ArrayList<>();
-
     public void updateStatus() {
         this.status = !this.status;
     }
