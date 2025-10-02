@@ -23,7 +23,7 @@ public class ScheduleConverter {
                 .date(date)
                 .time(requestDto.getTime())
                 .alarm(requestDto.getAlarm())
-                .alarmTime(requestDto.getTime())
+                .alarmTime(requestDto.getAlarmTime())
                 .content(requestDto.getContent())
                 .status(false)
                 .routineEndDate(requestDto.getEndDate())
@@ -40,7 +40,7 @@ public class ScheduleConverter {
                 .date(requestDto.getDate())
                 .time(requestDto.getTime())
                 .alarm(requestDto.getAlarm())
-                .alarmTime(requestDto.getTime())
+                .alarmTime(requestDto.getAlarmTime())
                 .content(requestDto.getContent())
                 .status(false)
                 .scheduleType(ScheduleType.TO_DO)
@@ -55,6 +55,7 @@ public class ScheduleConverter {
                 .date(schedule.getDate())
                 .time(schedule.getTime() != null ? schedule.getTime() : LocalTime.MIDNIGHT)
                 .alarm(schedule.isAlarm())
+                .alarmTime(schedule.getAlarmTime())
                 .content(schedule.getContent())
                 .status(schedule.isStatus())
                 .scheduleType(schedule.getScheduleType())
@@ -105,13 +106,28 @@ public class ScheduleConverter {
                 .date(date)
                 .time(requestDto.getTime())
                 .alarm(requestDto.getAlarm())
-                .alarmTime(requestDto.getTime())
+                .alarmTime(requestDto.getAlarmTime())
                 .content(requestDto.getContent())
                 .status(false)
                 .routineEndDate(requestDto.getEndDate())
                 .scheduleType(ScheduleType.ROUTINE)
                 .group(group)
                 .week(date.getDayOfWeek())
+                .build();
+    }
+
+    static public Schedule groupTodoToEntity(
+            ScheduleRequestDto.GroupTodoRequestDto requestDto,
+            Group group) {
+        return Schedule.builder()
+                .date(requestDto.getDate())
+                .time(requestDto.getTime())
+                .alarm(requestDto.getAlarm())
+                .alarmTime(requestDto.getAlarmTime())
+                .content(requestDto.getContent())
+                .status(false)
+                .scheduleType(ScheduleType.TO_DO)
+                .group(group)
                 .build();
     }
 

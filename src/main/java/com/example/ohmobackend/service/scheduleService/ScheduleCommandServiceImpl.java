@@ -149,6 +149,23 @@ public class ScheduleCommandServiceImpl implements ScheduleCommandService {
         scheduleRepository.saveAll(schedules);
     }
 
+    @Override
+    public void addGroupTodo(ScheduleRequestDto.GroupTodoRequestDto requestDto, Member member) {
+        Group group = groupRepository.findById(requestDto.getGroupId())
+                .orElseThrow(() -> new ScheduleHandler(ErrorStatus.GROUP_NOT_FOUND));
+
+        // 루틴 추가할 권한 없음(해당 그룹의 멤버가 아님)
+        memberGroupRepository.findByGroupAndMember(group, member)
+                .orElseThrow(() -> new ScheduleHandler(ErrorStatus.MEMBER_GROUP_NOT_FOUND));
+
+        // 알람 설정이 true 이지만 시간이 없을 경우
+        if(requestDto.getAlarm() && requestDto.getTime() == null) {
+            throw new ScheduleHandler(ErrorStatus.MISSING_TIME);
+        }
+
+        scheduleRepository.save(ScheduleConverter.groupTodoToEntity(requestDto, group));
+    }
+
     public static List<LocalDate> getDates(LocalDate startDate, LocalDate endDate, List<DayOfWeek> weeks) {
         List<LocalDate> dates = new ArrayList<>();
         LocalDate currentDate = startDate;
