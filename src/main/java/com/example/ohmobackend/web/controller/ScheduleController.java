@@ -116,4 +116,11 @@ public class ScheduleController {
         scheduleCommandService.addGroupTodo(request, member);
         return ApiResponse.onSuccess(SuccessStatus.SCHEDULE_TO_DO_OK, null);
     }
+
+    @PostMapping("/assignee")
+    @Operation(summary = "그룹 일정 담당자 등록 API", description = "그룹 일정 담당자 등록 API 입니다.")
+    public ApiResponse<Object> addScheduleAssignee(@RequestBody ScheduleRequestDto.ScheduleAssigneeDto request, @AuthUser Member member) {
+        scheduleCommandService.addScheduleAssignee(request, member);
+        return ApiResponse.onSuccess(SuccessStatus.SCHEDULE_ASSIGNEE_OK, null);
+    }
 }

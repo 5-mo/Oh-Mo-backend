@@ -1,8 +1,6 @@
 package com.example.ohmobackend.converter;
 
-import com.example.ohmobackend.domain.Group;
-import com.example.ohmobackend.domain.MemberCategory;
-import com.example.ohmobackend.domain.Schedule;
+import com.example.ohmobackend.domain.*;
 import com.example.ohmobackend.domain.enums.ScheduleType;
 import com.example.ohmobackend.web.dto.memberCategoryDto.MemberCategoryResponseDto;
 import com.example.ohmobackend.web.dto.scheduleDto.ScheduleRequestDto;
@@ -128,6 +126,15 @@ public class ScheduleConverter {
                 .status(false)
                 .scheduleType(ScheduleType.TO_DO)
                 .group(group)
+                .build();
+    }
+
+    static public ScheduleAssignee scheduleAssigneeToEntity(
+            Member member, Schedule schedule) {
+        return ScheduleAssignee.builder()
+                .member(member)
+                .schedule(schedule)
+                .status(false)
                 .build();
     }
 

@@ -8,6 +8,8 @@ import org.hibernate.annotations.DynamicUpdate;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -48,6 +50,9 @@ public class Schedule {
     private Group group;
 
     private DayOfWeek week;
+
+    @OneToMany(mappedBy = "schedule", cascade = CascadeType.ALL)
+    private List<ScheduleAssignee> ScheduleAssigneeList = new ArrayList<>();
 
     public void updateStatus() {
         this.status = !this.status;

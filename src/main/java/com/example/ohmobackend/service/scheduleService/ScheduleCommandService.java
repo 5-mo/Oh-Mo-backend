@@ -20,4 +20,6 @@ public interface ScheduleCommandService {
     void addGroupRoutine(ScheduleRequestDto.GroupRoutineRequestDto requestDto, Member member);
 
     void addGroupTodo(ScheduleRequestDto.GroupTodoRequestDto requestDto, Member member);
+
+    void addScheduleAssignee(ScheduleRequestDto.ScheduleAssigneeDto requestDto, Member member);
 }

@@ -84,4 +84,10 @@ public class ScheduleRequestDto {
         private String content;
         private LocalDate date;
     }
+
+    @Getter
+    public static class ScheduleAssigneeDto {
+        private Long scheduleId;
+        private List<Long> memberIdList;
+    }
 }
