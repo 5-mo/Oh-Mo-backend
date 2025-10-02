@@ -14,6 +14,7 @@ public class GroupResponseDto {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class GroupDto{
+        private Long groupId;
         private String groupName;
         private String groupCode;
         private String groupColor;

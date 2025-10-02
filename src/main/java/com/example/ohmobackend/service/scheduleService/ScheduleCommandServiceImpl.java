@@ -4,12 +4,9 @@ import com.example.ohmobackend.apiPayload.code.status.ErrorStatus;
 import com.example.ohmobackend.apiPayload.exception.handler.MemberCategoryHandler;
 import com.example.ohmobackend.apiPayload.exception.handler.ScheduleHandler;
 import com.example.ohmobackend.converter.ScheduleConverter;
-import com.example.ohmobackend.domain.Member;
-import com.example.ohmobackend.domain.MemberCategory;
-import com.example.ohmobackend.domain.Schedule;
+import com.example.ohmobackend.domain.*;
 import com.example.ohmobackend.domain.enums.ScheduleType;
-import com.example.ohmobackend.repository.MemberCategoryRepository;
-import com.example.ohmobackend.repository.ScheduleRepository;
+import com.example.ohmobackend.repository.*;
 import com.example.ohmobackend.web.dto.scheduleDto.ScheduleRequestDto;
 import com.example.ohmobackend.web.dto.scheduleDto.ScheduleResponseDto;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +26,9 @@ public class ScheduleCommandServiceImpl implements ScheduleCommandService {
 
     final private MemberCategoryRepository memberCategoryRepository;
     final private ScheduleRepository scheduleRepository;
+    final private GroupRepository groupRepository;
+    final private MemberGroupRepository memberGroupRepository;
+    final private RoutineWeekRepository routineWeekRepository;
 
     @Override
     public void addRoutine(ScheduleRequestDto.RoutineRequestDto requestDto, Member member) {
@@ -125,6 +125,31 @@ public class ScheduleCommandServiceImpl implements ScheduleCommandService {
     }
 
     // 반복되는 요일에 해당하는 날짜들 반환
+    @Override
+    public void addGroupRoutine(ScheduleRequestDto.GroupRoutineRequestDto requestDto, Member member) {
+        Group group = groupRepository.findById(requestDto.getGroupId())
+                .orElseThrow(() -> new ScheduleHandler(ErrorStatus.GROUP_NOT_FOUND));
+
+        // 루틴 추가할 권한 없음(해당 그룹의 멤버가 아님)
+        memberGroupRepository.findByGroupAndMember(group, member)
+                .orElseThrow(() -> new ScheduleHandler(ErrorStatus.MEMBER_GROUP_NOT_FOUND));
+
+        // 알람 설정이 true 이지만 시간이 없을 경우
+        if(requestDto.getAlarm() && requestDto.getTime() == null) {
+            throw new ScheduleHandler(ErrorStatus.MISSING_TIME);
+        }
+
+        LocalDate startDate = LocalDate.now();  // 시작 날짜 (오늘)
+        LocalDate endDate = requestDto.getEndDate();
+        List<LocalDate> dates = getDates(startDate, endDate, requestDto.getRoutineWeek()); // 반복 요일에 해당하는 날짜 리스트
+
+        List<Schedule> schedules = dates.stream()
+                .map(date -> ScheduleConverter.groupRoutineToEntity(group, requestDto, date))
+                .collect(Collectors.toList());
+
+        scheduleRepository.saveAll(schedules);
+    }
+
     public static List<LocalDate> getDates(LocalDate startDate, LocalDate endDate, List<DayOfWeek> weeks) {
         List<LocalDate> dates = new ArrayList<>();
         LocalDate currentDate = startDate;

@@ -49,4 +49,19 @@ public class ScheduleRequestDto {
         private Long scheduleId;
         private LocalTime time;
     }
+
+    @Getter
+    public static class GroupRoutineRequestDto {
+        private Long groupId;
+
+        @Schema(type = "string")
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:MM", timezone = "Asia/Seoul")
+        private LocalTime time;
+        private Boolean alarm;
+        private String content;
+        private LocalDate endDate;
+
+        @JsonFormat(with = JsonFormat.Feature.ACCEPT_CASE_INSENSITIVE_PROPERTIES)
+        private List<DayOfWeek> routineWeek;
+    }
 }

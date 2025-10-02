@@ -7,7 +7,9 @@ import lombok.extern.slf4j.Slf4j;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestController;
@@ -16,6 +18,7 @@ import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import java.time.format.DateTimeParseException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -115,4 +118,17 @@ public class ExceptionAdvice extends ResponseEntityExceptionHandler {
         );
     }
 
+    @Override
+    protected ResponseEntity<Object> handleHttpMessageNotReadable(
+            HttpMessageNotReadableException ex,
+            HttpHeaders headers,
+            HttpStatusCode status,
+            WebRequest request) {
+
+        ApiResponse<Object> body = ApiResponse.onFailure(
+                ErrorStatus._BAD_REQUEST,
+                "시간 형식이 올바르지 않습니다. (예: HH:mm)"
+        );
+        return super.handleExceptionInternal(ex, body, headers, HttpStatus.BAD_REQUEST, request);
+    }
 }
