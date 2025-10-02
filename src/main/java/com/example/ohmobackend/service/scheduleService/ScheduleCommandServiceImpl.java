@@ -28,7 +28,6 @@ public class ScheduleCommandServiceImpl implements ScheduleCommandService {
     final private ScheduleRepository scheduleRepository;
     final private GroupRepository groupRepository;
     final private MemberGroupRepository memberGroupRepository;
-    final private RoutineWeekRepository routineWeekRepository;
 
     @Override
     public void addRoutine(ScheduleRequestDto.RoutineRequestDto requestDto, Member member) {

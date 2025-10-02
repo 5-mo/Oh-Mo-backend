@@ -29,6 +29,7 @@ public class ScheduleConverter {
                 .routineEndDate(requestDto.getEndDate())
                 .scheduleType(ScheduleType.ROUTINE)
                 .memberCategory(memberCategory)
+                .week(date.getDayOfWeek())
                 .build();
     }
 
@@ -110,6 +111,7 @@ public class ScheduleConverter {
                 .routineEndDate(requestDto.getEndDate())
                 .scheduleType(ScheduleType.ROUTINE)
                 .group(group)
+                .week(date.getDayOfWeek())
                 .build();
     }
 

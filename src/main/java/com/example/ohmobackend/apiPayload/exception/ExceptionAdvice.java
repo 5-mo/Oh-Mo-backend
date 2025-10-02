@@ -125,10 +125,21 @@ public class ExceptionAdvice extends ResponseEntityExceptionHandler {
             HttpStatusCode status,
             WebRequest request) {
 
+        Throwable cause = ex.getCause();
+
+        if (cause instanceof DateTimeParseException) {
+            ApiResponse<Object> body = ApiResponse.onFailure(
+                    ErrorStatus._BAD_REQUEST,
+                    "시간 형식이 올바르지 않습니다. (예: HH:mm)"
+            );
+            return super.handleExceptionInternal(ex, body, headers, HttpStatus.BAD_REQUEST, request);
+        }
+
         ApiResponse<Object> body = ApiResponse.onFailure(
                 ErrorStatus._BAD_REQUEST,
-                "시간 형식이 올바르지 않습니다. (예: HH:mm)"
+                "잘못된 요청 형식입니다."
         );
         return super.handleExceptionInternal(ex, body, headers, HttpStatus.BAD_REQUEST, request);
     }
+
 }
