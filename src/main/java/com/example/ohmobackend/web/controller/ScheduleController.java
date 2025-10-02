@@ -102,4 +102,11 @@ public class ScheduleController {
         List<ScheduleResponseDto.ScheduleCompletionRateByMonthDto> routineStatusByContentList = scheduleQueryService.getScheduleCompletionReteByMonth(yearMonth, member);
         return ApiResponse.onSuccess(SuccessStatus.SCHEDULE_COMPLETION_RATE_OK, routineStatusByContentList);
     }
+
+    @PostMapping("/routine-group")
+    @Operation(summary = "그룹 루틴 추가 API", description = "그룹 루틴 추가 API 입니다.")
+    public ApiResponse<Object> addGroupRoutine(@RequestBody ScheduleRequestDto.GroupRoutineRequestDto request, @AuthUser Member member) {
+        scheduleCommandService.addGroupRoutine(request, member);
+        return ApiResponse.onSuccess(SuccessStatus.SCHEDULE_ROUTINE_OK, null);
+    }
 }

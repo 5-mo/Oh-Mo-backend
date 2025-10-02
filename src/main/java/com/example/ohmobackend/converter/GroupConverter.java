@@ -18,6 +18,7 @@ public class GroupConverter {
 
     public static GroupResponseDto.GroupDto toGroupDto(Group group) {
         return GroupResponseDto.GroupDto.builder()
+                .groupId(group.getId())
                 .groupName(group.getGroupName())
                 .groupCode(group.getGroupCode())
                 .groupColor(group.getGroupColor())

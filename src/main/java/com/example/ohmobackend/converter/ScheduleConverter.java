@@ -1,5 +1,6 @@
 package com.example.ohmobackend.converter;
 
+import com.example.ohmobackend.domain.Group;
 import com.example.ohmobackend.domain.MemberCategory;
 import com.example.ohmobackend.domain.Schedule;
 import com.example.ohmobackend.domain.enums.ScheduleType;
@@ -92,6 +93,23 @@ public class ScheduleConverter {
         return ScheduleResponseDto.ScheduleCompletionRateByMonthDto.builder()
                 .date(date)
                 .rate(rate)
+                .build();
+    }
+
+    static public Schedule groupRoutineToEntity(
+            Group group,
+            ScheduleRequestDto.GroupRoutineRequestDto requestDto,
+            LocalDate date) {
+        return Schedule.builder()
+                .date(date)
+                .time(requestDto.getTime())
+                .alarm(requestDto.getAlarm())
+                .alarmTime(requestDto.getTime())
+                .content(requestDto.getContent())
+                .status(false)
+                .routineEndDate(requestDto.getEndDate())
+                .scheduleType(ScheduleType.ROUTINE)
+                .group(group)
                 .build();
     }
 

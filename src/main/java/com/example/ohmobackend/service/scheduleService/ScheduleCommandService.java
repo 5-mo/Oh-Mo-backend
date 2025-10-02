@@ -15,4 +15,7 @@ public interface ScheduleCommandService {
     public ScheduleResponseDto.ScheduleDto updateScheduleDate(ScheduleRequestDto.UpdateTodoDateRequestDto requestDto);
 
     public void updateScheduleAlarmTime(ScheduleRequestDto.UpdateScheduleAlarmTimeDto requestDto);
+
+    // 반복되는 요일에 해당하는 날짜들 반환
+    void addGroupRoutine(ScheduleRequestDto.GroupRoutineRequestDto requestDto, Member member);
 }
