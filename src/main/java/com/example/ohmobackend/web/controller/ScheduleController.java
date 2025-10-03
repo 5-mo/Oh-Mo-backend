@@ -40,13 +40,6 @@ public class ScheduleController {
         return ApiResponse.onSuccess(SuccessStatus.SCHEDULE_TO_DO_OK, null);
     }
 
-    @PostMapping("/{scheduleId}")
-    @Operation(summary = "상태 변경 API", description = "상태 변경 API 입니다.")
-    public ApiResponse<Object> updateScheduleStatus(@PathVariable(name = "scheduleId") Long scheduleId, @AuthUser Member member) {
-        scheduleCommandService.updateScheduleStatus(scheduleId);
-        return ApiResponse.onSuccess(SuccessStatus.SCHEDULE_UPDATE_STATUS_OK, null);
-    }
-
     @GetMapping("/by-date")
     @Operation(summary = "일별 일정 조회 API", description = "일별 일정 조회 API 입니다.")
     public ApiResponse<List<ScheduleResponseDto.ScheduleDto>> getScheduleList(@RequestParam(name = "date")LocalDate date, @RequestParam(name = "type")ScheduleType scheduleType, @AuthUser Member member) {

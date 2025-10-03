@@ -80,15 +80,6 @@ public class ScheduleCommandServiceImpl implements ScheduleCommandService {
 
     @Override
     @Transactional
-    public void updateScheduleStatus(Long scheduleId) {
-        Schedule schedule = scheduleRepository.findById(scheduleId)
-                .orElseThrow(() -> new ScheduleHandler(ErrorStatus.SCHEDULE_NOT_FOUND));
-
-//        schedule.updateStatus();
-    }
-
-    @Override
-    @Transactional
     public ScheduleResponseDto.ScheduleDto updateScheduleDate(ScheduleRequestDto.UpdateTodoDateRequestDto requestDto) {
         Schedule schedule = scheduleRepository.findById(requestDto.getScheduleId())
                 .orElseThrow(() -> new ScheduleHandler(ErrorStatus.SCHEDULE_NOT_FOUND));
