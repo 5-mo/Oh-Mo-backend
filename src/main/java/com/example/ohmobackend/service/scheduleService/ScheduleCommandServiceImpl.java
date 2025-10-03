@@ -3,6 +3,7 @@ package com.example.ohmobackend.service.scheduleService;
 import com.example.ohmobackend.apiPayload.code.status.ErrorStatus;
 import com.example.ohmobackend.apiPayload.exception.handler.MemberCategoryHandler;
 import com.example.ohmobackend.apiPayload.exception.handler.ScheduleHandler;
+import com.example.ohmobackend.converter.RoutineConverter;
 import com.example.ohmobackend.converter.ScheduleConverter;
 import com.example.ohmobackend.converter.TodoConverter;
 import com.example.ohmobackend.domain.*;
@@ -32,9 +33,10 @@ public class ScheduleCommandServiceImpl implements ScheduleCommandService {
     final private ScheduleAssigneeRepository scheduleAssigneeRepository;
     final private MemberRepository memberRepository;
     final private TodoRepository todoRepository;
+    final private RoutineRepository routineRepository;
 
     @Override
-    public void addRoutine(ScheduleRequestDto.RoutineRequestDto requestDto, Member member) {
+    public void addRoutine(ScheduleRequestDto.AddRequestDto requestDto, Member member) {
         MemberCategory memberCategory = memberCategoryRepository.findById(requestDto.getCategoryId())
                 .orElseThrow(() -> new ScheduleHandler(ErrorStatus.MEMBER_CATEGORY_NOT_FOUND));
 
@@ -46,24 +48,21 @@ public class ScheduleCommandServiceImpl implements ScheduleCommandService {
             throw new MemberCategoryHandler(ErrorStatus.MEMBER_CATEGORY_NOT_TO_DO_TYPE);
         }
 
-        // 알람 설정이 true 이지만 시간이 없을 경우
-        if(requestDto.getAlarm() && requestDto.getTime() == null) {
-            throw new ScheduleHandler(ErrorStatus.MISSING_TIME);
-        }
+        Schedule schedule = scheduleRepository.save(ScheduleConverter.toEntity(requestDto, memberCategory));
 
         LocalDate startDate = LocalDate.now();  // 시작 날짜 (오늘)
-        LocalDate endDate = requestDto.getEndDate();
+        LocalDate endDate = schedule.getDate();
         List<LocalDate> dates = getDates(startDate, endDate, requestDto.getRoutineWeek()); // 반복 요일에 해당하는 날짜 리스트
 
-        List<Schedule> schedules = dates.stream()
-                .map(date -> ScheduleConverter.routineToEntity(requestDto, memberCategory, date))
+        List<Routine> routineList = dates.stream()
+                .map(date -> RoutineConverter.toEntity(schedule, date))
                 .collect(Collectors.toList());
 
-        scheduleRepository.saveAll(schedules);
+        routineRepository.saveAll(routineList);
     }
 
     @Override
-    public void addTodo(ScheduleRequestDto.TodoRequestDto requestDto, Member member) {
+    public void addTodo(ScheduleRequestDto.AddRequestDto requestDto, Member member) {
         MemberCategory memberCategory = memberCategoryRepository.findById(requestDto.getCategoryId())
                 .orElseThrow(() -> new ScheduleHandler(ErrorStatus.MEMBER_CATEGORY_NOT_FOUND));
 
@@ -75,12 +74,7 @@ public class ScheduleCommandServiceImpl implements ScheduleCommandService {
             throw new MemberCategoryHandler(ErrorStatus.MEMBER_CATEGORY_NOT_TO_DO_TYPE);
         }
 
-        // 알람 설정이 true 이지만 시간이 없을 경우
-        if(requestDto.getAlarm() && requestDto.getAlarmTime() == null) {
-            throw new ScheduleHandler(ErrorStatus.MISSING_TIME);
-        }
-
-        Schedule schedule = scheduleRepository.save(ScheduleConverter.todoToEntity(requestDto, memberCategory));
+        Schedule schedule = scheduleRepository.save(ScheduleConverter.toEntity(requestDto, memberCategory));
         todoRepository.save(TodoConverter.toEntity(schedule));
     }
 
@@ -111,10 +105,6 @@ public class ScheduleCommandServiceImpl implements ScheduleCommandService {
     public void updateScheduleAlarmTime(ScheduleRequestDto.UpdateScheduleAlarmTimeDto requestDto) {
         Schedule schedule = scheduleRepository.findById(requestDto.getScheduleId())
                 .orElseThrow(() -> new ScheduleHandler(ErrorStatus.SCHEDULE_NOT_FOUND));
-
-        if(!schedule.isAllowAlarm() || schedule.getTime() == null) {
-            throw new ScheduleHandler(ErrorStatus.SCHEDULE_INVALID_ALARM_TIME);
-        }
 
         if(schedule.getScheduleType() == ScheduleType.ROUTINE) {
             String scheduleContent = schedule.getContent();

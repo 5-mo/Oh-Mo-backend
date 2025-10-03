@@ -12,36 +12,20 @@ import java.util.List;
 public class ScheduleRequestDto {
 
     @Getter
-    public static class RoutineRequestDto {
+    public static class AddRequestDto {
         private Long categoryId;
 
         @Schema(type = "string")
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:MM", timezone = "Asia/Seoul")
         private LocalTime time;
-        private Boolean alarm;
-        @Schema(type = "string")
-        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:MM", timezone = "Asia/Seoul")
-        private LocalTime alarmTime;
-        private String content;
-        private LocalDate endDate;
-
-        @JsonFormat(with = JsonFormat.Feature.ACCEPT_CASE_INSENSITIVE_PROPERTIES)
-        private List<DayOfWeek> routineWeek;
-    }
-
-    @Getter
-    public static class TodoRequestDto {
-        private Long categoryId;
-
-        @Schema(type = "string")
-        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:MM", timezone = "Asia/Seoul")
-        private LocalTime time;
-        private Boolean alarm;
         @Schema(type = "string")
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:MM", timezone = "Asia/Seoul")
         private LocalTime alarmTime;
         private String content;
         private LocalDate date;
+
+        @JsonFormat(with = JsonFormat.Feature.ACCEPT_CASE_INSENSITIVE_PROPERTIES)
+        private List<DayOfWeek> routineWeek;
     }
 
     @Getter

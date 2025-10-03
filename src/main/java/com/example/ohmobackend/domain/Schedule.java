@@ -6,7 +6,6 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.DynamicUpdate;
 
-import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -28,8 +27,6 @@ public class Schedule extends BaseEntity {
     private LocalDate date;
 
     private LocalTime time;
-
-    private boolean allowAlarm;
 
     private LocalTime alarmTime;
 
@@ -64,7 +61,6 @@ public class Schedule extends BaseEntity {
     }
 
     public void updateAlarmTime(LocalTime time) {
-        this.allowAlarm = true;
         this.alarmTime = time;
     }
 }

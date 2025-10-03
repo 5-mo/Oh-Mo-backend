@@ -13,29 +13,15 @@ import java.util.stream.Collectors;
 
 public class ScheduleConverter {
 
-    static public Schedule routineToEntity(
-            ScheduleRequestDto.RoutineRequestDto requestDto,
-            MemberCategory memberCategory,
-            LocalDate date) {
-        return Schedule.builder()
-                .date(date)
-                .time(requestDto.getTime())
-                .alarmTime(requestDto.getAlarmTime())
-                .content(requestDto.getContent())
-                .scheduleType(ScheduleType.ROUTINE)
-                .memberCategory(memberCategory)
-                .build();
-    }
-
-    static public Schedule todoToEntity(
-            ScheduleRequestDto.TodoRequestDto requestDto,
+    static public Schedule toEntity(
+            ScheduleRequestDto.AddRequestDto requestDto,
             MemberCategory memberCategory) {
         return Schedule.builder()
                 .date(requestDto.getDate())
                 .time(requestDto.getTime())
                 .alarmTime(requestDto.getAlarmTime())
                 .content(requestDto.getContent())
-                .scheduleType(ScheduleType.TO_DO)
+                .scheduleType(memberCategory.getScheduleType())
                 .memberCategory(memberCategory)
                 .build();
     }

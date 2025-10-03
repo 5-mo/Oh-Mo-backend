@@ -6,9 +6,9 @@ import com.example.ohmobackend.web.dto.scheduleDto.ScheduleResponseDto;
 
 public interface ScheduleCommandService {
 
-    public void addRoutine(ScheduleRequestDto.RoutineRequestDto requestDto, Member member);
+    public void addRoutine(ScheduleRequestDto.AddRequestDto requestDto, Member member);
 
-    public void addTodo(ScheduleRequestDto.TodoRequestDto requestDto, Member member);
+    public void addTodo(ScheduleRequestDto.AddRequestDto requestDto, Member member);
 
     public void updateScheduleStatus(Long scheduleId);
 
