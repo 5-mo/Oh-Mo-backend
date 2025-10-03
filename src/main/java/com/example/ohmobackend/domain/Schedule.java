@@ -56,8 +56,8 @@ public class Schedule extends BaseEntity {
     @OneToMany(mappedBy = "schedule", cascade = CascadeType.ALL)
     private List<Routine> routineList = new ArrayList<>();
 
-    @OneToMany(mappedBy = "schedule", cascade = CascadeType.ALL)
-    private List<Todo> todoList = new ArrayList<>();
+    @OneToOne(mappedBy = "schedule", cascade = CascadeType.ALL)
+    private Todo todo;
 
     public void updateDate(LocalDate date) {
         this.date = date;

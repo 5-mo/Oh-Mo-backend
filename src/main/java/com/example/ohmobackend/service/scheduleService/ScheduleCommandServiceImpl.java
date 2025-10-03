@@ -4,6 +4,7 @@ import com.example.ohmobackend.apiPayload.code.status.ErrorStatus;
 import com.example.ohmobackend.apiPayload.exception.handler.MemberCategoryHandler;
 import com.example.ohmobackend.apiPayload.exception.handler.ScheduleHandler;
 import com.example.ohmobackend.converter.ScheduleConverter;
+import com.example.ohmobackend.converter.TodoConverter;
 import com.example.ohmobackend.domain.*;
 import com.example.ohmobackend.domain.enums.ScheduleType;
 import com.example.ohmobackend.repository.*;
@@ -30,6 +31,7 @@ public class ScheduleCommandServiceImpl implements ScheduleCommandService {
     final private MemberGroupRepository memberGroupRepository;
     final private ScheduleAssigneeRepository scheduleAssigneeRepository;
     final private MemberRepository memberRepository;
+    final private TodoRepository todoRepository;
 
     @Override
     public void addRoutine(ScheduleRequestDto.RoutineRequestDto requestDto, Member member) {
@@ -74,11 +76,12 @@ public class ScheduleCommandServiceImpl implements ScheduleCommandService {
         }
 
         // 알람 설정이 true 이지만 시간이 없을 경우
-        if(requestDto.getAlarm() && requestDto.getTime() == null) {
+        if(requestDto.getAlarm() && requestDto.getAlarmTime() == null) {
             throw new ScheduleHandler(ErrorStatus.MISSING_TIME);
         }
 
-        scheduleRepository.save(ScheduleConverter.todoToEntity(requestDto, memberCategory));
+        Schedule schedule = scheduleRepository.save(ScheduleConverter.todoToEntity(requestDto, memberCategory));
+        todoRepository.save(TodoConverter.toEntity(schedule));
     }
 
     @Override
