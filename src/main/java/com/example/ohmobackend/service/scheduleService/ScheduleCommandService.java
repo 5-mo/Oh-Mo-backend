@@ -10,7 +10,7 @@ public interface ScheduleCommandService {
 
     public void addTodo(ScheduleRequestDto.AddRequestDto requestDto, Member member);
 
-    public ScheduleResponseDto.ScheduleDto updateScheduleDate(ScheduleRequestDto.UpdateTodoDateRequestDto requestDto);
+    public ScheduleResponseDto.ScheduleDto updateScheduleDate(ScheduleRequestDto.UpdateTodoDateRequestDto requestDto, Member member);
 
     public void updateScheduleAlarmTime(ScheduleRequestDto.UpdateScheduleAlarmTimeDto requestDto);
 

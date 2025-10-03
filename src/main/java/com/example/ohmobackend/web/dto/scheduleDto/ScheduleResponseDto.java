@@ -21,10 +21,8 @@ public class ScheduleResponseDto {
         private Long scheduleId;
         private LocalDate date;
         private LocalTime time;
-        private boolean alarm;
         private LocalTime alarmTime;
         private String content;
-        private boolean status;
         private ScheduleType scheduleType;
         private MemberCategoryResponseDto.CategoryResponseDto category;
     }

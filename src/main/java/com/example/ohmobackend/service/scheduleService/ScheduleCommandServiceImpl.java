@@ -2,6 +2,7 @@ package com.example.ohmobackend.service.scheduleService;
 
 import com.example.ohmobackend.apiPayload.code.status.ErrorStatus;
 import com.example.ohmobackend.apiPayload.exception.handler.MemberCategoryHandler;
+import com.example.ohmobackend.apiPayload.exception.handler.MemberHandler;
 import com.example.ohmobackend.apiPayload.exception.handler.ScheduleHandler;
 import com.example.ohmobackend.converter.RoutineConverter;
 import com.example.ohmobackend.converter.ScheduleConverter;
@@ -80,13 +81,18 @@ public class ScheduleCommandServiceImpl implements ScheduleCommandService {
 
     @Override
     @Transactional
-    public ScheduleResponseDto.ScheduleDto updateScheduleDate(ScheduleRequestDto.UpdateTodoDateRequestDto requestDto) {
+    public ScheduleResponseDto.ScheduleDto updateScheduleDate(ScheduleRequestDto.UpdateTodoDateRequestDto requestDto, Member member) {
         Schedule schedule = scheduleRepository.findById(requestDto.getScheduleId())
                 .orElseThrow(() -> new ScheduleHandler(ErrorStatus.SCHEDULE_NOT_FOUND));
 
         if(schedule.getScheduleType() == ScheduleType.ROUTINE) {
             throw new ScheduleHandler(ErrorStatus.SCHEDULE_NOT_TO_DO_TYPE);
         }
+
+        if(schedule.getMemberCategory().getMember() != member) {
+            throw new MemberHandler(ErrorStatus.INVALID_MEMBER);
+        }
+
         schedule.updateDate(requestDto.getDate());
 
         return ScheduleConverter.toScheduleDto(schedule);

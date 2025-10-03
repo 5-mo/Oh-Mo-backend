@@ -31,7 +31,7 @@ public class ScheduleConverter {
         return ScheduleResponseDto.ScheduleDto.builder()
                 .scheduleId(schedule.getId())
                 .date(schedule.getDate())
-                .time(schedule.getTime() != null ? schedule.getTime() : LocalTime.MIDNIGHT)
+                .time(schedule.getTime() != null ? schedule.getTime() : null)
                 .alarmTime(schedule.getAlarmTime())
                 .content(schedule.getContent())
                 .scheduleType(schedule.getScheduleType())

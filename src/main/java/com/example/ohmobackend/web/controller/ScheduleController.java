@@ -54,10 +54,10 @@ public class ScheduleController {
         return ApiResponse.onSuccess(SuccessStatus.SCHEDULE_OK, scheduleDtoList);
     }
 
-    @PatchMapping ("/todo")
+    @PatchMapping ("/update-date")
     @Operation(summary = "투두 날짜 변경 API", description = "투두 날짜 변경 API 입니다.")
     public ApiResponse<ScheduleResponseDto.ScheduleDto> updateScheduleDate(@RequestBody ScheduleRequestDto.UpdateTodoDateRequestDto request, @AuthUser Member member) {
-        ScheduleResponseDto.ScheduleDto response = scheduleCommandService.updateScheduleDate(request);
+        ScheduleResponseDto.ScheduleDto response = scheduleCommandService.updateScheduleDate(request, member);
         return ApiResponse.onSuccess(SuccessStatus.SCHEDULE_UPDATE_DATE_OK, response);
     }
 
