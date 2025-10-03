@@ -1,5 +1,6 @@
 package com.example.ohmobackend.domain;
 
+import com.example.ohmobackend.domain.common.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.DynamicUpdate;
@@ -13,8 +14,8 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @DynamicUpdate
-@Table(name = "`group`")
-public class Group {
+@Table(name = "user_group")
+public class Group extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

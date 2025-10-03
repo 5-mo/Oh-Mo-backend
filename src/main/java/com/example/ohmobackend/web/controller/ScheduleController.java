@@ -68,12 +68,12 @@ public class ScheduleController {
         return ApiResponse.onSuccess(SuccessStatus.SCHEDULE_UPDATE_DATE_OK, response);
     }
 
-    @GetMapping("/todo/complete")
-    @Operation(summary = "일별 완료한 투두 조회 API", description = "일별 완료한 투두 조회 API 입니다.")
-    public ApiResponse<List<ScheduleResponseDto.ScheduleDto>> getCompleteTodoList(@RequestParam(name = "date")LocalDate date, @AuthUser Member member) {
-        List<ScheduleResponseDto.ScheduleDto> scheduleDtoList = scheduleQueryService.getCompleteTodoList(date, member);
-        return ApiResponse.onSuccess(SuccessStatus.SCHEDULE_OK, scheduleDtoList);
-    }
+//    @GetMapping("/todo/complete")
+//    @Operation(summary = "일별 완료한 투두 조회 API", description = "일별 완료한 투두 조회 API 입니다.")
+//    public ApiResponse<List<ScheduleResponseDto.ScheduleDto>> getCompleteTodoList(@RequestParam(name = "date")LocalDate date, @AuthUser Member member) {
+//        List<ScheduleResponseDto.ScheduleDto> scheduleDtoList = scheduleQueryService.getCompleteTodoList(date, member);
+//        return ApiResponse.onSuccess(SuccessStatus.SCHEDULE_OK, scheduleDtoList);
+//    }
 
     @GetMapping("")
     @Operation(summary = "검색어로 스케줄 조회 API", description = "검색어로 스케줄 조회 API 입니다.")
@@ -96,12 +96,12 @@ public class ScheduleController {
         return ApiResponse.onSuccess(SuccessStatus.SCHEDULE_ROUTINE_STATUS_OK, routineStatusByContentList);
     }
 
-    @GetMapping("/completion-rate")
-    @Operation(summary = "Day Log 주차별 루틴 상태 조회 API", description = "Day Log 주차별 루틴 상태 조회 API 입니다.")
-    public ApiResponse<List<ScheduleResponseDto.ScheduleCompletionRateByMonthDto>> getScheduleCompletionRateByMonth(@RequestParam(name = "year-month")String yearMonth, @AuthUser Member member) {
-        List<ScheduleResponseDto.ScheduleCompletionRateByMonthDto> routineStatusByContentList = scheduleQueryService.getScheduleCompletionReteByMonth(yearMonth, member);
-        return ApiResponse.onSuccess(SuccessStatus.SCHEDULE_COMPLETION_RATE_OK, routineStatusByContentList);
-    }
+//    @GetMapping("/completion-rate")
+//    @Operation(summary = "Day Log 주차별 루틴 상태 조회 API", description = "Day Log 주차별 루틴 상태 조회 API 입니다.")
+//    public ApiResponse<List<ScheduleResponseDto.ScheduleCompletionRateByMonthDto>> getScheduleCompletionRateByMonth(@RequestParam(name = "year-month")String yearMonth, @AuthUser Member member) {
+//        List<ScheduleResponseDto.ScheduleCompletionRateByMonthDto> routineStatusByContentList = scheduleQueryService.getScheduleCompletionReteByMonth(yearMonth, member);
+//        return ApiResponse.onSuccess(SuccessStatus.SCHEDULE_COMPLETION_RATE_OK, routineStatusByContentList);
+//    }
 
     @PostMapping("/routine-group")
     @Operation(summary = "그룹 루틴 등록 API", description = "그룹 루틴 등록 API 입니다.")
