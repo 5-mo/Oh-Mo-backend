@@ -1,5 +1,6 @@
 package com.example.ohmobackend.domain;
 
+import com.example.ohmobackend.domain.common.BaseEntity;
 import com.example.ohmobackend.domain.enums.ScheduleType;
 import jakarta.persistence.*;
 import lombok.*;
@@ -17,7 +18,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @DynamicUpdate
-public class Schedule {
+public class Schedule extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,15 +29,11 @@ public class Schedule {
 
     private LocalTime time;
 
-    private boolean alarm;
+    private boolean allowAlarm;
 
     private LocalTime alarmTime;
 
     private String content;
-
-    private boolean status;
-
-    private LocalDate routineEndDate;
 
     @Enumerated(EnumType.STRING)
     private ScheduleType scheduleType;
@@ -49,21 +46,25 @@ public class Schedule {
     @JoinColumn(name = "group_id")
     private Group group;
 
-    private DayOfWeek week;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "created_by")
+    private Member member;
 
     @OneToMany(mappedBy = "schedule", cascade = CascadeType.ALL)
-    private List<ScheduleAssignee> ScheduleAssigneeList = new ArrayList<>();
+    private List<ScheduleAssignee> scheduleAssigneeList = new ArrayList<>();
 
-    public void updateStatus() {
-        this.status = !this.status;
-    }
+    @OneToMany(mappedBy = "schedule", cascade = CascadeType.ALL)
+    private List<Routine> routineList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "schedule", cascade = CascadeType.ALL)
+    private List<Todo> todoList = new ArrayList<>();
 
     public void updateDate(LocalDate date) {
         this.date = date;
     }
 
     public void updateAlarmTime(LocalTime time) {
-        this.alarm = true;
+        this.allowAlarm = true;
         this.alarmTime = time;
     }
 }

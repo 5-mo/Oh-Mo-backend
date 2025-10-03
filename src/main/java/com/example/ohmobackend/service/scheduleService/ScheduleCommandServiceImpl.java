@@ -87,7 +87,7 @@ public class ScheduleCommandServiceImpl implements ScheduleCommandService {
         Schedule schedule = scheduleRepository.findById(scheduleId)
                 .orElseThrow(() -> new ScheduleHandler(ErrorStatus.SCHEDULE_NOT_FOUND));
 
-        schedule.updateStatus();
+//        schedule.updateStatus();
     }
 
     @Override
@@ -109,7 +109,7 @@ public class ScheduleCommandServiceImpl implements ScheduleCommandService {
         Schedule schedule = scheduleRepository.findById(requestDto.getScheduleId())
                 .orElseThrow(() -> new ScheduleHandler(ErrorStatus.SCHEDULE_NOT_FOUND));
 
-        if(!schedule.isAlarm() || schedule.getTime() == null) {
+        if(!schedule.isAllowAlarm() || schedule.getTime() == null) {
             throw new ScheduleHandler(ErrorStatus.SCHEDULE_INVALID_ALARM_TIME);
         }
 

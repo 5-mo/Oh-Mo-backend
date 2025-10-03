@@ -20,14 +20,10 @@ public class ScheduleConverter {
         return Schedule.builder()
                 .date(date)
                 .time(requestDto.getTime())
-                .alarm(requestDto.getAlarm())
                 .alarmTime(requestDto.getAlarmTime())
                 .content(requestDto.getContent())
-                .status(false)
-                .routineEndDate(requestDto.getEndDate())
                 .scheduleType(ScheduleType.ROUTINE)
                 .memberCategory(memberCategory)
-                .week(date.getDayOfWeek())
                 .build();
     }
 
@@ -37,10 +33,8 @@ public class ScheduleConverter {
         return Schedule.builder()
                 .date(requestDto.getDate())
                 .time(requestDto.getTime())
-                .alarm(requestDto.getAlarm())
                 .alarmTime(requestDto.getAlarmTime())
                 .content(requestDto.getContent())
-                .status(false)
                 .scheduleType(ScheduleType.TO_DO)
                 .memberCategory(memberCategory)
                 .build();
@@ -52,10 +46,8 @@ public class ScheduleConverter {
                 .scheduleId(schedule.getId())
                 .date(schedule.getDate())
                 .time(schedule.getTime() != null ? schedule.getTime() : LocalTime.MIDNIGHT)
-                .alarm(schedule.isAlarm())
                 .alarmTime(schedule.getAlarmTime())
                 .content(schedule.getContent())
-                .status(schedule.isStatus())
                 .scheduleType(schedule.getScheduleType())
                 .category(MemberCategoryConverter.toAddCategoryResponseDto(schedule.getMemberCategory()))
                 .build();
@@ -103,14 +95,10 @@ public class ScheduleConverter {
         return Schedule.builder()
                 .date(date)
                 .time(requestDto.getTime())
-                .alarm(requestDto.getAlarm())
                 .alarmTime(requestDto.getAlarmTime())
                 .content(requestDto.getContent())
-                .status(false)
-                .routineEndDate(requestDto.getEndDate())
                 .scheduleType(ScheduleType.ROUTINE)
                 .group(group)
-                .week(date.getDayOfWeek())
                 .build();
     }
 
@@ -120,10 +108,8 @@ public class ScheduleConverter {
         return Schedule.builder()
                 .date(requestDto.getDate())
                 .time(requestDto.getTime())
-                .alarm(requestDto.getAlarm())
                 .alarmTime(requestDto.getAlarmTime())
                 .content(requestDto.getContent())
-                .status(false)
                 .scheduleType(ScheduleType.TO_DO)
                 .group(group)
                 .build();

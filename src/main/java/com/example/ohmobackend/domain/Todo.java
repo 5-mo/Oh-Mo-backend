@@ -1,5 +1,6 @@
 package com.example.ohmobackend.domain;
 
+
 import com.example.ohmobackend.domain.common.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
@@ -13,22 +14,21 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @DynamicUpdate
-public class Diary extends BaseEntity {
+@Table(name = "todo")
+public class Todo extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "diary_id")
+    @Column(name = "todo_id")
     private Long id;
 
-    private String content;
-
-    private LocalDate date;
+    private boolean status;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id")
-    private Member member;
+    @JoinColumn(name = "schedule_id")
+    private Schedule schedule;
 
-    public void updateContent(String content) {
-        this.content = content;
+    public void updateStatus(boolean status) {
+        this.status = status;
     }
 }

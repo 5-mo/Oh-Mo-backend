@@ -24,11 +24,11 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Long> {
             @Param("endDate") LocalDate endDate
     );
 
-    @Query("SELECT s FROM Schedule s WHERE s.memberCategory = :memberCategory AND s.date = :date AND s.status = true")
-    public List<Schedule> findByMemberCategoryAndDateAndStatusIsTrue(
-            @Param("memberCategory") MemberCategory memberCategory,
-            @Param("date") LocalDate date
-    );
+//    @Query("SELECT s FROM Schedule s WHERE s.memberCategory = :memberCategory AND s.date = :date AND s.status = true")
+//    public List<Schedule> findByMemberCategoryAndDateAndStatusIsTrue(
+//            @Param("memberCategory") MemberCategory memberCategory,
+//            @Param("date") LocalDate date
+//    );
 
     @Query("SELECT s FROM Schedule s WHERE s.memberCategory = :memberCategory AND s.content LIKE %:keyword%")
     public List<Schedule> findByMemberCategoryAndTitleContaining(

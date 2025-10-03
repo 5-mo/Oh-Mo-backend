@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.DynamicUpdate;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 
 @Entity
@@ -13,22 +14,24 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @DynamicUpdate
-public class Diary extends BaseEntity {
+public class Routine extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "diary_id")
+    @Column(name = "routine_id")
     private Long id;
-
-    private String content;
 
     private LocalDate date;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id")
-    private Member member;
+    private boolean status;
 
-    public void updateContent(String content) {
-        this.content = content;
+    private DayOfWeek week;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "schedule_id")
+    private Schedule schedule;
+
+    public void updateStatus(boolean status) {
+        this.status = status;
     }
 }
