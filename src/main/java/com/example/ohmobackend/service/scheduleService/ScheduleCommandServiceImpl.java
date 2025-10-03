@@ -28,7 +28,8 @@ public class ScheduleCommandServiceImpl implements ScheduleCommandService {
     final private ScheduleRepository scheduleRepository;
     final private GroupRepository groupRepository;
     final private MemberGroupRepository memberGroupRepository;
-    final private RoutineWeekRepository routineWeekRepository;
+    final private ScheduleAssigneeRepository scheduleAssigneeRepository;
+    final private MemberRepository memberRepository;
 
     @Override
     public void addRoutine(ScheduleRequestDto.RoutineRequestDto requestDto, Member member) {
@@ -148,6 +149,53 @@ public class ScheduleCommandServiceImpl implements ScheduleCommandService {
                 .collect(Collectors.toList());
 
         scheduleRepository.saveAll(schedules);
+    }
+
+    @Override
+    public void addGroupTodo(ScheduleRequestDto.GroupTodoRequestDto requestDto, Member member) {
+        Group group = groupRepository.findById(requestDto.getGroupId())
+                .orElseThrow(() -> new ScheduleHandler(ErrorStatus.GROUP_NOT_FOUND));
+
+        // 루틴 추가할 권한 없음(해당 그룹의 멤버가 아님)
+        memberGroupRepository.findByGroupAndMember(group, member)
+                .orElseThrow(() -> new ScheduleHandler(ErrorStatus.MEMBER_GROUP_NOT_FOUND));
+
+        // 알람 설정이 true 이지만 시간이 없을 경우
+        if(requestDto.getAlarm() && requestDto.getTime() == null) {
+            throw new ScheduleHandler(ErrorStatus.MISSING_TIME);
+        }
+
+        scheduleRepository.save(ScheduleConverter.groupTodoToEntity(requestDto, group));
+    }
+
+    @Override
+    public void addScheduleAssignee(ScheduleRequestDto.ScheduleAssigneeDto requestDto, Member member) {
+        Schedule schedule = scheduleRepository.findById(requestDto.getScheduleId())
+                .orElseThrow(() -> new ScheduleHandler(ErrorStatus.SCHEDULE_NOT_FOUND));
+
+        // 그룹의 스케줄이 아닐 경우
+        if(schedule.getGroup() == null) {
+            throw new ScheduleHandler(ErrorStatus.SCHEDULE_NOT_GROUP_TYPE);
+        }
+
+        // 그룹의 멤버가 아닐 경우
+        memberGroupRepository.findByGroupAndMember(schedule.getGroup(), member)
+                .orElseThrow(() -> new ScheduleHandler(ErrorStatus.MEMBER_GROUP_NOT_FOUND));
+
+        List<ScheduleAssignee> assignees = requestDto.getMemberIdList().stream()
+                .map(memberId -> {
+                    Member targetMember = memberRepository.findById(memberId)
+                            .orElseThrow(() -> new ScheduleHandler(ErrorStatus.MEMBER_NOT_FOUND));
+
+                    memberGroupRepository.findByGroupAndMember(schedule.getGroup(), targetMember)
+                            .orElseThrow(() -> new ScheduleHandler(ErrorStatus.MEMBER_GROUP_NOT_FOUND));
+
+                    return ScheduleConverter.scheduleAssigneeToEntity(targetMember, schedule);
+                })
+                .collect(Collectors.toList());
+
+
+        scheduleAssigneeRepository.saveAll(assignees);
     }
 
     public static List<LocalDate> getDates(LocalDate startDate, LocalDate endDate, List<DayOfWeek> weeks) {

@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.DynamicUpdate;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -48,8 +49,10 @@ public class Schedule {
     @JoinColumn(name = "group_id")
     private Group group;
 
+    private DayOfWeek week;
+
     @OneToMany(mappedBy = "schedule", cascade = CascadeType.ALL)
-    private List<RoutineWeek> routineWeekList = new ArrayList<>();
+    private List<ScheduleAssignee> ScheduleAssigneeList = new ArrayList<>();
 
     public void updateStatus() {
         this.status = !this.status;

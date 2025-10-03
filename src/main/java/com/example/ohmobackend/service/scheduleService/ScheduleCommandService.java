@@ -18,4 +18,8 @@ public interface ScheduleCommandService {
 
     // 반복되는 요일에 해당하는 날짜들 반환
     void addGroupRoutine(ScheduleRequestDto.GroupRoutineRequestDto requestDto, Member member);
+
+    void addGroupTodo(ScheduleRequestDto.GroupTodoRequestDto requestDto, Member member);
+
+    void addScheduleAssignee(ScheduleRequestDto.ScheduleAssigneeDto requestDto, Member member);
 }

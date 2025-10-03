@@ -19,6 +19,9 @@ public class ScheduleRequestDto {
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:MM", timezone = "Asia/Seoul")
         private LocalTime time;
         private Boolean alarm;
+        @Schema(type = "string")
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:MM", timezone = "Asia/Seoul")
+        private LocalTime alarmTime;
         private String content;
         private LocalDate endDate;
 
@@ -34,6 +37,9 @@ public class ScheduleRequestDto {
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:MM", timezone = "Asia/Seoul")
         private LocalTime time;
         private Boolean alarm;
+        @Schema(type = "string")
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:MM", timezone = "Asia/Seoul")
+        private LocalTime alarmTime;
         private String content;
         private LocalDate date;
     }
@@ -58,10 +64,30 @@ public class ScheduleRequestDto {
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:MM", timezone = "Asia/Seoul")
         private LocalTime time;
         private Boolean alarm;
+        private LocalTime alarmTime;
         private String content;
         private LocalDate endDate;
 
         @JsonFormat(with = JsonFormat.Feature.ACCEPT_CASE_INSENSITIVE_PROPERTIES)
         private List<DayOfWeek> routineWeek;
+    }
+
+    @Getter
+    public static class GroupTodoRequestDto {
+        private Long groupId;
+
+        @Schema(type = "string")
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:MM", timezone = "Asia/Seoul")
+        private LocalTime time;
+        private Boolean alarm;
+        private LocalTime alarmTime;
+        private String content;
+        private LocalDate date;
+    }
+
+    @Getter
+    public static class ScheduleAssigneeDto {
+        private Long scheduleId;
+        private List<Long> memberIdList;
     }
 }
