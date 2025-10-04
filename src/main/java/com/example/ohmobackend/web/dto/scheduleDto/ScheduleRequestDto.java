@@ -37,7 +37,7 @@ public class ScheduleRequestDto {
     @Getter
     public static class UpdateScheduleAlarmTimeDto {
         private Long scheduleId;
-        private LocalTime time;
+        private LocalTime alarmTime;
     }
 
     @Getter

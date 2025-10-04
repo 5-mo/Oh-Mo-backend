@@ -56,8 +56,8 @@ public class ScheduleController {
 
     @PatchMapping ("/update-date")
     @Operation(summary = "투두 날짜 변경 API", description = "투두 날짜 변경 API 입니다.")
-    public ApiResponse<ScheduleResponseDto.ScheduleDto> updateScheduleDate(@RequestBody ScheduleRequestDto.UpdateTodoDateRequestDto request, @AuthUser Member member) {
-        ScheduleResponseDto.ScheduleDto response = scheduleCommandService.updateScheduleDate(request, member);
+    public ApiResponse<ScheduleResponseDto.ScheduleTodoDto> updateScheduleDate(@RequestBody ScheduleRequestDto.UpdateTodoDateRequestDto request, @AuthUser Member member) {
+        ScheduleResponseDto.ScheduleTodoDto response = scheduleCommandService.updateScheduleDate(request, member);
         return ApiResponse.onSuccess(SuccessStatus.SCHEDULE_UPDATE_DATE_OK, response);
     }
 
@@ -78,7 +78,7 @@ public class ScheduleController {
     @PatchMapping ("/alarm")
     @Operation(summary = "알람 시간 등록 API", description = "알람 시간 등록 API 입니다.")
     public ApiResponse<Object> updateScheduleAlarmTime(@RequestBody ScheduleRequestDto.UpdateScheduleAlarmTimeDto request, @AuthUser Member member) {
-        scheduleCommandService.updateScheduleAlarmTime(request);
+        scheduleCommandService.updateScheduleAlarmTime(request, member);
         return ApiResponse.onSuccess(SuccessStatus.SCHEDULE_UPDATE_ALARM_TIME_OK, null);
     }
 

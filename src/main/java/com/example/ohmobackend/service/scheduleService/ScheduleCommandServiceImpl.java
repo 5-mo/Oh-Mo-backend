@@ -81,7 +81,7 @@ public class ScheduleCommandServiceImpl implements ScheduleCommandService {
 
     @Override
     @Transactional
-    public ScheduleResponseDto.ScheduleDto updateScheduleDate(ScheduleRequestDto.UpdateTodoDateRequestDto requestDto, Member member) {
+    public ScheduleResponseDto.ScheduleTodoDto updateScheduleDate(ScheduleRequestDto.UpdateTodoDateRequestDto requestDto, Member member) {
         Schedule schedule = scheduleRepository.findById(requestDto.getScheduleId())
                 .orElseThrow(() -> new ScheduleHandler(ErrorStatus.SCHEDULE_NOT_FOUND));
 
@@ -95,24 +95,19 @@ public class ScheduleCommandServiceImpl implements ScheduleCommandService {
 
         schedule.updateDate(requestDto.getDate());
 
-        return ScheduleConverter.toScheduleDto(schedule);
+        return ScheduleConverter.toScheduleTodoDto(schedule, schedule.getTodo());
     }
 
     @Override
-    public void updateScheduleAlarmTime(ScheduleRequestDto.UpdateScheduleAlarmTimeDto requestDto) {
+    public void updateScheduleAlarmTime(ScheduleRequestDto.UpdateScheduleAlarmTimeDto requestDto, Member member) {
         Schedule schedule = scheduleRepository.findById(requestDto.getScheduleId())
                 .orElseThrow(() -> new ScheduleHandler(ErrorStatus.SCHEDULE_NOT_FOUND));
 
-        if(schedule.getScheduleType() == ScheduleType.ROUTINE) {
-            String scheduleContent = schedule.getContent();
-            List<Schedule> routineScheduleList = scheduleRepository.findByContent(scheduleContent);
-
-            routineScheduleList.forEach(routineSchedule ->
-                    routineSchedule.updateAlarmTime(requestDto.getTime())
-            );
-        } else {
-            schedule.updateAlarmTime(requestDto.getTime());
+        if(schedule.getMemberCategory().getMember() != member) {
+            throw new MemberHandler(ErrorStatus.INVALID_MEMBER);
         }
+
+        schedule.updateAlarmTime(requestDto.getAlarmTime());
     }
 
     // 반복되는 요일에 해당하는 날짜들 반환
