@@ -3,6 +3,7 @@ package com.example.ohmobackend.converter;
 import com.example.ohmobackend.domain.*;
 import com.example.ohmobackend.domain.enums.ScheduleType;
 import com.example.ohmobackend.web.dto.memberCategoryDto.MemberCategoryResponseDto;
+import com.example.ohmobackend.web.dto.routineDto.RoutineResponseDto;
 import com.example.ohmobackend.web.dto.scheduleDto.ScheduleRequestDto;
 import com.example.ohmobackend.web.dto.scheduleDto.ScheduleResponseDto;
 
@@ -26,9 +27,17 @@ public class ScheduleConverter {
                 .build();
     }
 
-    static public ScheduleResponseDto.ScheduleDto toScheduleDto(
-            Schedule schedule) {
+    static public ScheduleResponseDto.ScheduleDto toScheduleDto(List<ScheduleResponseDto.ScheduleTodoDto> todoList,
+                                                                List<ScheduleResponseDto.ScheduleRoutineDto> routineList) {
         return ScheduleResponseDto.ScheduleDto.builder()
+                .todoList(todoList)
+                .routineList(routineList)
+                .build();
+    }
+
+    static public ScheduleResponseDto.ScheduleTodoDto toScheduleTodoDto(
+            Schedule schedule, Todo todo) {
+        return ScheduleResponseDto.ScheduleTodoDto.builder()
                 .scheduleId(schedule.getId())
                 .date(schedule.getDate())
                 .time(schedule.getTime() != null ? schedule.getTime() : null)
@@ -36,6 +45,22 @@ public class ScheduleConverter {
                 .content(schedule.getContent())
                 .scheduleType(schedule.getScheduleType())
                 .category(MemberCategoryConverter.toAddCategoryResponseDto(schedule.getMemberCategory()))
+                .todo(TodoConverter.toTodoDto(todo))
+                .build();
+    }
+
+    static public ScheduleResponseDto.ScheduleRoutineDto toScheduleRoutineDto(
+            Schedule schedule, Routine routine) {
+
+        return ScheduleResponseDto.ScheduleRoutineDto.builder()
+                .scheduleId(schedule.getId())
+                .date(schedule.getDate())
+                .time(schedule.getTime() != null ? schedule.getTime() : null)
+                .alarmTime(schedule.getAlarmTime())
+                .content(schedule.getContent())
+                .scheduleType(schedule.getScheduleType())
+                .category(MemberCategoryConverter.toAddCategoryResponseDto(schedule.getMemberCategory()))
+                .routine(RoutineConverter.toRoutineDto(routine))
                 .build();
     }
 
@@ -57,15 +82,15 @@ public class ScheduleConverter {
                 .build();
     }
 
-    static public ScheduleResponseDto.RoutineStatusByContentDto toRoutineStatusByContentDto(List<Schedule> scheduleList, String content) {
-        List<ScheduleResponseDto.ScheduleDto> scheduleDtoList = scheduleList.stream()
-                .map(ScheduleConverter::toScheduleDto).collect(Collectors.toList());
-
-        return ScheduleResponseDto.RoutineStatusByContentDto.builder()
-                .content(content)
-                .scheduleList(scheduleDtoList)
-                .build();
-    }
+//    static public ScheduleResponseDto.RoutineStatusByContentDto toRoutineStatusByContentDto(List<Schedule> scheduleList, String content) {
+//        List<ScheduleResponseDto.ScheduleTodoDto> scheduleDtoList = scheduleList.stream()
+//                .map(ScheduleConverter::toScheduleTodoDto).collect(Collectors.toList());
+//
+//        return ScheduleResponseDto.RoutineStatusByContentDto.builder()
+//                .content(content)
+//                .scheduleList(scheduleDtoList)
+//                .build();
+//    }
 
     static public ScheduleResponseDto.ScheduleCompletionRateByMonthDto toScheduleCompletionRateByMonthDto(LocalDate date, double rate) {
         return ScheduleResponseDto.ScheduleCompletionRateByMonthDto.builder()

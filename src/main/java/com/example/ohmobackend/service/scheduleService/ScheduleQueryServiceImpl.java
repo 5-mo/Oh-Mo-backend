@@ -4,12 +4,12 @@ import com.example.ohmobackend.apiPayload.code.status.ErrorStatus;
 import com.example.ohmobackend.apiPayload.exception.handler.MemberCategoryHandler;
 import com.example.ohmobackend.apiPayload.exception.handler.ScheduleHandler;
 import com.example.ohmobackend.converter.ScheduleConverter;
-import com.example.ohmobackend.domain.Member;
-import com.example.ohmobackend.domain.MemberCategory;
-import com.example.ohmobackend.domain.Schedule;
+import com.example.ohmobackend.domain.*;
 import com.example.ohmobackend.domain.enums.ScheduleType;
 import com.example.ohmobackend.repository.MemberCategoryRepository;
+import com.example.ohmobackend.repository.RoutineRepository;
 import com.example.ohmobackend.repository.ScheduleRepository;
+import com.example.ohmobackend.repository.TodoRepository;
 import com.example.ohmobackend.web.dto.scheduleDto.ScheduleResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -27,27 +27,25 @@ public class ScheduleQueryServiceImpl implements ScheduleQueryService {
 
     final MemberCategoryRepository memberCategoryRepository;
     final ScheduleRepository scheduleRepository;
+    final TodoRepository todoRepository;
+    final RoutineRepository routineRepository;
 
     @Override
-    public List<ScheduleResponseDto.ScheduleDto> getScheduleList(LocalDate date, Member member, ScheduleType scheduleType) {
-        List<MemberCategory> memberCategoryList = memberCategoryRepository.findByMemberAndScheduleType(member, scheduleType);
-
-        if (memberCategoryList.isEmpty()) {
-            throw new MemberCategoryHandler(ErrorStatus.MEMBER_CATEGORY_NOT_FOUND);
-        }
-
-        List<Schedule> scheduleList = memberCategoryList.stream()
-                .map(memberCategory -> scheduleRepository.findByMemberCategoryAndDate(memberCategory, date))
-                .flatMap(List::stream)  // List<Schedule>을 평탄화하여 하나의 스트림으로 변환
+    public ScheduleResponseDto.ScheduleDto getScheduleList(LocalDate date, Member member) {
+        // 투두 찾기
+        List<Schedule> todoScheduleList = scheduleRepository.findSchedulesByMemberAndDateAndScheduleType(member, date, ScheduleType.TO_DO);
+        List<ScheduleResponseDto.ScheduleTodoDto> scheduleTodoList = todoScheduleList.stream()
+                .map(todoSchedule -> ScheduleConverter.toScheduleTodoDto(todoSchedule, todoSchedule.getTodo()))
                 .collect(Collectors.toList());
 
-        if (scheduleList.isEmpty()) {
-            throw new ScheduleHandler(ErrorStatus.SCHEDULE_NOT_EXIST);
-        }
-
-        return scheduleList.stream()
-                .map(schedule -> ScheduleConverter.toScheduleDto(schedule))
+        // 루틴 찾기
+        List<Routine> routineList = routineRepository.findRoutinesWithScheduleByMemberAndDate(member, date);
+        List<ScheduleResponseDto.ScheduleRoutineDto> scheduleRoutineList = routineList.stream()
+                .map(routine -> ScheduleConverter.toScheduleRoutineDto(routine.getSchedule(), routine))
                 .collect(Collectors.toList());
+
+        return ScheduleConverter.toScheduleDto(scheduleTodoList, scheduleRoutineList);
+
     }
 
 //    @Override
@@ -72,108 +70,111 @@ public class ScheduleQueryServiceImpl implements ScheduleQueryService {
 //                .collect(Collectors.toList());
 //    }
 
-    @Override
-    public List<ScheduleResponseDto.ScheduleByMonthDto> getScheduleListByMonth(String yearMonth, Member member) {
-        LocalDate firstDayOfMonth = YearMonth.parse(yearMonth).atDay(1);
-        LocalDate lastDayOfMonth = YearMonth.parse(yearMonth).atEndOfMonth();
+//    @Override
+//    public List<ScheduleResponseDto.ScheduleByMonthDto> getScheduleListByMonth(String yearMonth, Member member) {
+//        LocalDate firstDayOfMonth = YearMonth.parse(yearMonth).atDay(1);
+//        LocalDate lastDayOfMonth = YearMonth.parse(yearMonth).atEndOfMonth();
+//
+//        List<MemberCategory> memberCategoryList = memberCategoryRepository.findByMember(member);
+//
+//        if (memberCategoryList.isEmpty()) {
+//            throw new MemberCategoryHandler(ErrorStatus.MEMBER_CATEGORY_NOT_FOUND);
+//        }
+//
+//        List<Schedule> scheduleList = memberCategoryList.stream()
+//                .map(memberCategory -> scheduleRepository.findByMemberCategoryAndMonth(memberCategory, firstDayOfMonth, lastDayOfMonth))
+//                .flatMap(List::stream)  // List<Schedule>을 평탄화하여 하나의 스트림으로 변환
+//                .collect(Collectors.toList());
+//
+//        if (scheduleList.isEmpty()) {
+//            throw new ScheduleHandler(ErrorStatus.SCHEDULE_NOT_EXIST);
+//        }
+//
+//        // 날짜별로 그룹화
+//        Map<LocalDate, List<Schedule>> groupedByDate = scheduleList.stream()
+//                .collect(Collectors.groupingBy(Schedule::getDate));
+//
+//        // 날짜순으로 정렬
+//        List<LocalDate> sortedDates = groupedByDate.keySet().stream()
+//                .sorted()
+//                .collect(Collectors.toList());
+//
+//        return sortedDates.stream()
+//                .map(date -> {
+//                    List<Schedule> schedulesForDate = groupedByDate.get(date);
+//                    return ScheduleConverter.toScheduleByMonthDto(schedulesForDate, date);
+//                })
+//                .collect(Collectors.toList());
+//    }
 
-        List<MemberCategory> memberCategoryList = memberCategoryRepository.findByMember(member);
-
-        if (memberCategoryList.isEmpty()) {
-            throw new MemberCategoryHandler(ErrorStatus.MEMBER_CATEGORY_NOT_FOUND);
-        }
-
-        List<Schedule> scheduleList = memberCategoryList.stream()
-                .map(memberCategory -> scheduleRepository.findByMemberCategoryAndMonth(memberCategory, firstDayOfMonth, lastDayOfMonth))
-                .flatMap(List::stream)  // List<Schedule>을 평탄화하여 하나의 스트림으로 변환
-                .collect(Collectors.toList());
-
-        if (scheduleList.isEmpty()) {
-            throw new ScheduleHandler(ErrorStatus.SCHEDULE_NOT_EXIST);
-        }
-
-        // 날짜별로 그룹화
-        Map<LocalDate, List<Schedule>> groupedByDate = scheduleList.stream()
-                .collect(Collectors.groupingBy(Schedule::getDate));
-
-        // 날짜순으로 정렬
-        List<LocalDate> sortedDates = groupedByDate.keySet().stream()
-                .sorted()
-                .collect(Collectors.toList());
-
-        return sortedDates.stream()
-                .map(date -> {
-                    List<Schedule> schedulesForDate = groupedByDate.get(date);
-                    return ScheduleConverter.toScheduleByMonthDto(schedulesForDate, date);
-                })
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public List<ScheduleResponseDto.ScheduleDto> getScheduleListByKeyword(String keyword, Member member) {
-        List<MemberCategory> memberCategoryList = memberCategoryRepository.findByMember(member);
-
-        if (memberCategoryList.isEmpty()) {
-            throw new MemberCategoryHandler(ErrorStatus.MEMBER_CATEGORY_NOT_FOUND);
-        }
-
-        List<Schedule> scheduleList = memberCategoryList.stream()
-                .map(memberCategory -> scheduleRepository.findByMemberCategoryAndTitleContaining(memberCategory, keyword))
-                .flatMap(List::stream)  // List<Schedule>을 평탄화하여 하나의 스트림으로 변환
-                .sorted(Comparator.comparing(Schedule::getDate))
-                .collect(Collectors.toList());
-
-        if (scheduleList.isEmpty()) {
-            throw new ScheduleHandler(ErrorStatus.SCHEDULE_NOT_EXIST);
-        }
-
-        return scheduleList.stream()
-                .map(schedule -> ScheduleConverter.toScheduleDto(schedule))
-                .collect(Collectors.toList());
-    }
+//    @Override
+//    public List<ScheduleResponseDto.ScheduleTodoDto> getScheduleListByKeyword(String keyword, Member member) {
+//        List<MemberCategory> memberCategoryList = memberCategoryRepository.findByMember(member);
+//
+//        if (memberCategoryList.isEmpty()) {
+//            throw new MemberCategoryHandler(ErrorStatus.MEMBER_CATEGORY_NOT_FOUND);
+//        }
+//
+//        List<Schedule> scheduleList = memberCategoryList.stream()
+//                .map(memberCategory -> scheduleRepository.findByMemberCategoryAndTitleContaining(memberCategory, keyword))
+//                .flatMap(List::stream)  // List<Schedule>을 평탄화하여 하나의 스트림으로 변환
+//                .sorted(Comparator.comparing(Schedule::getDate))
+//                .collect(Collectors.toList());
+//
+//        if (scheduleList.isEmpty()) {
+//            throw new ScheduleHandler(ErrorStatus.SCHEDULE_NOT_EXIST);
+//        }
+//
+//        List<ScheduleResponseDto.ScheduleTodoDto> scheduleTodoList = scheduleList.stream()
+//                .map(schedule -> {
+//                    Todo todo = todoRepository.findBySchedule(schedule);
+//                    return ScheduleConverter.toScheduleTodoDto(schedule, todo);
+//                })
+//                .collect(Collectors.toList());
+//    }
 
 
     // 데이 로그 화면에서 루틴 완료 상태 조회
-    @Override
-    public List<ScheduleResponseDto.RoutineStatusByContentDto> getRoutineStatusList(LocalDate startDate, LocalDate endDate, Member member) {
-        List<MemberCategory> memberCategoryList = memberCategoryRepository.findByMemberAndScheduleType(member, ScheduleType.ROUTINE);
-
-        if (memberCategoryList.isEmpty()) {
-            throw new MemberCategoryHandler(ErrorStatus.MEMBER_CATEGORY_ROUTINE_NOT_FOUND);
-        }
-
-        List<Schedule> scheduleList = memberCategoryList.stream()
-                .map(memberCategory -> scheduleRepository.findByMemberCategoryAndDateBetween(memberCategory, startDate, endDate))
-                .flatMap(List::stream)  // List<Schedule>을 평탄화하여 하나의 스트림으로 변환
-                .collect(Collectors.toList());
-
-        if (scheduleList.isEmpty()) {
-            throw new ScheduleHandler(ErrorStatus.SCHEDULE_NOT_EXIST);
-        }
-
-        // 루틴 이름별로 그룹화
-        Map<String, List<Schedule>> groupedByContent = scheduleList.stream()
-                .collect(Collectors.groupingBy(
-                        Schedule::getContent,
-                        Collectors.collectingAndThen(
-                                Collectors.toList(),
-                                list -> list.stream()
-                                        .sorted(Comparator.comparing(Schedule::getDate))
-                                        .collect(Collectors.toList())
-                        )
-                ));
-
-        List<String> sortedContents = groupedByContent.keySet().stream()
-                .sorted()
-                .collect(Collectors.toList());
-
-        return sortedContents.stream()
-                .map(content -> {
-                    List<Schedule> schedulesForContent = groupedByContent.get(content);
-                    return ScheduleConverter.toRoutineStatusByContentDto(schedulesForContent, content);
-                })
-                .collect(Collectors.toList());
-    }
+//    @Override
+//    public List<ScheduleResponseDto.RoutineStatusByContentDto> getRoutineStatusList(LocalDate startDate, LocalDate endDate, Member member) {
+//        List<MemberCategory> memberCategoryList = memberCategoryRepository.findByMemberAndScheduleType(member, ScheduleType.ROUTINE);
+//
+//        if (memberCategoryList.isEmpty()) {
+//            throw new MemberCategoryHandler(ErrorStatus.MEMBER_CATEGORY_ROUTINE_NOT_FOUND);
+//        }
+//
+//        List<Schedule> scheduleList = memberCategoryList.stream()
+//                .map(memberCategory -> scheduleRepository.findByMemberCategoryAndDateBetween(memberCategory, startDate, endDate))
+//                .flatMap(List::stream)  // List<Schedule>을 평탄화하여 하나의 스트림으로 변환
+//                .collect(Collectors.toList());
+//
+//        if (scheduleList.isEmpty()) {
+//            throw new ScheduleHandler(ErrorStatus.SCHEDULE_NOT_EXIST);
+//        }
+//
+//        // 루틴 이름별로 그룹화
+//        Map<String, List<Schedule>> groupedByContent = scheduleList.stream()
+//                .collect(Collectors.groupingBy(
+//                        Schedule::getContent,
+//                        Collectors.collectingAndThen(
+//                                Collectors.toList(),
+//                                list -> list.stream()
+//                                        .sorted(Comparator.comparing(Schedule::getDate))
+//                                        .collect(Collectors.toList())
+//                        )
+//                ));
+//
+//        List<String> sortedContents = groupedByContent.keySet().stream()
+//                .sorted()
+//                .collect(Collectors.toList());
+//
+//        return sortedContents.stream()
+//                .map(content -> {
+//                    List<Schedule> schedulesForContent = groupedByContent.get(content);
+//                    return ScheduleConverter.toRoutineStatusByContentDto(schedulesForContent, content);
+//                })
+//                .collect(Collectors.toList());
+//    }
 
     // 데이로그 completion rate 조회
 //    @Override

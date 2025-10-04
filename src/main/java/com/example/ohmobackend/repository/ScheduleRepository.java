@@ -1,7 +1,9 @@
 package com.example.ohmobackend.repository;
 
+import com.example.ohmobackend.domain.Member;
 import com.example.ohmobackend.domain.MemberCategory;
 import com.example.ohmobackend.domain.Schedule;
+import com.example.ohmobackend.domain.enums.ScheduleType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -44,4 +46,14 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Long> {
             @Param("startDate") LocalDate startDate,
             @Param("endDate") LocalDate endDate
     );
+
+    @Query("SELECT s FROM Schedule s " +
+            "WHERE s.memberCategory.member = :member " +
+            "AND s.date = :date " +
+            "AND s.scheduleType = :scheduleType")
+    List<Schedule> findSchedulesByMemberAndDateAndScheduleType(
+            @Param("member") Member member,
+            @Param("date") LocalDate date,
+            @Param("scheduleType") ScheduleType scheduleType);
+
 }

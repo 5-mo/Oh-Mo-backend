@@ -2,6 +2,9 @@ package com.example.ohmobackend.web.dto.scheduleDto;
 
 import com.example.ohmobackend.domain.enums.ScheduleType;
 import com.example.ohmobackend.web.dto.memberCategoryDto.MemberCategoryResponseDto;
+import com.example.ohmobackend.web.dto.routineDto.RoutineResponseDto;
+import com.example.ohmobackend.web.dto.todoDto.TodoRequestDto;
+import com.example.ohmobackend.web.dto.todoDto.TodoResponseDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -18,6 +21,15 @@ public class ScheduleResponseDto {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class ScheduleDto {
+        List<ScheduleResponseDto.ScheduleTodoDto> todoList;
+        List<ScheduleResponseDto.ScheduleRoutineDto> routineList;
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class ScheduleTodoDto {
         private Long scheduleId;
         private LocalDate date;
         private LocalTime time;
@@ -25,6 +37,22 @@ public class ScheduleResponseDto {
         private String content;
         private ScheduleType scheduleType;
         private MemberCategoryResponseDto.CategoryResponseDto category;
+        private TodoResponseDto.TodoDto todo;
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class ScheduleRoutineDto {
+        private Long scheduleId;
+        private LocalDate date;
+        private LocalTime time;
+        private LocalTime alarmTime;
+        private String content;
+        private ScheduleType scheduleType;
+        private MemberCategoryResponseDto.CategoryResponseDto category;
+        private RoutineResponseDto.routineDto routine;
     }
 
     @Getter
@@ -42,7 +70,7 @@ public class ScheduleResponseDto {
     @AllArgsConstructor
     public static class RoutineStatusByContentDto {
         private String content;
-        private List<ScheduleResponseDto.ScheduleDto> scheduleList;
+        private List<ScheduleResponseDto.ScheduleTodoDto> scheduleList;
     }
 
     @Getter
