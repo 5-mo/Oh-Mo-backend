@@ -14,6 +14,14 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @DynamicUpdate
+@Table(
+        name = "routine",
+        indexes = {
+                @Index(name = "idx_routine_date", columnList = "date"),
+                @Index(name = "idx_routine_schedule", columnList = "schedule_id"),
+                @Index(name = "idx_routine_date_schedule", columnList = "date, schedule_id")
+        }
+)
 public class Routine extends BaseEntity {
 
     @Id

@@ -17,6 +17,15 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @DynamicUpdate
+@Table(
+        name = "schedule",
+        indexes = {
+                @Index(name = "idx_schedule_date", columnList = "date"),
+                @Index(name = "idx_schedule_member_category", columnList = "member_category_id"),
+                @Index(name = "idx_schedule_type", columnList = "scheduleType"),
+                @Index(name = "idx_schedule_date_category", columnList = "date, member_category_id")
+        }
+)
 public class Schedule extends BaseEntity {
 
     @Id
