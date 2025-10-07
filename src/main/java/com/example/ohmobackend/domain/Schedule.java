@@ -6,10 +6,13 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.DynamicUpdate;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -64,6 +67,15 @@ public class Schedule extends BaseEntity {
 
     @OneToOne(mappedBy = "schedule", cascade = CascadeType.ALL)
     private Todo todo;
+
+    @ElementCollection(fetch = FetchType.LAZY)
+    @CollectionTable(
+            name = "schedule_repeat_days",
+            joinColumns = @JoinColumn(name = "schedule_id")
+    )
+    @Column(name = "day_of_week", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private Set<DayOfWeek> repeatWeek = new HashSet<>();
 
     public void updateDate(LocalDate date) {
         this.date = date;
