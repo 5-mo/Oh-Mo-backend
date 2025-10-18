@@ -28,7 +28,7 @@ public class ScheduleConverter {
     }
 
     static public ScheduleResponseDto.ScheduleDto toScheduleDto(List<ScheduleResponseDto.ScheduleTodoDto> todoList,
-                                                                List<ScheduleResponseDto.ScheduleRoutineDto> routineList) {
+                                                                List<ScheduleResponseDto.ScheduleWithRoutineListDto> routineList) {
         return ScheduleResponseDto.ScheduleDto.builder()
                 .todoList(todoList)
                 .routineList(routineList)
@@ -61,6 +61,25 @@ public class ScheduleConverter {
                 .scheduleType(schedule.getScheduleType())
                 .category(MemberCategoryConverter.toAddCategoryResponseDto(schedule.getMemberCategory()))
                 .routine(RoutineConverter.toRoutineDto(routine))
+                .build();
+    }
+
+    static public ScheduleResponseDto.ScheduleWithRoutineListDto toScheduleWithRoutineListDto(
+            Schedule schedule, List<Routine> routineList) {
+
+        List<RoutineResponseDto.routineDto> routineDtoList = routineList.stream()
+                .map(routine -> RoutineConverter.toRoutineDto(routine))
+                .toList();
+
+        return ScheduleResponseDto.ScheduleWithRoutineListDto.builder()
+                .scheduleId(schedule.getId())
+                .date(schedule.getDate())
+                .time(schedule.getTime() != null ? schedule.getTime() : null)
+                .alarmTime(schedule.getAlarmTime())
+                .content(schedule.getContent())
+                .scheduleType(schedule.getScheduleType())
+                .category(MemberCategoryConverter.toAddCategoryResponseDto(schedule.getMemberCategory()))
+                .routineList(routineDtoList)
                 .build();
     }
 

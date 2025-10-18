@@ -22,7 +22,7 @@ public class ScheduleResponseDto {
     @AllArgsConstructor
     public static class ScheduleDto {
         List<ScheduleResponseDto.ScheduleTodoDto> todoList;
-        List<ScheduleResponseDto.ScheduleRoutineDto> routineList;
+        List<ScheduleResponseDto.ScheduleWithRoutineListDto> routineList;
     }
 
     @Getter
@@ -53,6 +53,21 @@ public class ScheduleResponseDto {
         private ScheduleType scheduleType;
         private MemberCategoryResponseDto.CategoryResponseDto category;
         private RoutineResponseDto.routineDto routine;
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class ScheduleWithRoutineListDto {
+        private Long scheduleId;
+        private LocalDate date;
+        private LocalTime time;
+        private LocalTime alarmTime;
+        private String content;
+        private ScheduleType scheduleType;
+        private MemberCategoryResponseDto.CategoryResponseDto category;
+        private List<RoutineResponseDto.routineDto> routineList;
     }
 
     @Getter

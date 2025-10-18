@@ -21,4 +21,15 @@ public interface RoutineRepository extends JpaRepository<Routine, Long> {
             @Param("date") LocalDate date
     );
 
+    @Query("SELECT DISTINCT r FROM Routine r " +
+            "JOIN FETCH r.schedule s " +
+            "JOIN s.memberCategory mc " +
+            "WHERE s.date BETWEEN :startDate AND :endDate " +
+            "AND mc.member = :member")
+    List<Routine> findRoutinesByMemberAndMonth(
+            @Param("member") Member member,
+            @Param("startDate") LocalDate startDate,
+            @Param("endDate") LocalDate endDate
+    );
+
 }

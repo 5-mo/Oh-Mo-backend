@@ -11,11 +11,11 @@ public interface ScheduleQueryService {
 
     public ScheduleResponseDto.ScheduleDto getScheduleList(LocalDate date, Member member);
 
-//    public List<ScheduleResponseDto.ScheduleDto> getCompleteTodoList(LocalDate date, Member member);
+    public List<ScheduleResponseDto.ScheduleTodoDto> getCompleteTodoList(LocalDate date, Member member);
 
-//    public List<ScheduleResponseDto.ScheduleByMonthDto> getScheduleListByMonth(String yearMonth, Member member);
+    public List<ScheduleResponseDto.ScheduleByMonthDto> getScheduleListByMonth(String yearMonth, Member member);
 
-//    public List<ScheduleResponseDto.ScheduleTodoDto> getScheduleListByKeyword(String keyword, Member member);
+    public ScheduleResponseDto.ScheduleDto getScheduleListByKeyword(String keyword, Member member);
 
 //    public List<ScheduleResponseDto.RoutineStatusByContentDto> getRoutineStatusList(LocalDate startDate, LocalDate endDate, Member member);
 
