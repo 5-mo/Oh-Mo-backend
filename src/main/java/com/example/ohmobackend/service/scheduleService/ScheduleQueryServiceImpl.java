@@ -18,6 +18,7 @@ import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -152,52 +153,77 @@ public class ScheduleQueryServiceImpl implements ScheduleQueryService {
     }
 
     // 데이로그 completion rate 조회
-//    @Override
-//    public List<ScheduleResponseDto.ScheduleCompletionRateByMonthDto> getScheduleCompletionReteByMonth(String yearMonth, Member member) {
-//        LocalDate firstDayOfMonth = YearMonth.parse(yearMonth).atDay(1);
-//        LocalDate lastDayOfMonth = YearMonth.parse(yearMonth).atEndOfMonth();
-//
-//        List<MemberCategory> memberCategoryList = memberCategoryRepository.findByMember(member);
-//
-//        if (memberCategoryList.isEmpty()) {
-//            throw new MemberCategoryHandler(ErrorStatus.MEMBER_CATEGORY_NOT_FOUND);
-//        }
-//
-//        List<Schedule> scheduleList = memberCategoryList.stream()
-//                .map(memberCategory -> scheduleRepository.findByMemberCategoryAndMonth(memberCategory, firstDayOfMonth, lastDayOfMonth))
-//                .flatMap(List::stream)  // List<Schedule>을 평탄화하여 하나의 스트림으로 변환
-//                .collect(Collectors.toList());
-//
-//        if (scheduleList.isEmpty()) {
-//            throw new ScheduleHandler(ErrorStatus.SCHEDULE_NOT_EXIST);
-//        }
-//
-//        // 날짜별로 그룹화
-//        Map<LocalDate, List<Schedule>> groupedByDate = scheduleList.stream()
-//                .collect(Collectors.groupingBy(Schedule::getDate));
-//
-//        Map<LocalDate, Double> completionRateByDate = groupedByDate.entrySet().stream()
-//                .collect(Collectors.toMap(
-//                        Map.Entry::getKey,
-//                        entry -> {
-//                            List<Schedule> schedules = entry.getValue();
-//                            long total = schedules.size();
-//                            long completed = schedules.stream().filter(Schedule::isStatus).count();
-//                            return total == 0 ? 0.0 : Math.round(((double) completed / total) * 100 * 100.0) / 100.0;
-//                        }
-//                ));
-//
-//        // 날짜순으로 정렬
-//        List<LocalDate> sortedDates = groupedByDate.keySet().stream()
-//                .sorted()
-//                .collect(Collectors.toList());
-//
-//        return sortedDates.stream()
-//                .map(date -> {
-//                    double rate = completionRateByDate.get(date);
-//                    System.out.println(date+":"+rate);
-//                    return ScheduleConverter.toScheduleCompletionRateByMonthDto(date, rate);
-//                })
-//                .collect(Collectors.toList());
-//    }
+    @Override
+    public List<ScheduleResponseDto.ScheduleCompletionRateByMonthDto> getScheduleCompletionReteByMonth(String yearMonth, Member member) {
+        LocalDate firstDayOfMonth = YearMonth.parse(yearMonth).atDay(1);
+        LocalDate lastDayOfMonth = YearMonth.parse(yearMonth).atEndOfMonth();
+
+        // TO_DO 카테고리 가져오기
+        List<MemberCategory> todoMemberCategoryList = memberCategoryRepository.findByMemberAndScheduleType(member, ScheduleType.TO_DO);
+        if (todoMemberCategoryList.isEmpty()) {
+            throw new MemberCategoryHandler(ErrorStatus.MEMBER_CATEGORY_NOT_FOUND);
+        }
+
+        // 월별 Schedule (Todo용)
+        List<Schedule> scheduleList = todoMemberCategoryList.stream()
+                .map(cat -> scheduleRepository.findByMemberCategoryAndMonth(cat, firstDayOfMonth, lastDayOfMonth))
+                .flatMap(List::stream)
+                .collect(Collectors.toList());
+
+        // 월별 Routine
+        List<Routine> routineList = routineRepository.findRoutinesByMemberAndMonth(member, firstDayOfMonth, lastDayOfMonth);
+
+        // 날짜별 Todo + Routine 모두 합치기
+        Map<LocalDate, Map<String, List<?>>> dateToItemsMap = new HashMap<>();
+
+        // 일정(TO_DO) 추가
+        for (Schedule schedule : scheduleList) {
+            LocalDate date = schedule.getDate();
+            dateToItemsMap
+                    .computeIfAbsent(date, k -> new HashMap<>())
+                    .computeIfAbsent("todoList", k -> new ArrayList<Schedule>());
+            ((List<Schedule>) dateToItemsMap.get(date).get("todoList")).add(schedule);
+        }
+
+        // 루틴 추가
+        for (Routine routine : routineList) {
+            LocalDate date = routine.getDate();
+            dateToItemsMap
+                    .computeIfAbsent(date, k -> new HashMap<>())
+                    .computeIfAbsent("routineList", k -> new ArrayList<Routine>());
+            ((List<Routine>) dateToItemsMap.get(date).get("routineList")).add(routine);
+        }
+
+        List<ScheduleResponseDto.ScheduleCompletionRateByMonthDto> result =
+                dateToItemsMap.entrySet().stream()
+                        .sorted(Map.Entry.comparingByKey())
+                        .map(entry -> {
+                            LocalDate date = entry.getKey();
+                            Map<String, List<?>> items = entry.getValue();
+
+                            List<Schedule> todos = (List<Schedule>) items.getOrDefault("todoList", Collections.emptyList());
+                            List<Routine> routines = (List<Routine>) items.getOrDefault("routineList", Collections.emptyList());
+
+                            long totalCount = todos.size() + routines.size();
+
+                            if (totalCount == 0) {
+                                return ScheduleConverter.toScheduleCompletionRateByMonthDto(date, 0);
+                            }
+
+                            long completedCount = Stream.concat(
+                                    todos.stream()
+                                            .filter(schedule -> schedule.getTodo() != null && schedule.getTodo().isStatus()),
+                                    routines.stream()
+                                            .filter(Routine::isStatus)
+                            ).count();
+
+                            double completionRate = (double) completedCount / totalCount * 100;
+
+                            return ScheduleConverter.toScheduleCompletionRateByMonthDto(date, completionRate);
+                        })
+                        .collect(Collectors.toList());
+
+
+        return result;
+    }
 }

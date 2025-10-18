@@ -19,5 +19,5 @@ public interface ScheduleQueryService {
 
     public List<ScheduleResponseDto.RoutineStatusByWeekDto> getRoutineStatusList(LocalDate startDate, LocalDate endDate, Member member);
 
-//    public List<ScheduleResponseDto.ScheduleCompletionRateByMonthDto> getScheduleCompletionReteByMonth(String yearMonth,  Member member);
+    public List<ScheduleResponseDto.ScheduleCompletionRateByMonthDto> getScheduleCompletionReteByMonth(String yearMonth,  Member member);
 }
