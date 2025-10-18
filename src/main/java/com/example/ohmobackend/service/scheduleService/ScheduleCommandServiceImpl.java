@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -49,8 +50,17 @@ public class ScheduleCommandServiceImpl implements ScheduleCommandService {
             throw new MemberCategoryHandler(ErrorStatus.MEMBER_CATEGORY_NOT_TO_DO_TYPE);
         }
 
-        Schedule schedule = scheduleRepository.save(ScheduleConverter.toEntity(requestDto, memberCategory));
+        Schedule schedule = ScheduleConverter.toEntity(requestDto, memberCategory);
 
+        // repeatWeek 저장
+        if (requestDto.getRoutineWeek() != null && !requestDto.getRoutineWeek().isEmpty()) {
+            schedule.getRepeatWeek().addAll(requestDto.getRoutineWeek());
+        }
+
+        // DB에 저장
+        scheduleRepository.save(schedule);
+
+        // 반복 요일 기반 Routine 생성
         LocalDate startDate = LocalDate.now();  // 시작 날짜 (오늘)
         LocalDate endDate = schedule.getDate();
         List<LocalDate> dates = getDates(startDate, endDate, requestDto.getRoutineWeek()); // 반복 요일에 해당하는 날짜 리스트

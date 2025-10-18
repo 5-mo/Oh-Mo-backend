@@ -9,6 +9,7 @@ import com.example.ohmobackend.web.dto.scheduleDto.ScheduleResponseDto;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -24,7 +25,9 @@ public class ScheduleConverter {
                 .content(requestDto.getContent())
                 .scheduleType(memberCategory.getScheduleType())
                 .memberCategory(memberCategory)
+                .repeatWeek(requestDto.getRoutineWeek() == null ? null : new HashSet<>())
                 .build();
+
     }
 
     static public ScheduleResponseDto.ScheduleDto toScheduleDto(List<ScheduleResponseDto.ScheduleTodoDto> todoList,

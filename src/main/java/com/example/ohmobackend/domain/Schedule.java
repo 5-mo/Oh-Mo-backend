@@ -73,6 +73,7 @@ public class Schedule extends BaseEntity {
             name = "schedule_repeat_days",
             joinColumns = @JoinColumn(name = "schedule_id")
     )
+
     @Column(name = "day_of_week", nullable = false)
     @Enumerated(EnumType.STRING)
     private Set<DayOfWeek> repeatWeek = new HashSet<>();
