@@ -83,9 +83,9 @@ public class ScheduleResponseDto {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class RoutineStatusByContentDto {
+    public static class RoutineStatusByWeekDto {
         private String content;
-        private List<ScheduleResponseDto.ScheduleTodoDto> scheduleList;
+        private List<RoutineResponseDto.routineDto> routineDtoList;
     }
 
     @Getter

@@ -104,15 +104,16 @@ public class ScheduleConverter {
                 .build();
     }
 
-//    static public ScheduleResponseDto.RoutineStatusByContentDto toRoutineStatusByContentDto(List<Schedule> scheduleList, String content) {
-//        List<ScheduleResponseDto.ScheduleTodoDto> scheduleDtoList = scheduleList.stream()
-//                .map(ScheduleConverter::toScheduleTodoDto).collect(Collectors.toList());
-//
-//        return ScheduleResponseDto.RoutineStatusByContentDto.builder()
-//                .content(content)
-//                .scheduleList(scheduleDtoList)
-//                .build();
-//    }
+    // 주별 루틴 완료 상태 DTO 변환
+    static public ScheduleResponseDto.RoutineStatusByWeekDto toRoutineStatusByContentDto(List<Routine> routineList, Schedule schedule) {
+        List<RoutineResponseDto.routineDto> routineDtoList = routineList.stream().map(
+                routine -> RoutineConverter.toRoutineDto(routine)).collect(Collectors.toList());
+
+        return ScheduleResponseDto.RoutineStatusByWeekDto.builder()
+                .content(schedule.getContent())
+                .routineDtoList(routineDtoList)
+                .build();
+    }
 
     static public ScheduleResponseDto.ScheduleCompletionRateByMonthDto toScheduleCompletionRateByMonthDto(LocalDate date, double rate) {
         return ScheduleResponseDto.ScheduleCompletionRateByMonthDto.builder()
