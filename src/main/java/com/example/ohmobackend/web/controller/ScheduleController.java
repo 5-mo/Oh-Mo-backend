@@ -28,29 +28,37 @@ public class ScheduleController {
 
     @PostMapping("/routine")
     @Operation(summary = "루틴 등록 API", description = "루틴 등록 API 입니다.")
-    public ApiResponse<Object> addRoutine(@RequestBody ScheduleRequestDto.RoutineRequestDto request, @AuthUser Member member) {
+    public ApiResponse<Object> addRoutine(@RequestBody ScheduleRequestDto.AddRequestDto request, @AuthUser Member member) {
         scheduleCommandService.addRoutine(request, member);
         return ApiResponse.onSuccess(SuccessStatus.SCHEDULE_ROUTINE_OK, null);
     }
 
     @PostMapping("/todo")
     @Operation(summary = "투두 등록 API", description = "투두 등록 API 입니다.")
-    public ApiResponse<Object> addTodo(@RequestBody ScheduleRequestDto.TodoRequestDto request, @AuthUser Member member) {
+    public ApiResponse<Object> addTodo(@RequestBody ScheduleRequestDto.AddRequestDto request, @AuthUser Member member) {
         scheduleCommandService.addTodo(request, member);
         return ApiResponse.onSuccess(SuccessStatus.SCHEDULE_TO_DO_OK, null);
     }
 
-    @PostMapping("/{scheduleId}")
-    @Operation(summary = "상태 변경 API", description = "상태 변경 API 입니다.")
-    public ApiResponse<Object> updateScheduleStatus(@PathVariable(name = "scheduleId") Long scheduleId, @AuthUser Member member) {
-        scheduleCommandService.updateScheduleStatus(scheduleId);
-        return ApiResponse.onSuccess(SuccessStatus.SCHEDULE_UPDATE_STATUS_OK, null);
+    @PatchMapping ("/alarm")
+    @Operation(summary = "알람 시간 등록 API", description = "알람 시간 등록 API 입니다.")
+    public ApiResponse<Object> updateScheduleAlarmTime(@RequestBody ScheduleRequestDto.UpdateScheduleAlarmTimeDto request, @AuthUser Member member) {
+        scheduleCommandService.updateScheduleAlarmTime(request, member);
+        return ApiResponse.onSuccess(SuccessStatus.SCHEDULE_UPDATE_ALARM_TIME_OK, null);
     }
 
+    @PatchMapping ("/update-date")
+    @Operation(summary = "투두 날짜 변경 API", description = "투두 날짜 변경 API 입니다.")
+    public ApiResponse<ScheduleResponseDto.ScheduleTodoDto> updateScheduleDate(@RequestBody ScheduleRequestDto.UpdateTodoDateRequestDto request, @AuthUser Member member) {
+        ScheduleResponseDto.ScheduleTodoDto response = scheduleCommandService.updateScheduleDate(request, member);
+        return ApiResponse.onSuccess(SuccessStatus.SCHEDULE_UPDATE_DATE_OK, response);
+    }
+
+    // 일정 조회 관련
     @GetMapping("/by-date")
     @Operation(summary = "일별 일정 조회 API", description = "일별 일정 조회 API 입니다.")
-    public ApiResponse<List<ScheduleResponseDto.ScheduleDto>> getScheduleList(@RequestParam(name = "date")LocalDate date, @RequestParam(name = "type")ScheduleType scheduleType, @AuthUser Member member) {
-        List<ScheduleResponseDto.ScheduleDto> scheduleDtoList = scheduleQueryService.getScheduleList(date, member, scheduleType);
+    public ApiResponse<ScheduleResponseDto.ScheduleDto> getScheduleList(@RequestParam(name = "date")LocalDate date, @AuthUser Member member) {
+        ScheduleResponseDto.ScheduleDto scheduleDtoList = scheduleQueryService.getScheduleList(date, member);
         return ApiResponse.onSuccess(SuccessStatus.SCHEDULE_OK, scheduleDtoList);
     }
 
@@ -58,50 +66,39 @@ public class ScheduleController {
     @Operation(summary = "월별 일정 조회 API", description = "월별 일정 조회 API 입니다.")
     public ApiResponse<List<ScheduleResponseDto.ScheduleByMonthDto>> getScheduleListByMonth(@RequestParam(name = "year-month")String yearMonth, @AuthUser Member member) {
         List<ScheduleResponseDto.ScheduleByMonthDto> scheduleDtoList = scheduleQueryService.getScheduleListByMonth(yearMonth, member);
+
         return ApiResponse.onSuccess(SuccessStatus.SCHEDULE_OK, scheduleDtoList);
+
     }
 
-    @PatchMapping ("/todo")
-    @Operation(summary = "투두 날짜 변경 API", description = "투두 날짜 변경 API 입니다.")
-    public ApiResponse<ScheduleResponseDto.ScheduleDto> updateScheduleDate(@RequestBody ScheduleRequestDto.UpdateTodoDateRequestDto request, @AuthUser Member member) {
-        ScheduleResponseDto.ScheduleDto response = scheduleCommandService.updateScheduleDate(request);
-        return ApiResponse.onSuccess(SuccessStatus.SCHEDULE_UPDATE_DATE_OK, response);
+    @GetMapping("/todo/complete")
+    @Operation(summary = "일별 완료한 투두 조회 API", description = "일별 완료한 투두 조회 API 입니다.")
+    public ApiResponse<List<ScheduleResponseDto.ScheduleTodoDto>> getCompleteTodoList(@RequestParam(name = "date")LocalDate date, @AuthUser Member member) {
+        List<ScheduleResponseDto.ScheduleTodoDto> scheduleTodoDtoList = scheduleQueryService.getCompleteTodoList(date, member);
+        return ApiResponse.onSuccess(SuccessStatus.SCHEDULE_OK, scheduleTodoDtoList);
     }
-
-//    @GetMapping("/todo/complete")
-//    @Operation(summary = "일별 완료한 투두 조회 API", description = "일별 완료한 투두 조회 API 입니다.")
-//    public ApiResponse<List<ScheduleResponseDto.ScheduleDto>> getCompleteTodoList(@RequestParam(name = "date")LocalDate date, @AuthUser Member member) {
-//        List<ScheduleResponseDto.ScheduleDto> scheduleDtoList = scheduleQueryService.getCompleteTodoList(date, member);
-//        return ApiResponse.onSuccess(SuccessStatus.SCHEDULE_OK, scheduleDtoList);
-//    }
 
     @GetMapping("")
     @Operation(summary = "검색어로 스케줄 조회 API", description = "검색어로 스케줄 조회 API 입니다.")
-    public ApiResponse<List<ScheduleResponseDto.ScheduleDto>> getScheduleList(@RequestParam(name = "query")String keyword, @AuthUser Member member) {
-        List<ScheduleResponseDto.ScheduleDto> scheduleDtoList = scheduleQueryService.getScheduleListByKeyword(keyword, member);
-        return ApiResponse.onSuccess(SuccessStatus.SCHEDULE_OK, scheduleDtoList);
-    }
+    public ApiResponse<ScheduleResponseDto.ScheduleDto> getScheduleList(@RequestParam(name = "query")String keyword, @AuthUser Member member) {
+        ScheduleResponseDto.ScheduleDto scheduleDtoList = scheduleQueryService.getScheduleListByKeyword(keyword, member);
 
-    @PatchMapping ("/alarm")
-    @Operation(summary = "알람 시간 등록 API", description = "알람 시간 등록 API 입니다.")
-    public ApiResponse<Object> updateScheduleAlarmTime(@RequestBody ScheduleRequestDto.UpdateScheduleAlarmTimeDto request, @AuthUser Member member) {
-        scheduleCommandService.updateScheduleAlarmTime(request);
-        return ApiResponse.onSuccess(SuccessStatus.SCHEDULE_UPDATE_ALARM_TIME_OK, null);
+        return ApiResponse.onSuccess(SuccessStatus.SCHEDULE_OK, scheduleDtoList);
     }
 
     @GetMapping("routine/status")
     @Operation(summary = "Day Log 주차별 루틴 상태 조회 API", description = "Day Log 주차별 루틴 상태 조회 API 입니다.")
-    public ApiResponse<List<ScheduleResponseDto.RoutineStatusByContentDto>> getRoutineStatus(@RequestParam(name = "start-date")LocalDate startDate, @RequestParam(name = "end-date")LocalDate endDate, @AuthUser Member member) {
-        List<ScheduleResponseDto.RoutineStatusByContentDto> routineStatusByContentList = scheduleQueryService.getRoutineStatusList(startDate, endDate, member);
+    public ApiResponse<List<ScheduleResponseDto.RoutineStatusByWeekDto>> getRoutineStatus(@RequestParam(name = "start-date")LocalDate startDate, @RequestParam(name = "end-date")LocalDate endDate, @AuthUser Member member) {
+        List<ScheduleResponseDto.RoutineStatusByWeekDto> routineStatusByContentList = scheduleQueryService.getRoutineStatusList(startDate, endDate, member);
         return ApiResponse.onSuccess(SuccessStatus.SCHEDULE_ROUTINE_STATUS_OK, routineStatusByContentList);
     }
 
-//    @GetMapping("/completion-rate")
-//    @Operation(summary = "Day Log 주차별 루틴 상태 조회 API", description = "Day Log 주차별 루틴 상태 조회 API 입니다.")
-//    public ApiResponse<List<ScheduleResponseDto.ScheduleCompletionRateByMonthDto>> getScheduleCompletionRateByMonth(@RequestParam(name = "year-month")String yearMonth, @AuthUser Member member) {
-//        List<ScheduleResponseDto.ScheduleCompletionRateByMonthDto> routineStatusByContentList = scheduleQueryService.getScheduleCompletionReteByMonth(yearMonth, member);
-//        return ApiResponse.onSuccess(SuccessStatus.SCHEDULE_COMPLETION_RATE_OK, routineStatusByContentList);
-//    }
+    @GetMapping("/completion-rate")
+    @Operation(summary = "Day Log 월변 completion-rate 조회 API", description = "Day Log 월변 completion-rate 조회 API")
+    public ApiResponse<List<ScheduleResponseDto.ScheduleCompletionRateByMonthDto>> getScheduleCompletionRateByMonth(@RequestParam(name = "year-month")String yearMonth, @AuthUser Member member) {
+        List<ScheduleResponseDto.ScheduleCompletionRateByMonthDto> routineStatusByContentList = scheduleQueryService.getScheduleCompletionReteByMonth(yearMonth, member);
+        return ApiResponse.onSuccess(SuccessStatus.SCHEDULE_COMPLETION_RATE_OK, routineStatusByContentList);
+    }
 
     @PostMapping("/routine-group")
     @Operation(summary = "그룹 루틴 등록 API", description = "그룹 루틴 등록 API 입니다.")

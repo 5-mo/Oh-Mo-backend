@@ -10,7 +10,9 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -18,6 +20,15 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @DynamicUpdate
+@Table(
+        name = "schedule",
+        indexes = {
+                @Index(name = "idx_schedule_date", columnList = "date"),
+                @Index(name = "idx_schedule_member_category", columnList = "member_category_id"),
+                @Index(name = "idx_schedule_type", columnList = "scheduleType"),
+                @Index(name = "idx_schedule_date_category", columnList = "date, member_category_id")
+        }
+)
 public class Schedule extends BaseEntity {
 
     @Id
@@ -28,8 +39,6 @@ public class Schedule extends BaseEntity {
     private LocalDate date;
 
     private LocalTime time;
-
-    private boolean allowAlarm;
 
     private LocalTime alarmTime;
 
@@ -56,15 +65,24 @@ public class Schedule extends BaseEntity {
     @OneToMany(mappedBy = "schedule", cascade = CascadeType.ALL)
     private List<Routine> routineList = new ArrayList<>();
 
-    @OneToMany(mappedBy = "schedule", cascade = CascadeType.ALL)
-    private List<Todo> todoList = new ArrayList<>();
+    @OneToOne(mappedBy = "schedule", cascade = CascadeType.ALL)
+    private Todo todo;
+
+    @ElementCollection(fetch = FetchType.LAZY)
+    @CollectionTable(
+            name = "schedule_repeat_days",
+            joinColumns = @JoinColumn(name = "schedule_id")
+    )
+
+    @Column(name = "day_of_week", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private Set<DayOfWeek> repeatWeek = new HashSet<>();
 
     public void updateDate(LocalDate date) {
         this.date = date;
     }
 
     public void updateAlarmTime(LocalTime time) {
-        this.allowAlarm = true;
         this.alarmTime = time;
     }
 }

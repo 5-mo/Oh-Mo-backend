@@ -2,8 +2,11 @@ package com.example.ohmobackend.service.scheduleService;
 
 import com.example.ohmobackend.apiPayload.code.status.ErrorStatus;
 import com.example.ohmobackend.apiPayload.exception.handler.MemberCategoryHandler;
+import com.example.ohmobackend.apiPayload.exception.handler.MemberHandler;
 import com.example.ohmobackend.apiPayload.exception.handler.ScheduleHandler;
+import com.example.ohmobackend.converter.RoutineConverter;
 import com.example.ohmobackend.converter.ScheduleConverter;
+import com.example.ohmobackend.converter.TodoConverter;
 import com.example.ohmobackend.domain.*;
 import com.example.ohmobackend.domain.enums.ScheduleType;
 import com.example.ohmobackend.repository.*;
@@ -16,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -30,9 +34,11 @@ public class ScheduleCommandServiceImpl implements ScheduleCommandService {
     final private MemberGroupRepository memberGroupRepository;
     final private ScheduleAssigneeRepository scheduleAssigneeRepository;
     final private MemberRepository memberRepository;
+    final private TodoRepository todoRepository;
+    final private RoutineRepository routineRepository;
 
     @Override
-    public void addRoutine(ScheduleRequestDto.RoutineRequestDto requestDto, Member member) {
+    public void addRoutine(ScheduleRequestDto.AddRequestDto requestDto, Member member) {
         MemberCategory memberCategory = memberCategoryRepository.findById(requestDto.getCategoryId())
                 .orElseThrow(() -> new ScheduleHandler(ErrorStatus.MEMBER_CATEGORY_NOT_FOUND));
 
@@ -44,24 +50,30 @@ public class ScheduleCommandServiceImpl implements ScheduleCommandService {
             throw new MemberCategoryHandler(ErrorStatus.MEMBER_CATEGORY_NOT_TO_DO_TYPE);
         }
 
-        // 알람 설정이 true 이지만 시간이 없을 경우
-        if(requestDto.getAlarm() && requestDto.getTime() == null) {
-            throw new ScheduleHandler(ErrorStatus.MISSING_TIME);
+        Schedule schedule = ScheduleConverter.toEntity(requestDto, memberCategory);
+
+        // repeatWeek 저장
+        if (requestDto.getRoutineWeek() != null && !requestDto.getRoutineWeek().isEmpty()) {
+            schedule.getRepeatWeek().addAll(requestDto.getRoutineWeek());
         }
 
+        // DB에 저장
+        scheduleRepository.save(schedule);
+
+        // 반복 요일 기반 Routine 생성
         LocalDate startDate = LocalDate.now();  // 시작 날짜 (오늘)
-        LocalDate endDate = requestDto.getEndDate();
+        LocalDate endDate = schedule.getDate();
         List<LocalDate> dates = getDates(startDate, endDate, requestDto.getRoutineWeek()); // 반복 요일에 해당하는 날짜 리스트
 
-        List<Schedule> schedules = dates.stream()
-                .map(date -> ScheduleConverter.routineToEntity(requestDto, memberCategory, date))
+        List<Routine> routineList = dates.stream()
+                .map(date -> RoutineConverter.toEntity(schedule, date))
                 .collect(Collectors.toList());
 
-        scheduleRepository.saveAll(schedules);
+        routineRepository.saveAll(routineList);
     }
 
     @Override
-    public void addTodo(ScheduleRequestDto.TodoRequestDto requestDto, Member member) {
+    public void addTodo(ScheduleRequestDto.AddRequestDto requestDto, Member member) {
         MemberCategory memberCategory = memberCategoryRepository.findById(requestDto.getCategoryId())
                 .orElseThrow(() -> new ScheduleHandler(ErrorStatus.MEMBER_CATEGORY_NOT_FOUND));
 
@@ -73,56 +85,39 @@ public class ScheduleCommandServiceImpl implements ScheduleCommandService {
             throw new MemberCategoryHandler(ErrorStatus.MEMBER_CATEGORY_NOT_TO_DO_TYPE);
         }
 
-        // 알람 설정이 true 이지만 시간이 없을 경우
-        if(requestDto.getAlarm() && requestDto.getTime() == null) {
-            throw new ScheduleHandler(ErrorStatus.MISSING_TIME);
-        }
-
-        scheduleRepository.save(ScheduleConverter.todoToEntity(requestDto, memberCategory));
+        Schedule schedule = scheduleRepository.save(ScheduleConverter.toEntity(requestDto, memberCategory));
+        todoRepository.save(TodoConverter.toEntity(schedule));
     }
 
     @Override
     @Transactional
-    public void updateScheduleStatus(Long scheduleId) {
-        Schedule schedule = scheduleRepository.findById(scheduleId)
-                .orElseThrow(() -> new ScheduleHandler(ErrorStatus.SCHEDULE_NOT_FOUND));
-
-//        schedule.updateStatus();
-    }
-
-    @Override
-    @Transactional
-    public ScheduleResponseDto.ScheduleDto updateScheduleDate(ScheduleRequestDto.UpdateTodoDateRequestDto requestDto) {
+    public ScheduleResponseDto.ScheduleTodoDto updateScheduleDate(ScheduleRequestDto.UpdateTodoDateRequestDto requestDto, Member member) {
         Schedule schedule = scheduleRepository.findById(requestDto.getScheduleId())
                 .orElseThrow(() -> new ScheduleHandler(ErrorStatus.SCHEDULE_NOT_FOUND));
 
         if(schedule.getScheduleType() == ScheduleType.ROUTINE) {
             throw new ScheduleHandler(ErrorStatus.SCHEDULE_NOT_TO_DO_TYPE);
         }
+
+        if(schedule.getMemberCategory().getMember() != member) {
+            throw new MemberHandler(ErrorStatus.INVALID_MEMBER);
+        }
+
         schedule.updateDate(requestDto.getDate());
 
-        return ScheduleConverter.toScheduleDto(schedule);
+        return ScheduleConverter.toScheduleTodoDto(schedule, schedule.getTodo());
     }
 
     @Override
-    public void updateScheduleAlarmTime(ScheduleRequestDto.UpdateScheduleAlarmTimeDto requestDto) {
+    public void updateScheduleAlarmTime(ScheduleRequestDto.UpdateScheduleAlarmTimeDto requestDto, Member member) {
         Schedule schedule = scheduleRepository.findById(requestDto.getScheduleId())
                 .orElseThrow(() -> new ScheduleHandler(ErrorStatus.SCHEDULE_NOT_FOUND));
 
-        if(!schedule.isAllowAlarm() || schedule.getTime() == null) {
-            throw new ScheduleHandler(ErrorStatus.SCHEDULE_INVALID_ALARM_TIME);
+        if(schedule.getMemberCategory().getMember() != member) {
+            throw new MemberHandler(ErrorStatus.INVALID_MEMBER);
         }
 
-        if(schedule.getScheduleType() == ScheduleType.ROUTINE) {
-            String scheduleContent = schedule.getContent();
-            List<Schedule> routineScheduleList = scheduleRepository.findByContent(scheduleContent);
-
-            routineScheduleList.forEach(routineSchedule ->
-                    routineSchedule.updateAlarmTime(requestDto.getTime())
-            );
-        } else {
-            schedule.updateAlarmTime(requestDto.getTime());
-        }
+        schedule.updateAlarmTime(requestDto.getAlarmTime());
     }
 
     // 반복되는 요일에 해당하는 날짜들 반환

@@ -9,15 +9,15 @@ import java.util.List;
 
 public interface ScheduleQueryService {
 
-    public List<ScheduleResponseDto.ScheduleDto> getScheduleList(LocalDate date, Member member, ScheduleType scheduleType);
+    public ScheduleResponseDto.ScheduleDto getScheduleList(LocalDate date, Member member);
 
-//    public List<ScheduleResponseDto.ScheduleDto> getCompleteTodoList(LocalDate date, Member member);
+    public List<ScheduleResponseDto.ScheduleTodoDto> getCompleteTodoList(LocalDate date, Member member);
 
     public List<ScheduleResponseDto.ScheduleByMonthDto> getScheduleListByMonth(String yearMonth, Member member);
 
-    public List<ScheduleResponseDto.ScheduleDto> getScheduleListByKeyword(String keyword, Member member);
+    public ScheduleResponseDto.ScheduleDto getScheduleListByKeyword(String keyword, Member member);
 
-    public List<ScheduleResponseDto.RoutineStatusByContentDto> getRoutineStatusList(LocalDate startDate, LocalDate endDate, Member member);
+    public List<ScheduleResponseDto.RoutineStatusByWeekDto> getRoutineStatusList(LocalDate startDate, LocalDate endDate, Member member);
 
-//    public List<ScheduleResponseDto.ScheduleCompletionRateByMonthDto> getScheduleCompletionReteByMonth(String yearMonth,  Member member);
+    public List<ScheduleResponseDto.ScheduleCompletionRateByMonthDto> getScheduleCompletionReteByMonth(String yearMonth,  Member member);
 }
