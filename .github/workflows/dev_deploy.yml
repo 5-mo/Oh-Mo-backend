@@ -38,6 +38,9 @@ jobs:
             sudo docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/ohmo:latest
 
+            # 네트워크 생성
+            sudo docker network create oh-mo-backend_app-network || true
+
             # Stop and remove old container
             sudo docker stop ohmo || true
             sudo docker rm ohmo || true
