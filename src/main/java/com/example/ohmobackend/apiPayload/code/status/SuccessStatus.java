@@ -46,6 +46,9 @@ public enum SuccessStatus implements BaseCode {
 
     // 그룹 관련
     GROUP_REGISTER_OK(HttpStatus.OK, "GROUP_2000", "그룹 등록이 완료되었습니다."),
+    GROUP_FIND_OK(HttpStatus.OK, "GROUP_2001", "그룹 조회가 완료되었습니다."),
+    GROUP_ENTER_OK(HttpStatus.OK, "GROUP_2002", "그룹 입장이 완료되었습니다."),
+    GROUP_MEMBER_OK(HttpStatus.OK, "GROUP_2002", "그룹 멤버 조회가 완료되었습니다."),
 
     // 루틴 관련
     ROUTINE_UPDATE_STATUS_OK(HttpStatus.OK, "ROUTINE_2000", "루틴 상태 변경이 완료되었습니다."),

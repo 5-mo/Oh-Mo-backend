@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -32,6 +33,14 @@ public class GroupQueryServiceImpl implements GroupQueryService {
 
         List<MemberGroup> memberGroup = memberGroupRepository.findAllByGroup(group);
         return GroupConverter.toGroupMembersDto(group, memberGroup);
+    }
+
+    public List<GroupResponseDto.GroupDto> getGroups(Member member) {
+        List<MemberGroup> memberGroups = memberGroupRepository.findAllByMember(member);
+        List<GroupResponseDto.GroupDto> groups = memberGroups.stream().map(
+                memberGroup -> GroupConverter.toGroupDto(memberGroup.getGroup())
+        ).collect(Collectors.toList());
+        return groups;
     }
 
 }

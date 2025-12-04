@@ -13,6 +13,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/group")
@@ -34,7 +36,7 @@ public class GroupController {
     public ApiResponse<GroupResponseDto.GroupDto> enterGroup(
             @RequestBody GroupRequestDto.EnterGroupRequestDto request, @AuthUser Member member) {
         GroupResponseDto.GroupDto responseDto = groupCommandService.enterGroup(member, request);
-        return ApiResponse.onSuccess(SuccessStatus.GROUP_REGISTER_OK, responseDto);
+        return ApiResponse.onSuccess(SuccessStatus.GROUP_ENTER_OK, responseDto);
     }
 
     @GetMapping("/member")
@@ -42,6 +44,13 @@ public class GroupController {
     public ApiResponse<GroupResponseDto.GroupMembersDto> getGroupMember(
             @RequestParam(name = "groupId") Long groupId, @AuthUser Member member) {
         GroupResponseDto.GroupMembersDto responseDto = groupQueryService.getGroupMembers(groupId, member);
-        return ApiResponse.onSuccess(SuccessStatus.GROUP_REGISTER_OK, responseDto);
+        return ApiResponse.onSuccess(SuccessStatus.GROUP_MEMBER_OK, responseDto);
+    }
+
+    @GetMapping("")
+    @Operation(summary = "그룹 조회 API", description = "그룹 조회 API 입니다.")
+    public ApiResponse<List<GroupResponseDto.GroupDto>> getGroups(@AuthUser Member member) {
+        List<GroupResponseDto.GroupDto> responseDto = groupQueryService.getGroups(member);
+        return ApiResponse.onSuccess(SuccessStatus.GROUP_FIND_OK, responseDto);
     }
 }
