@@ -2,13 +2,13 @@ package com.example.ohmobackend.converter;
 
 import com.example.ohmobackend.domain.*;
 import com.example.ohmobackend.domain.enums.ScheduleType;
+import com.example.ohmobackend.web.dto.groupScheduleDto.GroupScheduleRequestDto;
 import com.example.ohmobackend.web.dto.memberCategoryDto.MemberCategoryResponseDto;
 import com.example.ohmobackend.web.dto.routineDto.RoutineResponseDto;
 import com.example.ohmobackend.web.dto.scheduleDto.ScheduleRequestDto;
 import com.example.ohmobackend.web.dto.scheduleDto.ScheduleResponseDto;
 
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -25,7 +25,22 @@ public class ScheduleConverter {
                 .content(requestDto.getContent())
                 .scheduleType(memberCategory.getScheduleType())
                 .memberCategory(memberCategory)
-                .repeatWeek(requestDto.getRoutineWeek() == null ? null : new HashSet<>())
+                .repeatWeek(new HashSet<>())
+                .build();
+
+    }
+
+    static public Schedule groupScheduleToEntity(
+            GroupScheduleRequestDto.GroupScheduleAddRequestDto requestDto,
+            Group group, ScheduleType scheduleType) {
+        return Schedule.builder()
+                .date(requestDto.getDate())
+                .time(requestDto.getTime())
+                .alarmTime(requestDto.getAlarmTime())
+                .content(requestDto.getContent())
+                .scheduleType(scheduleType)
+                .group(group)
+                .repeatWeek(new HashSet<>())
                 .build();
 
     }
@@ -108,33 +123,6 @@ public class ScheduleConverter {
         return ScheduleResponseDto.ScheduleCompletionRateByMonthDto.builder()
                 .date(date)
                 .rate(rate)
-                .build();
-    }
-
-    static public Schedule groupRoutineToEntity(
-            Group group,
-            ScheduleRequestDto.GroupRoutineRequestDto requestDto,
-            LocalDate date) {
-        return Schedule.builder()
-                .date(date)
-                .time(requestDto.getTime())
-                .alarmTime(requestDto.getAlarmTime())
-                .content(requestDto.getContent())
-                .scheduleType(ScheduleType.ROUTINE)
-                .group(group)
-                .build();
-    }
-
-    static public Schedule groupTodoToEntity(
-            ScheduleRequestDto.GroupTodoRequestDto requestDto,
-            Group group) {
-        return Schedule.builder()
-                .date(requestDto.getDate())
-                .time(requestDto.getTime())
-                .alarmTime(requestDto.getAlarmTime())
-                .content(requestDto.getContent())
-                .scheduleType(ScheduleType.TO_DO)
-                .group(group)
                 .build();
     }
 

@@ -52,9 +52,11 @@ public enum ErrorStatus implements BaseErrorCode {
 
     // 루틴
     ROUTINE_NOT_FOUND(HttpStatus.BAD_REQUEST, "ROUTINE4001", "루틴을 찾을 수 없습니다."),
+    SCHEDULE_TYPE_NOT_ROUTINE(HttpStatus.BAD_REQUEST, "ROUTINE4002", "스케줄 타입이 루틴이 아닙니다."),
 
     // 투두
     TODO_NOT_FOUND(HttpStatus.BAD_REQUEST, "TODO4001", "투두를 찾을 수 없습니다."),
+    SCHEDULE_TYPE_NOT_TODO(HttpStatus.BAD_REQUEST, "TODO4001", "스케줄 타입이 투두가 아닙니다."),
 
 
     ;
