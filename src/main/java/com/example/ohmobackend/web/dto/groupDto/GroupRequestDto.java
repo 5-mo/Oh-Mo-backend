@@ -11,7 +11,6 @@ public class GroupRequestDto {
     @AllArgsConstructor
     public static class AddGroupRequestDto {
         private String groupName;
-        private String groupCode;
         private String groupPassword;
         private String groupColor;
         private int numPeople;
