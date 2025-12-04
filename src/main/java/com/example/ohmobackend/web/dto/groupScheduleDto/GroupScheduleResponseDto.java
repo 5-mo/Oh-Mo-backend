@@ -14,8 +14,17 @@ public class GroupScheduleResponseDto {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class ScheduleAssigneeDto{
-        private Long scheduleId;
+    public static class TodoScheduleAssigneeDto {
+        private Long todoId;
+        private List<GroupResponseDto.MemberDto> memberDtoList;
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class RoutineScheduleAssigneeDto {
+        private Long routineId;
         private List<GroupResponseDto.MemberDto> memberDtoList;
     }
 }

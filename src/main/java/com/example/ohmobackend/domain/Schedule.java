@@ -60,9 +60,6 @@ public class Schedule extends BaseEntity {
     private Member member;
 
     @OneToMany(mappedBy = "schedule", cascade = CascadeType.ALL)
-    private List<ScheduleAssignee> scheduleAssigneeList = new ArrayList<>();
-
-    @OneToMany(mappedBy = "schedule", cascade = CascadeType.ALL)
     private List<Routine> routineList = new ArrayList<>();
 
     @OneToOne(mappedBy = "schedule", cascade = CascadeType.ALL)

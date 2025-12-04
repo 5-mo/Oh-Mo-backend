@@ -35,8 +35,7 @@ public class GroupScheduleCommandServiceImpl {
                 .orElseThrow(() -> new ScheduleHandler(ErrorStatus.GROUP_NOT_FOUND));
 
         // 루틴 추가할 권한 없음(해당 그룹의 멤버가 아님)
-        memberGroupRepository.findByGroupAndMember(group, member)
-                .orElseThrow(() -> new ScheduleHandler(ErrorStatus.MEMBER_GROUP_NOT_FOUND));
+        validateMemberGroup(member, group);
 
         Schedule schedule = ScheduleConverter.groupScheduleToEntity(requestDto, group, ScheduleType.ROUTINE);
 
@@ -61,8 +60,7 @@ public class GroupScheduleCommandServiceImpl {
                 .orElseThrow(() -> new ScheduleHandler(ErrorStatus.GROUP_NOT_FOUND));
 
         // 루틴 추가할 권한 없음(해당 그룹의 멤버가 아님)
-        memberGroupRepository.findByGroupAndMember(group, member)
-                .orElseThrow(() -> new ScheduleHandler(ErrorStatus.MEMBER_GROUP_NOT_FOUND));
+        validateMemberGroup(member, group);
 
 
         Schedule schedule = ScheduleConverter.groupScheduleToEntity(requestDto, group, ScheduleType.TO_DO);
@@ -70,32 +68,64 @@ public class GroupScheduleCommandServiceImpl {
         todoRepository.save(TodoConverter.toEntity(schedule));
     }
 
-    public void addScheduleAssignee(GroupScheduleRequestDto.ScheduleAssigneeRequestDto requestDto, Member member) {
-        Schedule schedule = scheduleRepository.findById(requestDto.getScheduleId())
+    public void addTodoScheduleAssignee(GroupScheduleRequestDto.TodoScheduleAssigneeRequestDto requestDto, Member member) {
+        Todo todo = todoRepository.findById(requestDto.getTodoId())
                 .orElseThrow(() -> new ScheduleHandler(ErrorStatus.SCHEDULE_NOT_FOUND));
 
         // 그룹의 스케줄이 아닐 경우
-        if(schedule.getGroup() == null) {
-            throw new ScheduleHandler(ErrorStatus.SCHEDULE_NOT_GROUP_TYPE);
-        }
+        Group group = todo.getSchedule().getGroup();
+        validateScheduleHasGroup(group);
 
         // 그룹의 멤버가 아닐 경우
-        memberGroupRepository.findByGroupAndMember(schedule.getGroup(), member)
-                .orElseThrow(() -> new ScheduleHandler(ErrorStatus.MEMBER_GROUP_NOT_FOUND));
+        validateMemberGroup(member, group);
 
         List<ScheduleAssignee> assignees = requestDto.getMemberIdList().stream()
                 .map(memberId -> {
                     Member targetMember = memberRepository.findById(memberId)
                             .orElseThrow(() -> new ScheduleHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
-                    memberGroupRepository.findByGroupAndMember(schedule.getGroup(), targetMember)
-                            .orElseThrow(() -> new ScheduleHandler(ErrorStatus.MEMBER_GROUP_NOT_FOUND));
+                    validateMemberGroup(targetMember, group);
 
-                    return ScheduleConverter.scheduleAssigneeToEntity(targetMember, schedule);
+                    return ScheduleConverter.todoScheduleAssigneeToEntity(targetMember, todo);
                 })
                 .collect(Collectors.toList());
 
+        scheduleAssigneeRepository.saveAll(assignees);
+    }
+
+    public void addRoutineScheduleAssignee(GroupScheduleRequestDto.RoutineScheduleAssigneeRequestDto requestDto, Member member) {
+        Routine routine = routineRepository.findById(requestDto.getRoutineId())
+                .orElseThrow(() -> new ScheduleHandler(ErrorStatus.SCHEDULE_NOT_FOUND));
+
+        // 그룹의 스케줄이 아닐 경우
+        Group group = routine.getSchedule().getGroup();
+        validateScheduleHasGroup(group);
+
+        // 그룹의 멤버가 아닐 경우
+        validateMemberGroup(member, group);
+
+        List<ScheduleAssignee> assignees = requestDto.getMemberIdList().stream()
+                .map(memberId -> {
+                    Member targetMember = memberRepository.findById(memberId)
+                            .orElseThrow(() -> new ScheduleHandler(ErrorStatus.MEMBER_NOT_FOUND));
+
+                    validateMemberGroup(targetMember, group);
+
+                    return ScheduleConverter.routineScheduleAssigneeToEntity(targetMember, routine);
+                })
+                .collect(Collectors.toList());
 
         scheduleAssigneeRepository.saveAll(assignees);
+    }
+
+    private void validateMemberGroup(Member member, Group group) {
+        memberGroupRepository.findByGroupAndMember(group, member)
+                .orElseThrow(() -> new ScheduleHandler(ErrorStatus.MEMBER_GROUP_NOT_FOUND));
+    }
+
+    private static void validateScheduleHasGroup(Group group) {
+        if(group == null) {
+            throw new ScheduleHandler(ErrorStatus.SCHEDULE_NOT_GROUP_TYPE);
+        }
     }
 }

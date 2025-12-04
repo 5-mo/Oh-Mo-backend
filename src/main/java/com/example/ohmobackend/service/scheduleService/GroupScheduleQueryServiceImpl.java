@@ -27,6 +27,7 @@ public class GroupScheduleQueryServiceImpl implements GroupScheduleQueryService 
 
     final ScheduleRepository scheduleRepository;
     final RoutineRepository routineRepository;
+    final TodoRepository todoRepository;
     final GroupRepository groupRepository;
     final MemberGroupRepository memberGroupRepository;
     final ScheduleAssigneeRepository scheduleAssigneeRepository;
@@ -58,10 +59,10 @@ public class GroupScheduleQueryServiceImpl implements GroupScheduleQueryService 
     }
 
     @Override
-    public GroupScheduleResponseDto.ScheduleAssigneeDto getScheduleAssignee(Long scheduleId, Member member) {
-        Schedule schedule = scheduleRepository.findById(scheduleId)
+    public GroupScheduleResponseDto.TodoScheduleAssigneeDto getTodoScheduleAssignee(Long todoId, Member member) {
+        Todo todo = todoRepository.findById(todoId)
                 .orElseThrow(() -> new ScheduleHandler(ErrorStatus.SCHEDULE_NOT_FOUND));
-        Group group = schedule.getGroup();
+        Group group = todo.getSchedule().getGroup();
 
         // 그룹의 일정이 아닌 경우
         if (group == null) {
@@ -69,14 +70,37 @@ public class GroupScheduleQueryServiceImpl implements GroupScheduleQueryService 
         }
 
         // 해당 그룹의 멤버가 아님
-        memberGroupRepository.findByGroupAndMember(schedule.getGroup(), member)
+        memberGroupRepository.findByGroupAndMember(group, member)
                 .orElseThrow(() -> new ScheduleHandler(ErrorStatus.MEMBER_GROUP_NOT_FOUND));
 
-        List<ScheduleAssignee> scheduleAssignees = scheduleAssigneeRepository.findAllBySchedule(schedule);
+        List<ScheduleAssignee> scheduleAssignees = scheduleAssigneeRepository.findAllByTodo(todo);
         List<MemberGroup> memberGroups = scheduleAssignees.stream().map(
                 scheduleAssignee -> memberGroupRepository.findByMemberAndGroup(scheduleAssignee.getMember(), group)
         ).collect(Collectors.toList());
 
-        return GroupScheduleConverter.toScheduleAssigneeDto(schedule, memberGroups);
+        return GroupScheduleConverter.toTodoScheduleAssigneeDto(todo, memberGroups);
+    }
+
+    @Override
+    public GroupScheduleResponseDto.RoutineScheduleAssigneeDto getRoutineScheduleAssignee(Long routineId, Member member) {
+        Routine routine = routineRepository.findById(routineId)
+                .orElseThrow(() -> new ScheduleHandler(ErrorStatus.SCHEDULE_NOT_FOUND));
+        Group group = routine.getSchedule().getGroup();
+
+        // 그룹의 일정이 아닌 경우
+        if (group == null) {
+            new ScheduleHandler(ErrorStatus.SCHEDULE_NOT_GROUP_TYPE);
+        }
+
+        // 해당 그룹의 멤버가 아님
+        memberGroupRepository.findByGroupAndMember(group, member)
+                .orElseThrow(() -> new ScheduleHandler(ErrorStatus.MEMBER_GROUP_NOT_FOUND));
+
+        List<ScheduleAssignee> scheduleAssignees = scheduleAssigneeRepository.findAllByRoutine(routine);
+        List<MemberGroup> memberGroups = scheduleAssignees.stream().map(
+                scheduleAssignee -> memberGroupRepository.findByMemberAndGroup(scheduleAssignee.getMember(), group)
+        ).collect(Collectors.toList());
+
+        return GroupScheduleConverter.toRoutineScheduleAssigneeDto(routine, memberGroups);
     }
 }

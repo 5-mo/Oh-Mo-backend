@@ -29,8 +29,14 @@ public class GroupScheduleRequestDto {
     }
 
     @Getter
-    public static class ScheduleAssigneeRequestDto {
-        private Long scheduleId;
+    public static class TodoScheduleAssigneeRequestDto {
+        private Long todoId;
+        private List<Long> memberIdList;
+    }
+
+    @Getter
+    public static class RoutineScheduleAssigneeRequestDto {
+        private Long routineId;
         private List<Long> memberIdList;
     }
 }
