@@ -48,7 +48,7 @@ public class GroupCommandServiceImpl implements GroupCommandService {
     }
 
     private static void validateGroupPassword(String password, Group group) {
-        if (password.equals(group.getGroupPassword())) {
+        if (!password.equals(group.getGroupPassword())) {
             throw new GroupHandler(ErrorStatus.GROUP_INVALID_PASSWORD);
         }
     }
