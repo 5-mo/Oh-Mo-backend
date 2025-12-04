@@ -16,4 +16,14 @@ public class NoticeRequestDto {
         private LocalDate date;
         private Long groupId;
     }
+
+    @Getter
+    @Setter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class PatchNoticeDto {
+        private String notice;
+        private LocalDate date;
+    }
 }

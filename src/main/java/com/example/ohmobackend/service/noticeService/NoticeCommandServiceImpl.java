@@ -35,6 +35,26 @@ public class NoticeCommandServiceImpl implements NoticeCommandService {
         return noticeDto;
     }
 
+    public NoticeResponseDto.NoticeDto pathNotice(Long noticeId, NoticeRequestDto.PatchNoticeDto requestDto, Member member) {
+        Notice notice = noticeRepository.findById(noticeId)
+                .orElseThrow(() -> new GroupHandler(ErrorStatus.GROUP_NOT_FOUND));
+
+        validateExistMember(member, notice.getGroup());
+
+        if (requestDto.getNotice() != null) {
+            notice.updateNotice(requestDto.getNotice());
+        }
+
+        if (requestDto.getDate() != null) {
+            notice.updateDate(requestDto.getDate());
+        }
+
+        noticeRepository.save(notice);
+
+        NoticeResponseDto.NoticeDto noticeDto = NoticeConverter.toNoticeDto(notice);
+        return noticeDto;
+    }
+
     private void validateExistMember(Member member, Group group) {
         if (!memberGroupRepository.findByGroupAndMember(group, member).isEmpty()) {
             throw new GroupHandler(ErrorStatus.GROUP_EXISTS_MEMBER);

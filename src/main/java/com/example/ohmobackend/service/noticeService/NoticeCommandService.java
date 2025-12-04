@@ -7,4 +7,6 @@ import com.example.ohmobackend.web.dto.noticeDto.NoticeResponseDto;
 public interface NoticeCommandService {
 
     public NoticeResponseDto.NoticeDto addNotice(NoticeRequestDto.AddNoticeDto requestDto, Member member);
+
+    public NoticeResponseDto.NoticeDto pathNotice(Long noticeId, NoticeRequestDto.PatchNoticeDto requestDto, Member member);
 }
