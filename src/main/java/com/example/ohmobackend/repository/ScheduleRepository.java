@@ -1,5 +1,6 @@
 package com.example.ohmobackend.repository;
 
+import com.example.ohmobackend.domain.Group;
 import com.example.ohmobackend.domain.Member;
 import com.example.ohmobackend.domain.MemberCategory;
 import com.example.ohmobackend.domain.Schedule;
@@ -26,12 +27,6 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Long> {
             @Param("endDate") LocalDate endDate
     );
 
-//    @Query("SELECT s FROM Schedule s WHERE s.memberCategory = :memberCategory AND s.date = :date AND s.status = true")
-//    public List<Schedule> findByMemberCategoryAndDateAndStatusIsTrue(
-//            @Param("memberCategory") MemberCategory memberCategory,
-//            @Param("date") LocalDate date
-//    );
-
     @Query("SELECT s FROM Schedule s WHERE s.memberCategory = :memberCategory AND s.content LIKE %:keyword%")
     public List<Schedule> findByMemberCategoryAndTitleContaining(
             @Param("memberCategory") MemberCategory memberCategory,
@@ -53,6 +48,15 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Long> {
             "AND s.scheduleType = :scheduleType")
     List<Schedule> findSchedulesByMemberAndDateAndScheduleType(
             @Param("member") Member member,
+            @Param("date") LocalDate date,
+            @Param("scheduleType") ScheduleType scheduleType);
+
+    @Query("SELECT s FROM Schedule s " +
+            "WHERE s.group = :group " +
+            "AND s.date = :date " +
+            "AND s.scheduleType = :scheduleType")
+    List<Schedule> findSchedulesByGroupAndDateAndScheduleType(
+            @Param("group") Group group,
             @Param("date") LocalDate date,
             @Param("scheduleType") ScheduleType scheduleType);
 

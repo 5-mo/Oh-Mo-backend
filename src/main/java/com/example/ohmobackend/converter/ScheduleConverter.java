@@ -11,6 +11,7 @@ import com.example.ohmobackend.web.dto.scheduleDto.ScheduleResponseDto;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class ScheduleConverter {
@@ -62,7 +63,9 @@ public class ScheduleConverter {
                 .alarmTime(schedule.getAlarmTime())
                 .content(schedule.getContent())
                 .scheduleType(schedule.getScheduleType())
-                .category(MemberCategoryConverter.toAddCategoryResponseDto(schedule.getMemberCategory()))
+                .category(Optional.ofNullable(schedule.getMemberCategory())
+                        .map(MemberCategoryConverter::toAddCategoryResponseDto)
+                        .orElse(null))
                 .todo(TodoConverter.toTodoDto(todo))
                 .build();
     }
@@ -96,7 +99,9 @@ public class ScheduleConverter {
                 .alarmTime(schedule.getAlarmTime())
                 .content(schedule.getContent())
                 .scheduleType(schedule.getScheduleType())
-                .category(MemberCategoryConverter.toAddCategoryResponseDto(schedule.getMemberCategory()))
+                .category(Optional.ofNullable(schedule.getMemberCategory())
+                        .map(MemberCategoryConverter::toAddCategoryResponseDto)
+                        .orElse(null))
                 .routineByDateList(routineDtoList)
                 .build();
     }

@@ -5,14 +5,15 @@ import com.example.ohmobackend.apiPayload.code.status.SuccessStatus;
 import com.example.ohmobackend.domain.Member;
 import com.example.ohmobackend.security.handler.AuthUser;
 import com.example.ohmobackend.service.scheduleService.GroupScheduleCommandServiceImpl;
+import com.example.ohmobackend.service.scheduleService.GroupScheduleQueryService;
 import com.example.ohmobackend.web.dto.groupScheduleDto.GroupScheduleRequestDto;
+import com.example.ohmobackend.web.dto.scheduleDto.ScheduleResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDate;
 
 @RequiredArgsConstructor
 @RestController
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class GroupScheduleController {
 
     final GroupScheduleCommandServiceImpl groupScheduleCommandService;
+    private final GroupScheduleQueryService groupScheduleQueryService;
 
     @PostMapping("/routine")
     @Operation(summary = "그룹 루틴 등록 API", description = "그룹 루틴 등록 API 입니다.")
@@ -41,5 +43,12 @@ public class GroupScheduleController {
     public ApiResponse<Object> addScheduleAssignee(@RequestBody GroupScheduleRequestDto.ScheduleAssigneeDto request, @AuthUser Member member) {
         groupScheduleCommandService.addScheduleAssignee(request, member);
         return ApiResponse.onSuccess(SuccessStatus.SCHEDULE_ASSIGNEE_OK, null);
+    }
+
+    @GetMapping("/by-date")
+    @Operation(summary = "그룹 일별 일정 조회 API", description = "그룹 일별 일정 조회 API 입니다.")
+    public ApiResponse<ScheduleResponseDto.ScheduleDto> getScheduleList(@RequestParam(name = "groupId") Long groupId, @RequestParam(name = "date") LocalDate date, @AuthUser Member member) {
+        ScheduleResponseDto.ScheduleDto scheduleDtoList = groupScheduleQueryService.getScheduleList(groupId, date, member);
+        return ApiResponse.onSuccess(SuccessStatus.SCHEDULE_OK, scheduleDtoList);
     }
 }
