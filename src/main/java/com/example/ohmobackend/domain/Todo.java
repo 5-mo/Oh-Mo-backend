@@ -6,6 +6,9 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.DynamicUpdate;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 @Entity
 @Getter
@@ -26,6 +29,9 @@ public class Todo extends BaseEntity {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "schedule_id")
     private Schedule schedule;
+
+    @OneToMany(mappedBy = "todo", cascade = CascadeType.ALL)
+    private List<ScheduleAssignee> scheduleAssigneeList = new ArrayList<>();
 
     public void updateStatus() {
         this.status = !this.status;
