@@ -65,7 +65,7 @@ public class GroupScheduleCommandServiceImpl {
                 .orElseThrow(() -> new ScheduleHandler(ErrorStatus.MEMBER_GROUP_NOT_FOUND));
 
 
-        Schedule schedule = ScheduleConverter.groupScheduleToEntity(requestDto, group, ScheduleType.ROUTINE);
+        Schedule schedule = ScheduleConverter.groupScheduleToEntity(requestDto, group, ScheduleType.TO_DO);
         scheduleRepository.save(schedule);
         todoRepository.save(TodoConverter.toEntity(schedule));
     }
