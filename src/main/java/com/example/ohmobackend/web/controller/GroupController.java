@@ -56,20 +56,4 @@ public class GroupController {
         List<GroupResponseDto.GroupDto> responseDto = groupQueryService.getGroups(member);
         return ApiResponse.onSuccess(SuccessStatus.GROUP_FIND_OK, responseDto);
     }
-
-    @PostMapping("/notice")
-    @Operation(summary = "그룹 공지사항 등록 API", description = "그룹 공지사항 등록 API 입니다.")
-    public ApiResponse<NoticeResponseDto.NoticeDto> addNotice(
-            @RequestBody NoticeRequestDto.AddNoticeDto request, @AuthUser Member member) {
-        NoticeResponseDto.NoticeDto responseDto = noticeCommandService.addNotice(request, member);
-        return ApiResponse.onSuccess(SuccessStatus.GROUP_NOTICE_REGISTER_OK, responseDto);
-    }
-
-    @PatchMapping("/notice")
-    @Operation(summary = "그룹 공지사항 날짜 수정 API", description = "그룹 공지사항 날짜 수정 API 입니다.")
-    public ApiResponse<NoticeResponseDto.NoticeDto> patchNotice(
-            @RequestParam(name = "noticeId") Long noticeId, @RequestBody NoticeRequestDto.PatchNoticeDto request, @AuthUser Member member) {
-        NoticeResponseDto.NoticeDto responseDto = noticeCommandService.pathNotice(noticeId, request, member);
-        return ApiResponse.onSuccess(SuccessStatus.GROUP_NOTICE_MODIFY_OK, responseDto);
-    }
 }
