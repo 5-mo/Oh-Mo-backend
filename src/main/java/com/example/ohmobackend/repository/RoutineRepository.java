@@ -13,7 +13,7 @@ public interface RoutineRepository extends JpaRepository<Routine, Long> {
 
     @Query("SELECT DISTINCT r FROM Routine r " +
             "JOIN FETCH r.schedule s " +
-            "JOIN s.memberCategory mc " +
+            "JOIN FETCH s.memberCategory mc " +
             "WHERE r.date = :date " +
             "AND mc.member = :member")
     List<Routine> findRoutinesWithScheduleByMemberAndDate(

@@ -47,7 +47,7 @@ public class ScheduleCommandServiceImpl implements ScheduleCommandService {
         }
 
         if(memberCategory.getScheduleType() != ScheduleType.ROUTINE) {
-            throw new MemberCategoryHandler(ErrorStatus.MEMBER_CATEGORY_NOT_TO_DO_TYPE);
+            throw new MemberCategoryHandler(ErrorStatus.MEMBER_CATEGORY_NOT_ROUTINE_TYPE);
         }
 
         Schedule schedule = ScheduleConverter.toEntity(requestDto, memberCategory);

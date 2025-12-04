@@ -39,8 +39,13 @@ public class ScheduleQueryServiceImpl implements ScheduleQueryService {
 
         // 루틴 찾기
         List<Routine> routineList = routineRepository.findRoutinesWithScheduleByMemberAndDate(member, date);
-        List<ScheduleResponseDto.ScheduleWithRoutineListDto> scheduleRoutineList = routineList.stream()
-                .map(routine -> ScheduleConverter.toScheduleWithRoutineListDto(routine.getSchedule(), routineList))
+
+        Map<Schedule, List<Routine>> scheduleToRoutines = routineList.stream()
+                .filter(r -> r.getSchedule().getScheduleType() == ScheduleType.ROUTINE)
+                .collect(Collectors.groupingBy(Routine::getSchedule));
+
+        List<ScheduleResponseDto.ScheduleWithRoutineListDto> scheduleRoutineList = scheduleToRoutines.entrySet().stream()
+                .map(entry -> ScheduleConverter.toScheduleWithRoutineListDto(entry.getKey(), entry.getValue()))
                 .collect(Collectors.toList());
 
         return ScheduleConverter.toScheduleDto(scheduleTodoList, scheduleRoutineList);
