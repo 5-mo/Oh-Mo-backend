@@ -1,11 +1,15 @@
 package com.example.ohmobackend.converter;
 
-import com.example.ohmobackend.domain.Diary;
 import com.example.ohmobackend.domain.Group;
+import com.example.ohmobackend.domain.Member;
+import com.example.ohmobackend.domain.MemberGroup;
 import com.example.ohmobackend.web.dto.groupDto.GroupRequestDto;
 import com.example.ohmobackend.web.dto.groupDto.GroupResponseDto;
+import com.example.ohmobackend.web.dto.memberDto.MemberResponseDto;
 
 import java.security.SecureRandom;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class GroupConverter {
 
@@ -33,6 +37,21 @@ public class GroupConverter {
                 .build();
     }
 
+    public static GroupResponseDto.GroupMembersDto toGroupMembersDto(Group group, List<MemberGroup> memberGroupList) {
+        List<GroupResponseDto.MemberDto> memberDtoList = memberGroupList.stream()
+                .map(memberGroup -> toMemberDto(memberGroup.getMember(), memberGroup.getNickname()))
+                .collect(Collectors.toList());
+
+        return GroupResponseDto.GroupMembersDto.builder()
+                .groupId(group.getId())
+                .groupName(group.getGroupName())
+                .groupCode(group.getGroupCode())
+                .groupColor(group.getGroupColor())
+                .numPeople(group.getNumPeople())
+                .memberDtoList(memberDtoList)
+                .build();
+    }
+
     private static String generateGroupCode() {
         StringBuilder sb = new StringBuilder(GROUP_CODE_LENGTH);
         for (int i = 0; i < GROUP_CODE_LENGTH; i++) {
@@ -40,5 +59,13 @@ public class GroupConverter {
             sb.append(GROUP_CODE_CHARSET.charAt(index));
         }
         return sb.toString();
+    }
+
+    public static GroupResponseDto.MemberDto toMemberDto(Member member, String groupNickName) {
+        return GroupResponseDto.MemberDto.builder()
+                .email(member.getEmail())
+                .nickname(member.getNickname())
+                .groupNickname(groupNickName)
+                .build();
     }
 }
