@@ -88,7 +88,7 @@ public class ScheduleQueryServiceImpl implements ScheduleQueryService {
                 .collect(Collectors.groupingBy(Schedule::getDate));
 
         // 루틴 찾기
-        List<Routine> routineList = routineRepository.findRoutinesByMemberAndMonth(member, firstDayOfMonth, lastDayOfMonth);
+        List<Routine> routineList = routineRepository.findRoutinesByMemberAndDate(member, firstDayOfMonth, lastDayOfMonth);
         routineList.forEach(routine -> {
             LocalDate date = routine.getDate();
             Schedule schedule = routine.getSchedule();
@@ -145,16 +145,19 @@ public class ScheduleQueryServiceImpl implements ScheduleQueryService {
 
     // 데이 로그 화면에서 루틴 완료 상태 조회
     @Override
-    public List<ScheduleResponseDto.RoutineStatusByWeekDto> getRoutineStatusList(LocalDate startDate, LocalDate endDate, Member member) {
+    public List<ScheduleResponseDto.ScheduleWithRoutineListDto> getRoutineStatusList(LocalDate startDate, LocalDate endDate, Member member) {
         // 루틴 찾기
-        List<Routine> routineList = routineRepository.findRoutinesByMemberAndMonth(member, startDate, endDate);
+        List<Routine> routineList = routineRepository.findRoutinesByMemberAndDate(member, startDate, endDate);
 
-        Map<Schedule, List<Routine>> groupedBySchedule = routineList.stream()
+        Map<Schedule, List<Routine>> scheduleToRoutines = routineList.stream()
+                .filter(r -> r.getSchedule().getScheduleType() == ScheduleType.ROUTINE)
                 .collect(Collectors.groupingBy(Routine::getSchedule));
 
-        return groupedBySchedule.entrySet().stream()
-                .map(entry -> ScheduleConverter.toRoutineStatusByContentDto(entry.getValue(), entry.getKey()))
+        List<ScheduleResponseDto.ScheduleWithRoutineListDto> scheduleRoutineList = scheduleToRoutines.entrySet().stream()
+                .map(entry -> ScheduleConverter.toScheduleWithRoutineListDto(entry.getKey(), entry.getValue()))
                 .collect(Collectors.toList());
+
+        return scheduleRoutineList;
     }
 
     // 데이로그 completion rate 조회
@@ -176,7 +179,7 @@ public class ScheduleQueryServiceImpl implements ScheduleQueryService {
                 .collect(Collectors.toList());
 
         // 월별 Routine
-        List<Routine> routineList = routineRepository.findRoutinesByMemberAndMonth(member, firstDayOfMonth, lastDayOfMonth);
+        List<Routine> routineList = routineRepository.findRoutinesByMemberAndDate(member, firstDayOfMonth, lastDayOfMonth);
 
         // 날짜별 Todo + Routine 모두 합치기
         Map<LocalDate, Map<String, List<?>>> dateToItemsMap = new HashMap<>();

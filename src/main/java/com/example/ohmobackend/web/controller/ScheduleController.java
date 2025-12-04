@@ -88,8 +88,8 @@ public class ScheduleController {
 
     @GetMapping("routine/status")
     @Operation(summary = "Day Log 주차별 루틴 상태 조회 API", description = "Day Log 주차별 루틴 상태 조회 API 입니다.")
-    public ApiResponse<List<ScheduleResponseDto.RoutineStatusByWeekDto>> getRoutineStatus(@RequestParam(name = "start-date")LocalDate startDate, @RequestParam(name = "end-date")LocalDate endDate, @AuthUser Member member) {
-        List<ScheduleResponseDto.RoutineStatusByWeekDto> routineStatusByContentList = scheduleQueryService.getRoutineStatusList(startDate, endDate, member);
+    public ApiResponse<List<ScheduleResponseDto.ScheduleWithRoutineListDto>> getRoutineStatus(@RequestParam(name = "start-date")LocalDate startDate, @RequestParam(name = "end-date")LocalDate endDate, @AuthUser Member member) {
+        List<ScheduleResponseDto.ScheduleWithRoutineListDto> routineStatusByContentList = scheduleQueryService.getRoutineStatusList(startDate, endDate, member);
         return ApiResponse.onSuccess(SuccessStatus.SCHEDULE_ROUTINE_STATUS_OK, routineStatusByContentList);
     }
 

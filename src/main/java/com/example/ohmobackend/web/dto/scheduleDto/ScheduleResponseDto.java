@@ -67,7 +67,7 @@ public class ScheduleResponseDto {
         private String content;
         private ScheduleType scheduleType;
         private MemberCategoryResponseDto.CategoryResponseDto category;
-        private List<RoutineResponseDto.routineDto> routineList;
+        private List<RoutineResponseDto.routineDto> routineByDateList;
     }
 
     @Getter
@@ -77,15 +77,6 @@ public class ScheduleResponseDto {
     public static class ScheduleByMonthDto {
         private LocalDate date;
         private List<MemberCategoryResponseDto.CategoryResponseDto> categoryList;
-    }
-
-    @Getter
-    @Builder
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class RoutineStatusByWeekDto {
-        private String content;
-        private List<RoutineResponseDto.routineDto> routineDtoList;
     }
 
     @Getter
