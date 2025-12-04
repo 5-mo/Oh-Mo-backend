@@ -7,9 +7,9 @@ import com.example.ohmobackend.domain.enums.GroupRole;
 
 public class MemberGroupConverter {
 
-    public static MemberGroup managerToMemberGroupEntity(Member member, Group group, String nickname) {
+    public static MemberGroup toMemberGroupEntity(Member member, Group group, String nickname, GroupRole groupRole) {
         return MemberGroup.builder()
-                .role(GroupRole.MANAGER)
+                .role(groupRole)
                 .nickname(nickname)
                 .group(group)
                 .member(member)

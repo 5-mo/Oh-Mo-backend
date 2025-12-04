@@ -7,6 +7,7 @@ import com.example.ohmobackend.converter.MemberGroupConverter;
 import com.example.ohmobackend.domain.Group;
 import com.example.ohmobackend.domain.Member;
 import com.example.ohmobackend.domain.MemberGroup;
+import com.example.ohmobackend.domain.enums.GroupRole;
 import com.example.ohmobackend.repository.GroupRepository;
 import com.example.ohmobackend.repository.MemberGroupRepository;
 import com.example.ohmobackend.web.dto.groupDto.GroupRequestDto;
@@ -28,7 +29,8 @@ public class GroupCommandServiceImpl implements GroupCommandService {
         Group group = GroupConverter.toGroupEntity(requestDto);
         Group newGroup = groupRepository.save(group);
 
-        MemberGroup memberGroup = MemberGroupConverter.managerToMemberGroupEntity(member, group, requestDto.getNickname());
+        MemberGroup memberGroup = MemberGroupConverter.toMemberGroupEntity(member, group, requestDto.getNickname(), GroupRole.MANAGER
+        );
         memberGroupRepository.save(memberGroup);
         return GroupConverter.toGroupDto(newGroup);
     }
@@ -43,7 +45,7 @@ public class GroupCommandServiceImpl implements GroupCommandService {
         validateDuplicateNickname(group, requestDto.getNickname());
         validateGroupCount(group);
 
-        MemberGroup memberGroup = MemberGroupConverter.managerToMemberGroupEntity(member, group, requestDto.getNickname());
+        MemberGroup memberGroup = MemberGroupConverter.toMemberGroupEntity(member, group, requestDto.getNickname(), GroupRole.MANAGER);
         memberGroupRepository.save(memberGroup);
         return GroupConverter.toGroupDto(group);
     }
