@@ -3,15 +3,13 @@ package com.example.ohmobackend.service.scheduleService;
 
 import com.example.ohmobackend.apiPayload.code.status.ErrorStatus;
 import com.example.ohmobackend.apiPayload.exception.handler.GroupHandler;
+import com.example.ohmobackend.apiPayload.exception.handler.ScheduleHandler;
+import com.example.ohmobackend.converter.GroupScheduleConverter;
 import com.example.ohmobackend.converter.ScheduleConverter;
-import com.example.ohmobackend.domain.Group;
-import com.example.ohmobackend.domain.Member;
-import com.example.ohmobackend.domain.Routine;
-import com.example.ohmobackend.domain.Schedule;
+import com.example.ohmobackend.domain.*;
 import com.example.ohmobackend.domain.enums.ScheduleType;
-import com.example.ohmobackend.repository.GroupRepository;
-import com.example.ohmobackend.repository.RoutineRepository;
-import com.example.ohmobackend.repository.ScheduleRepository;
+import com.example.ohmobackend.repository.*;
+import com.example.ohmobackend.web.dto.groupScheduleDto.GroupScheduleResponseDto;
 import com.example.ohmobackend.web.dto.scheduleDto.ScheduleResponseDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,6 +28,8 @@ public class GroupScheduleQueryServiceImpl implements GroupScheduleQueryService 
     final ScheduleRepository scheduleRepository;
     final RoutineRepository routineRepository;
     final GroupRepository groupRepository;
+    final MemberGroupRepository memberGroupRepository;
+    final ScheduleAssigneeRepository scheduleAssigneeRepository;
 
     @Override
     public ScheduleResponseDto.ScheduleDto getScheduleList(Long groupId, LocalDate date, Member member) {
@@ -55,5 +55,28 @@ public class GroupScheduleQueryServiceImpl implements GroupScheduleQueryService 
 
         return ScheduleConverter.toScheduleDto(scheduleTodoList, scheduleRoutineList);
 
+    }
+
+    @Override
+    public GroupScheduleResponseDto.ScheduleAssigneeDto getScheduleAssignee(Long scheduleId, Member member) {
+        Schedule schedule = scheduleRepository.findById(scheduleId)
+                .orElseThrow(() -> new ScheduleHandler(ErrorStatus.SCHEDULE_NOT_FOUND));
+        Group group = schedule.getGroup();
+
+        // 그룹의 일정이 아닌 경우
+        if (group == null) {
+            new ScheduleHandler(ErrorStatus.SCHEDULE_NOT_GROUP_TYPE);
+        }
+
+        // 해당 그룹의 멤버가 아님
+        memberGroupRepository.findByGroupAndMember(schedule.getGroup(), member)
+                .orElseThrow(() -> new ScheduleHandler(ErrorStatus.MEMBER_GROUP_NOT_FOUND));
+
+        List<ScheduleAssignee> scheduleAssignees = scheduleAssigneeRepository.findAllBySchedule(schedule);
+        List<MemberGroup> memberGroups = scheduleAssignees.stream().map(
+                scheduleAssignee -> memberGroupRepository.findByMemberAndGroup(scheduleAssignee.getMember(), group)
+        ).collect(Collectors.toList());
+
+        return GroupScheduleConverter.toScheduleAssigneeDto(schedule, memberGroups);
     }
 }

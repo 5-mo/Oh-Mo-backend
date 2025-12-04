@@ -7,6 +7,7 @@ import com.example.ohmobackend.security.handler.AuthUser;
 import com.example.ohmobackend.service.scheduleService.GroupScheduleCommandServiceImpl;
 import com.example.ohmobackend.service.scheduleService.GroupScheduleQueryService;
 import com.example.ohmobackend.web.dto.groupScheduleDto.GroupScheduleRequestDto;
+import com.example.ohmobackend.web.dto.groupScheduleDto.GroupScheduleResponseDto;
 import com.example.ohmobackend.web.dto.scheduleDto.ScheduleResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
@@ -40,7 +41,7 @@ public class GroupScheduleController {
 
     @PostMapping("/assignee")
     @Operation(summary = "그룹 일정 담당자 등록 API", description = "그룹 일정 담당자 등록 API 입니다.")
-    public ApiResponse<Object> addScheduleAssignee(@RequestBody GroupScheduleRequestDto.ScheduleAssigneeDto request, @AuthUser Member member) {
+    public ApiResponse<Object> addScheduleAssignee(@RequestBody GroupScheduleRequestDto.ScheduleAssigneeRequestDto request, @AuthUser Member member) {
         groupScheduleCommandService.addScheduleAssignee(request, member);
         return ApiResponse.onSuccess(SuccessStatus.SCHEDULE_ASSIGNEE_OK, null);
     }
@@ -50,5 +51,12 @@ public class GroupScheduleController {
     public ApiResponse<ScheduleResponseDto.ScheduleDto> getScheduleList(@RequestParam(name = "groupId") Long groupId, @RequestParam(name = "date") LocalDate date, @AuthUser Member member) {
         ScheduleResponseDto.ScheduleDto scheduleDtoList = groupScheduleQueryService.getScheduleList(groupId, date, member);
         return ApiResponse.onSuccess(SuccessStatus.SCHEDULE_OK, scheduleDtoList);
+    }
+
+    @GetMapping("/assignee")
+    @Operation(summary = "일정 담당자 조회 API", description = "그룹 일별 일정 조회 API 입니다.")
+    public ApiResponse<GroupScheduleResponseDto.ScheduleAssigneeDto> getScheduleList(@RequestParam(name = "scheduleId") Long scheduleId, @AuthUser Member member) {
+        GroupScheduleResponseDto.ScheduleAssigneeDto scheduleAssignees = groupScheduleQueryService.getScheduleAssignee(scheduleId, member);
+        return ApiResponse.onSuccess(SuccessStatus.SCHEDULE_OK, scheduleAssignees);
     }
 }

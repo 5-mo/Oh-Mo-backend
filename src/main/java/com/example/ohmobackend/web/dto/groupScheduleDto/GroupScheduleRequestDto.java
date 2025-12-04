@@ -1,6 +1,5 @@
 package com.example.ohmobackend.web.dto.groupScheduleDto;
 
-import com.example.ohmobackend.domain.enums.ScheduleType;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
@@ -30,7 +29,7 @@ public class GroupScheduleRequestDto {
     }
 
     @Getter
-    public static class ScheduleAssigneeDto {
+    public static class ScheduleAssigneeRequestDto {
         private Long scheduleId;
         private List<Long> memberIdList;
     }

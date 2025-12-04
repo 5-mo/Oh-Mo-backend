@@ -70,7 +70,7 @@ public class GroupScheduleCommandServiceImpl {
         todoRepository.save(TodoConverter.toEntity(schedule));
     }
 
-    public void addScheduleAssignee(GroupScheduleRequestDto.ScheduleAssigneeDto requestDto, Member member) {
+    public void addScheduleAssignee(GroupScheduleRequestDto.ScheduleAssigneeRequestDto requestDto, Member member) {
         Schedule schedule = scheduleRepository.findById(requestDto.getScheduleId())
                 .orElseThrow(() -> new ScheduleHandler(ErrorStatus.SCHEDULE_NOT_FOUND));
 
