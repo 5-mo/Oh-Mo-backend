@@ -82,7 +82,7 @@ public class ScheduleConverter {
                 .content(schedule.getContent())
                 .scheduleType(schedule.getScheduleType())
                 .category(MemberCategoryConverter.toAddCategoryResponseDto(schedule.getMemberCategory()))
-                .routineList(routineDtoList)
+                .routineByDateList(routineDtoList)
                 .build();
     }
 
@@ -101,17 +101,6 @@ public class ScheduleConverter {
         return ScheduleResponseDto.ScheduleByMonthDto.builder()
                 .date(date)
                 .categoryList(categoryList)
-                .build();
-    }
-
-    // 주별 루틴 완료 상태 DTO 변환
-    static public ScheduleResponseDto.RoutineStatusByWeekDto toRoutineStatusByContentDto(List<Routine> routineList, Schedule schedule) {
-        List<RoutineResponseDto.routineDto> routineDtoList = routineList.stream().map(
-                routine -> RoutineConverter.toRoutineDto(routine)).collect(Collectors.toList());
-
-        return ScheduleResponseDto.RoutineStatusByWeekDto.builder()
-                .content(schedule.getContent())
-                .routineDtoList(routineDtoList)
                 .build();
     }
 
