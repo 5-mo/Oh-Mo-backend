@@ -9,4 +9,5 @@ import java.util.List;
 public interface NoticeQueryService {
 
     public List<NoticeResponseDto.NoticeDto> getNotice(LocalDate date, Long groupId, Member member);
+    public List<NoticeResponseDto.NoticeByMonthDto> getNoticeByMonth(String yearMonth, Long groupId, Member member);
 }

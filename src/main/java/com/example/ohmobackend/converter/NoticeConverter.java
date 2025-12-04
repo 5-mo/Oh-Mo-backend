@@ -5,6 +5,9 @@ import com.example.ohmobackend.domain.Notice;
 import com.example.ohmobackend.web.dto.noticeDto.NoticeRequestDto;
 import com.example.ohmobackend.web.dto.noticeDto.NoticeResponseDto;
 
+import java.time.LocalDate;
+import java.util.List;
+
 public class NoticeConverter {
 
     public static Notice toNoticeEntity(NoticeRequestDto.AddNoticeDto addNoticeDto, Group group) {
@@ -20,6 +23,22 @@ public class NoticeConverter {
                 .notice(notice.getNotice())
                 .date(notice.getDate())
                 .groupId(notice.getGroup().getId())
+                .build();
+    }
+
+    public static List<NoticeResponseDto.NoticeDto> toNoticeDtoList(List<Notice> notices) {
+        return notices.stream()
+                .map(NoticeConverter::toNoticeDto)
+                .toList();
+    }
+
+    public static NoticeResponseDto.NoticeByMonthDto toNoticeByMonthDto(
+            LocalDate date,
+            List<Notice> notices
+    ) {
+        return NoticeResponseDto.NoticeByMonthDto.builder()
+                .date(date)
+                .notices(toNoticeDtoList(notices))
                 .build();
     }
 

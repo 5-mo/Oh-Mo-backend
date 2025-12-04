@@ -54,7 +54,7 @@ public enum SuccessStatus implements BaseCode {
     GROUP_NOTICE_REGISTER_OK(HttpStatus.OK, "GROUP_2001", "그룹 공지사항 등록이 완료되었습니다."),
     GROUP_NOTICE_MODIFY_OK(HttpStatus.OK, "GROUP_2002", "그룹 공지사항 수정이 완료되었습니다."),
     GROUP_NOTICE_DELETE_OK(HttpStatus.OK, "GROUP_2003", "그룹 공지사항 삭제 완료되었습니다."),
-    GROUP_NOTICE_OK(HttpStatus.OK, "GROUP_2000", "그룹 조회가 완료되었습니다."),
+    GROUP_NOTICE_OK(HttpStatus.OK, "GROUP_2000", "그룹 공지사항 조회가 완료되었습니다."),
 
     // 루틴 관련
     ROUTINE_UPDATE_STATUS_OK(HttpStatus.OK, "ROUTINE_2000", "루틴 상태 변경이 완료되었습니다."),

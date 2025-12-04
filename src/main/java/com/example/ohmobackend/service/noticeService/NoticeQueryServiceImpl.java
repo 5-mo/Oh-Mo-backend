@@ -13,7 +13,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.YearMonth;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -34,5 +36,23 @@ public class NoticeQueryServiceImpl implements NoticeQueryService {
                 notice -> NoticeConverter.toNoticeDto(notice)
         ).collect(Collectors.toList());
         return notices;
+    }
+
+    @Override
+    public List<NoticeResponseDto.NoticeByMonthDto> getNoticeByMonth(String yearMonth, Long groupId, Member member) {
+        LocalDate firstDayOfMonth = YearMonth.parse(yearMonth).atDay(1);
+        LocalDate lastDayOfMonth = YearMonth.parse(yearMonth).atEndOfMonth();
+
+        Group group = groupRepository.findById(groupId)
+                .orElseThrow(() -> new GroupHandler(ErrorStatus.GROUP_NOT_FOUND));
+
+        List<Notice> notices = noticeRepository.findNoticesByGroupAndDate(group, firstDayOfMonth, lastDayOfMonth);
+
+        Map<LocalDate, List<Notice>> noticeMap = notices.stream()
+                .collect(Collectors.groupingBy(Notice::getDate));
+
+        return noticeMap.entrySet().stream().map(
+                entry -> NoticeConverter.toNoticeByMonthDto(entry.getKey(), entry.getValue())
+        ).collect(Collectors.toList());
     }
 }

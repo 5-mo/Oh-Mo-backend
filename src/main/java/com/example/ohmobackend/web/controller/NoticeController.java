@@ -54,6 +54,16 @@ public class NoticeController {
             @RequestParam(name = "groupId")Long groupId,
             @AuthUser Member member) {
         List<NoticeResponseDto.NoticeDto> notices = noticeQueryService.getNotice(date, groupId, member);
-        return ApiResponse.onSuccess(SuccessStatus.GROUP_NOTICE_MODIFY_OK, notices);
+        return ApiResponse.onSuccess(SuccessStatus.GROUP_NOTICE_OK, notices);
+    }
+
+    @GetMapping("/by-month")
+    @Operation(summary = "월별 그룹 공지사항 조회 API")
+    public ApiResponse<List<NoticeResponseDto.NoticeByMonthDto>> getNotice(
+            @RequestParam(name = "year-month")String yearMonth,
+            @RequestParam(name = "groupId")Long groupId,
+            @AuthUser Member member) {
+        List<NoticeResponseDto.NoticeByMonthDto> noticeByMonth = noticeQueryService.getNoticeByMonth(yearMonth, groupId, member);
+        return ApiResponse.onSuccess(SuccessStatus.GROUP_NOTICE_OK, noticeByMonth);
     }
 }
