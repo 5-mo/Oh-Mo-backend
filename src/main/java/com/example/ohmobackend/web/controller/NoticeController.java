@@ -13,12 +13,12 @@ import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/group")
+@RequestMapping("/api/notice")
 public class NoticeController {
 
     private final NoticeCommandService noticeCommandService;
 
-    @PostMapping("/notice")
+    @PostMapping
     @Operation(summary = "그룹 공지사항 등록 API", description = "그룹 공지사항 등록 API 입니다.")
     public ApiResponse<NoticeResponseDto.NoticeDto> addNotice(
             @RequestBody NoticeRequestDto.AddNoticeDto request, @AuthUser Member member) {
@@ -26,11 +26,19 @@ public class NoticeController {
         return ApiResponse.onSuccess(SuccessStatus.GROUP_NOTICE_REGISTER_OK, responseDto);
     }
 
-    @PatchMapping("/notice")
+    @PatchMapping
     @Operation(summary = "그룹 공지사항 수정 API", description = "그룹 공지사항 수정 API 입니다.")
     public ApiResponse<NoticeResponseDto.NoticeDto> patchNotice(
             @RequestParam(name = "noticeId") Long noticeId, @RequestBody NoticeRequestDto.PatchNoticeDto request, @AuthUser Member member) {
         NoticeResponseDto.NoticeDto responseDto = noticeCommandService.pathNotice(noticeId, request, member);
         return ApiResponse.onSuccess(SuccessStatus.GROUP_NOTICE_MODIFY_OK, responseDto);
+    }
+
+    @DeleteMapping
+    @Operation(summary = "그룹 공지사항 삭제 API", description = "그룹 공지사항 삭제 API 입니다.")
+    public ApiResponse<Object> deleteNotice(
+            @RequestParam(name = "noticeId") Long noticeId, @AuthUser Member member) {
+        noticeCommandService.deleteNotice(noticeId, member);
+        return ApiResponse.onSuccess(SuccessStatus.GROUP_NOTICE_MODIFY_OK, null);
     }
 }

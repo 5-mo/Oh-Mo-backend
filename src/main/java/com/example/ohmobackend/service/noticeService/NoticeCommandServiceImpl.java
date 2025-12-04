@@ -35,6 +35,7 @@ public class NoticeCommandServiceImpl implements NoticeCommandService {
         return noticeDto;
     }
 
+    @Override
     public NoticeResponseDto.NoticeDto pathNotice(Long noticeId, NoticeRequestDto.PatchNoticeDto requestDto, Member member) {
         Notice notice = noticeRepository.findById(noticeId)
                 .orElseThrow(() -> new GroupHandler(ErrorStatus.GROUP_NOT_FOUND));
@@ -53,6 +54,15 @@ public class NoticeCommandServiceImpl implements NoticeCommandService {
 
         NoticeResponseDto.NoticeDto noticeDto = NoticeConverter.toNoticeDto(notice);
         return noticeDto;
+    }
+
+    @Override
+    public void deleteNotice(Long noticeId, Member member) {
+        Notice notice = noticeRepository.findById(noticeId)
+                .orElseThrow(() -> new GroupHandler(ErrorStatus.GROUP_NOT_FOUND));
+
+        validateExistMember(member, notice.getGroup());
+        noticeRepository.deleteById(noticeId);
     }
 
     private void validateExistMember(Member member, Group group) {
