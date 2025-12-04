@@ -5,11 +5,15 @@ import com.example.ohmobackend.apiPayload.code.status.SuccessStatus;
 import com.example.ohmobackend.domain.Member;
 import com.example.ohmobackend.security.handler.AuthUser;
 import com.example.ohmobackend.service.noticeService.NoticeCommandService;
+import com.example.ohmobackend.service.noticeService.NoticeQueryService;
 import com.example.ohmobackend.web.dto.noticeDto.NoticeRequestDto;
 import com.example.ohmobackend.web.dto.noticeDto.NoticeResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDate;
+import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
@@ -17,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 public class NoticeController {
 
     private final NoticeCommandService noticeCommandService;
+    private final NoticeQueryService noticeQueryService;
 
     @PostMapping
     @Operation(summary = "그룹 공지사항 등록 API", description = "그룹 공지사항 등록 API 입니다.")
@@ -40,5 +45,15 @@ public class NoticeController {
             @RequestParam(name = "noticeId") Long noticeId, @AuthUser Member member) {
         noticeCommandService.deleteNotice(noticeId, member);
         return ApiResponse.onSuccess(SuccessStatus.GROUP_NOTICE_MODIFY_OK, null);
+    }
+
+    @GetMapping
+    @Operation(summary = "그룹 공지사항 조회 API", description = "그룹 공지사항 조회 API 입니다.")
+    public ApiResponse<List<NoticeResponseDto.NoticeDto>> getNotice(
+            @RequestParam(name = "date")LocalDate date,
+            @RequestParam(name = "groupId")Long groupId,
+            @AuthUser Member member) {
+        List<NoticeResponseDto.NoticeDto> notices = noticeQueryService.getNotice(date, groupId, member);
+        return ApiResponse.onSuccess(SuccessStatus.GROUP_NOTICE_MODIFY_OK, notices);
     }
 }
