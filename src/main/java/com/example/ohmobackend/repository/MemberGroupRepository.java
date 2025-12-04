@@ -10,4 +10,8 @@ import java.util.Optional;
 public interface MemberGroupRepository extends JpaRepository<MemberGroup, Long> {
 
     public Optional<MemberGroup> findByGroupAndMember(Group group, Member member);
+
+    public boolean existsByGroupAndNickname(Group group, String nickname);
+
+    long countByGroup(Group group);
 }

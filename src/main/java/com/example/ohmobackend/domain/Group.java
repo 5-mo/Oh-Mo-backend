@@ -26,6 +26,8 @@ public class Group extends BaseEntity {
 
     private String groupCode;
 
+    private String groupPassword;
+
     private String groupColor;
 
     private int numPeople;

@@ -19,13 +19,21 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/group")
 public class GroupController {
 
-    final GroupCommandService groupCommandService;
+    private final GroupCommandService groupCommandService;
 
     @PostMapping()
     @Operation(summary = "그룹 등록 API", description = "그룹 등록 API 입니다.")
     public ApiResponse<GroupResponseDto.GroupDto> addGroup(
             @RequestBody GroupRequestDto.AddGroupRequestDto request, @AuthUser Member member) {
         GroupResponseDto.GroupDto responseDto = groupCommandService.addGroup(member, request);
+        return ApiResponse.onSuccess(SuccessStatus.GROUP_REGISTER_OK, responseDto);
+    }
+
+    @PostMapping("/enter")
+    @Operation(summary = "그룹 들어가기 API", description = "그룹 들어가기 API 입니다.")
+    public ApiResponse<GroupResponseDto.GroupDto> enterGroup(
+            @RequestBody GroupRequestDto.EnterGroupRequestDto request, @AuthUser Member member) {
+        GroupResponseDto.GroupDto responseDto = groupCommandService.enterGroup(member, request);
         return ApiResponse.onSuccess(SuccessStatus.GROUP_REGISTER_OK, responseDto);
     }
 }
