@@ -49,6 +49,7 @@ public enum ErrorStatus implements BaseErrorCode {
     GROUP_NOT_FOUND(HttpStatus.BAD_REQUEST, "GROUP4001", "그룹을 찾을 수 없습니다."),
     GROUP_INVALID_PASSWORD(HttpStatus.BAD_REQUEST, "GROUP4002", "그룹 비밀번호가 틀렸습니다."),
     MEMBER_GROUP_NOT_FOUND(HttpStatus.BAD_REQUEST, "GROUP4002", "그룹에 가입되어 있지 않습니다."),
+    GROUP_EXISTS_MEMBER(HttpStatus.BAD_REQUEST, "GROUP4002", "그룹에 가입되어 있습니다."),
     GROUP_NICKNAME_DUPLICATED(HttpStatus.BAD_REQUEST, "GROUP4003", "이미 사용중인 닉네임입니다."),
     GROUP_MEMBER_LIMIT_EXCEEDED(HttpStatus.BAD_REQUEST, "GROUP4004", "그룹 최대 인원을 초과했습니다."),
 

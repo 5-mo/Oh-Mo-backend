@@ -39,6 +39,7 @@ public class GroupCommandServiceImpl implements GroupCommandService {
                 .orElseThrow(() -> new GroupHandler(ErrorStatus.GROUP_NOT_FOUND));
 
         validateGroupPassword(requestDto.getGroupPassword(), group);
+        validateExistMember(member, group);
         validateDuplicateNickname(group, requestDto.getNickname());
         validateGroupCount(group);
 
@@ -47,9 +48,15 @@ public class GroupCommandServiceImpl implements GroupCommandService {
         return GroupConverter.toGroupDto(group);
     }
 
-    private static void validateGroupPassword(String password, Group group) {
+    private void validateGroupPassword(String password, Group group) {
         if (!password.equals(group.getGroupPassword())) {
             throw new GroupHandler(ErrorStatus.GROUP_INVALID_PASSWORD);
+        }
+    }
+
+    private void validateExistMember(Member member, Group group) {
+        if (!memberGroupRepository.findByGroupAndMember(group, member).isEmpty()) {
+            throw new GroupHandler(ErrorStatus.GROUP_EXISTS_MEMBER);
         }
     }
 
