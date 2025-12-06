@@ -44,5 +44,6 @@ public class GroupResponseDto {
         private String nickname;
         private Long assigneeId;
         private String groupNickname;
+        private boolean status;
     }
 }

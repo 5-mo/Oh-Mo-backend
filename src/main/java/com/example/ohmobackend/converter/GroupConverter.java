@@ -67,6 +67,7 @@ public class GroupConverter {
                 .nickname(assignee.getMemberGroup().getMember().getNickname())
                 .assigneeId(assignee.getId())
                 .groupNickname(assignee.getMemberGroup().getNickname())
+                .status(assignee.isStatus())
                 .build();
     }
 

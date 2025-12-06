@@ -81,7 +81,7 @@ public class GroupScheduleController {
     }
 
     @PostMapping("/assignee/status")
-    @Operation(summary = "루틴 일정 담당자 조회 API")
+    @Operation(summary = "루틴 일정 상태 변경 API")
     public ApiResponse<Object> updateAssigneeStatus(@RequestParam(name = "assigneeId") Long assigneeId, @AuthUser Member member) {
         assigneeCommandService.updateAssigneeStatus(assigneeId, member);
         return ApiResponse.onSuccess(SuccessStatus.ASSIGNEE_STATUS_UPDATE_OK, null);
