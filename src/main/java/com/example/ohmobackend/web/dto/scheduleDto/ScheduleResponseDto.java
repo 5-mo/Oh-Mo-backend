@@ -68,6 +68,7 @@ public class ScheduleResponseDto {
         private ScheduleType scheduleType;
         private MemberCategoryResponseDto.CategoryResponseDto category;
         private List<RoutineResponseDto.routineDto> routineByDateList;
+        private List<String> repeatWeek;
     }
 
     @Getter

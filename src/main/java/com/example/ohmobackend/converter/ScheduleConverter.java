@@ -8,6 +8,7 @@ import com.example.ohmobackend.web.dto.routineDto.RoutineResponseDto;
 import com.example.ohmobackend.web.dto.scheduleDto.ScheduleRequestDto;
 import com.example.ohmobackend.web.dto.scheduleDto.ScheduleResponseDto;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.List;
@@ -92,6 +93,10 @@ public class ScheduleConverter {
                 .map(routine -> RoutineConverter.toRoutineDto(routine))
                 .toList();
 
+        List<String> repeatWeek = schedule.getRepeatWeek().stream()
+                .map(DayOfWeek::name)
+                .collect(Collectors.toList());
+
         return ScheduleResponseDto.ScheduleWithRoutineListDto.builder()
                 .scheduleId(schedule.getId())
                 .date(schedule.getDate())
@@ -103,6 +108,7 @@ public class ScheduleConverter {
                         .map(MemberCategoryConverter::toAddCategoryResponseDto)
                         .orElse(null))
                 .routineByDateList(routineDtoList)
+                .repeatWeek(repeatWeek)
                 .build();
     }
 
