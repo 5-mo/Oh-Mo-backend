@@ -4,12 +4,12 @@ package com.example.ohmobackend.service.scheduleService;
 import com.example.ohmobackend.apiPayload.code.status.ErrorStatus;
 import com.example.ohmobackend.apiPayload.exception.handler.GroupHandler;
 import com.example.ohmobackend.apiPayload.exception.handler.ScheduleHandler;
-import com.example.ohmobackend.converter.GroupScheduleConverter;
+import com.example.ohmobackend.converter.GroupConverter;
 import com.example.ohmobackend.converter.ScheduleConverter;
 import com.example.ohmobackend.domain.*;
 import com.example.ohmobackend.domain.enums.ScheduleType;
 import com.example.ohmobackend.repository.*;
-import com.example.ohmobackend.web.dto.groupScheduleDto.GroupScheduleResponseDto;
+import com.example.ohmobackend.web.dto.groupDto.GroupResponseDto;
 import com.example.ohmobackend.web.dto.scheduleDto.ScheduleResponseDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -59,7 +59,7 @@ public class GroupScheduleQueryServiceImpl implements GroupScheduleQueryService 
     }
 
     @Override
-    public GroupScheduleResponseDto.TodoScheduleAssigneeDto getTodoScheduleAssignee(Long todoId, Member member) {
+    public List<GroupResponseDto.MemberDto> getTodoScheduleAssignee(Long todoId, Member member) {
         Todo todo = todoRepository.findById(todoId)
                 .orElseThrow(() -> new ScheduleHandler(ErrorStatus.SCHEDULE_NOT_FOUND));
         Group group = todo.getSchedule().getGroup();
@@ -74,15 +74,14 @@ public class GroupScheduleQueryServiceImpl implements GroupScheduleQueryService 
                 .orElseThrow(() -> new ScheduleHandler(ErrorStatus.MEMBER_GROUP_NOT_FOUND));
 
         List<ScheduleAssignee> scheduleAssignees = scheduleAssigneeRepository.findAllByTodo(todo);
-        List<MemberGroup> memberGroups = scheduleAssignees.stream().map(
-                scheduleAssignee -> memberGroupRepository.findByMemberAndGroup(scheduleAssignee.getMember(), group)
-        ).collect(Collectors.toList());
 
-        return GroupScheduleConverter.toTodoScheduleAssigneeDto(todo, memberGroups);
+        return scheduleAssignees.stream().map(
+                scheduleAssignee -> GroupConverter.toAssigneeDto(scheduleAssignee)
+        ).collect(Collectors.toList());
     }
 
     @Override
-    public GroupScheduleResponseDto.RoutineScheduleAssigneeDto getRoutineScheduleAssignee(Long routineId, Member member) {
+    public List<GroupResponseDto.MemberDto> getRoutineScheduleAssignee(Long routineId, Member member) {
         Routine routine = routineRepository.findById(routineId)
                 .orElseThrow(() -> new ScheduleHandler(ErrorStatus.SCHEDULE_NOT_FOUND));
         Group group = routine.getSchedule().getGroup();
@@ -97,10 +96,8 @@ public class GroupScheduleQueryServiceImpl implements GroupScheduleQueryService 
                 .orElseThrow(() -> new ScheduleHandler(ErrorStatus.MEMBER_GROUP_NOT_FOUND));
 
         List<ScheduleAssignee> scheduleAssignees = scheduleAssigneeRepository.findAllByRoutine(routine);
-        List<MemberGroup> memberGroups = scheduleAssignees.stream().map(
-                scheduleAssignee -> memberGroupRepository.findByMemberAndGroup(scheduleAssignee.getMember(), group)
+        return scheduleAssignees.stream().map(
+                scheduleAssignee -> GroupConverter.toAssigneeDto(scheduleAssignee)
         ).collect(Collectors.toList());
-
-        return GroupScheduleConverter.toRoutineScheduleAssigneeDto(routine, memberGroups);
     }
 }

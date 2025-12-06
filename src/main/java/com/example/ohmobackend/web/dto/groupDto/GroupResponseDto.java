@@ -42,6 +42,7 @@ public class GroupResponseDto {
     public static class MemberDto {
         private String email;
         private String nickname;
+        private Long assigneeId;
         private String groupNickname;
     }
 }

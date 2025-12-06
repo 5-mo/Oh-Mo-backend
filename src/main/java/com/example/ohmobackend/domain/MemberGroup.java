@@ -6,6 +6,9 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.DynamicUpdate;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Getter
 @Builder
@@ -31,4 +34,10 @@ public class MemberGroup extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
+
+    @OneToMany(mappedBy = "memberGroup", cascade = CascadeType.ALL)
+    private List<Schedule> scheduleList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "memberGroup", cascade = CascadeType.ALL)
+    private List<ScheduleAssignee> scheduleAssigneeList = new ArrayList<>();
 }

@@ -31,12 +31,12 @@ public class GroupScheduleRequestDto {
     @Getter
     public static class TodoScheduleAssigneeRequestDto {
         private Long todoId;
-        private List<Long> memberIdList;
+        private List<Long> memberGroupIdList;
     }
 
     @Getter
     public static class RoutineScheduleAssigneeRequestDto {
         private Long routineId;
-        private List<Long> memberIdList;
+        private List<Long> memberGroupIdList;
     }
 }

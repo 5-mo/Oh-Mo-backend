@@ -21,8 +21,8 @@ public class ScheduleAssignee extends BaseEntity {
     private boolean status;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id")
-    private Member member;
+    @JoinColumn(name = "member_group_id")
+    private MemberGroup memberGroup;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "todo_id")

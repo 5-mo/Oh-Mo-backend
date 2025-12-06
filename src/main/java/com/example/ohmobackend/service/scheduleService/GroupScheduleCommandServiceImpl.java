@@ -79,14 +79,11 @@ public class GroupScheduleCommandServiceImpl {
         // 그룹의 멤버가 아닐 경우
         validateMemberGroup(member, group);
 
-        List<ScheduleAssignee> assignees = requestDto.getMemberIdList().stream()
-                .map(memberId -> {
-                    Member targetMember = memberRepository.findById(memberId)
+        List<ScheduleAssignee> assignees = requestDto.getMemberGroupIdList().stream()
+                .map(memberGroupId -> {
+                    MemberGroup memberGroup = memberGroupRepository.findById(memberGroupId)
                             .orElseThrow(() -> new ScheduleHandler(ErrorStatus.MEMBER_NOT_FOUND));
-
-                    validateMemberGroup(targetMember, group);
-
-                    return ScheduleConverter.todoScheduleAssigneeToEntity(targetMember, todo);
+                    return ScheduleConverter.todoScheduleAssigneeToEntity(memberGroup, todo);
                 })
                 .collect(Collectors.toList());
 
@@ -104,14 +101,11 @@ public class GroupScheduleCommandServiceImpl {
         // 그룹의 멤버가 아닐 경우
         validateMemberGroup(member, group);
 
-        List<ScheduleAssignee> assignees = requestDto.getMemberIdList().stream()
-                .map(memberId -> {
-                    Member targetMember = memberRepository.findById(memberId)
+        ;List<ScheduleAssignee> assignees = requestDto.getMemberGroupIdList().stream()
+                .map(memberGroupId -> {
+                    MemberGroup memberGroup = memberGroupRepository.findById(memberGroupId)
                             .orElseThrow(() -> new ScheduleHandler(ErrorStatus.MEMBER_NOT_FOUND));
-
-                    validateMemberGroup(targetMember, group);
-
-                    return ScheduleConverter.routineScheduleAssigneeToEntity(targetMember, routine);
+                    return ScheduleConverter.routineScheduleAssigneeToEntity(memberGroup, routine);
                 })
                 .collect(Collectors.toList());
 

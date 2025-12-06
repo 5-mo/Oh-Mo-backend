@@ -132,18 +132,18 @@ public class ScheduleConverter {
     }
 
     static public ScheduleAssignee todoScheduleAssigneeToEntity(
-            Member member, Todo todo) {
+            MemberGroup memberGroup, Todo todo) {
         return ScheduleAssignee.builder()
-                .member(member)
+                .memberGroup(memberGroup)
                 .todo(todo)
                 .status(false)
                 .build();
     }
 
     static public ScheduleAssignee routineScheduleAssigneeToEntity(
-            Member member, Routine routine) {
+            MemberGroup memberGroup, Routine routine) {
         return ScheduleAssignee.builder()
-                .member(member)
+                .memberGroup(memberGroup)
                 .routine(routine)
                 .status(false)
                 .build();

@@ -3,9 +3,9 @@ package com.example.ohmobackend.converter;
 import com.example.ohmobackend.domain.Group;
 import com.example.ohmobackend.domain.Member;
 import com.example.ohmobackend.domain.MemberGroup;
+import com.example.ohmobackend.domain.ScheduleAssignee;
 import com.example.ohmobackend.web.dto.groupDto.GroupRequestDto;
 import com.example.ohmobackend.web.dto.groupDto.GroupResponseDto;
-import com.example.ohmobackend.web.dto.memberDto.MemberResponseDto;
 
 import java.security.SecureRandom;
 import java.util.List;
@@ -59,6 +59,15 @@ public class GroupConverter {
             sb.append(GROUP_CODE_CHARSET.charAt(index));
         }
         return sb.toString();
+    }
+
+    public static GroupResponseDto.MemberDto toAssigneeDto(ScheduleAssignee assignee) {
+        return GroupResponseDto.MemberDto.builder()
+                .email(assignee.getMemberGroup().getMember().getEmail())
+                .nickname(assignee.getMemberGroup().getMember().getNickname())
+                .assigneeId(assignee.getId())
+                .groupNickname(assignee.getMemberGroup().getNickname())
+                .build();
     }
 
     public static GroupResponseDto.MemberDto toMemberDto(Member member, String groupNickName) {
