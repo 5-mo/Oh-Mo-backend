@@ -24,7 +24,7 @@ import java.util.List;
                 @Index(name = "idx_routine_date_schedule", columnList = "date, schedule_id")
         }
 )
-public class Routine extends BaseEntity {
+public class Routine extends BaseEntity implements AssignableTask {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -44,7 +44,14 @@ public class Routine extends BaseEntity {
     @OneToMany(mappedBy = "routine", cascade = CascadeType.ALL)
     private List<ScheduleAssignee> scheduleAssigneeList = new ArrayList<>();
 
-    public void updateStatus() {
-        this.status = !this.status;
+
+    @Override
+    public void updateStatus(boolean status) {
+        this.status = status;
+    }
+
+    @Override
+    public List<ScheduleAssignee> getAssignees() {
+        return scheduleAssigneeList;
     }
 }

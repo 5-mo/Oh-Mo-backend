@@ -49,14 +49,14 @@ public class GroupScheduleController {
     @Operation(summary = "그룹 투두 일정 담당자 등록 API", description = "그룹 투두 일정 담당자 등록 API 입니다.")
     public ApiResponse<Object> addTodoScheduleAssignee(@RequestBody GroupScheduleRequestDto.TodoScheduleAssigneeRequestDto request, @AuthUser Member member) {
         assigneeCommandService.addTodoScheduleAssignee(request, member);
-        return ApiResponse.onSuccess(SuccessStatus.SCHEDULE_ASSIGNEE_OK, null);
+        return ApiResponse.onSuccess(SuccessStatus.ASSIGNEE_ADD_OK, null);
     }
 
     @PostMapping("/assignee-routine")
     @Operation(summary = "그룹 루틴 일정 담당자 등록 API", description = "그룹 루틴 일정 담당자 등록 API 입니다.")
     public ApiResponse<Object> addRoutineScheduleAssignee(@RequestBody GroupScheduleRequestDto.RoutineScheduleAssigneeRequestDto request, @AuthUser Member member) {
         assigneeCommandService.addRoutineScheduleAssignee(request, member);
-        return ApiResponse.onSuccess(SuccessStatus.SCHEDULE_ASSIGNEE_OK, null);
+        return ApiResponse.onSuccess(SuccessStatus.ASSIGNEE_ADD_OK, null);
     }
 
     @GetMapping("/by-date")
@@ -70,13 +70,20 @@ public class GroupScheduleController {
     @Operation(summary = "투두 일정 담당자 조회 API")
     public ApiResponse<List<GroupResponseDto.MemberDto>> getTodoAssignees(@RequestParam(name = "todoId") Long todoId, @AuthUser Member member) {
         List<GroupResponseDto.MemberDto> scheduleAssignees = assigneeQueryService.getTodoScheduleAssignee(todoId, member);
-        return ApiResponse.onSuccess(SuccessStatus.SCHEDULE_OK, scheduleAssignees);
+        return ApiResponse.onSuccess(SuccessStatus.ASSIGNEE_OK, scheduleAssignees);
     }
 
     @GetMapping("/assignee-routine")
     @Operation(summary = "루틴 일정 담당자 조회 API")
     public ApiResponse<List<GroupResponseDto.MemberDto>> getRoutineAssignees(@RequestParam(name = "routineId") Long routineId, @AuthUser Member member) {
         List<GroupResponseDto.MemberDto> scheduleAssignees = assigneeQueryService.getRoutineScheduleAssignee(routineId, member);
-        return ApiResponse.onSuccess(SuccessStatus.SCHEDULE_OK, scheduleAssignees);
+        return ApiResponse.onSuccess(SuccessStatus.ASSIGNEE_OK, scheduleAssignees);
+    }
+
+    @PostMapping("/assignee/status")
+    @Operation(summary = "루틴 일정 담당자 조회 API")
+    public ApiResponse<Object> updateAssigneeStatus(@RequestParam(name = "assigneeId") Long assigneeId, @AuthUser Member member) {
+        assigneeCommandService.updateAssigneeStatus(assigneeId, member);
+        return ApiResponse.onSuccess(SuccessStatus.ASSIGNEE_STATUS_UPDATE_OK, null);
     }
 }

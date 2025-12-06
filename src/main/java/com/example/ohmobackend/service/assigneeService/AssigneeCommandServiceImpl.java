@@ -1,6 +1,8 @@
 package com.example.ohmobackend.service.assigneeService;
 
 import com.example.ohmobackend.apiPayload.code.status.ErrorStatus;
+import com.example.ohmobackend.apiPayload.exception.handler.GroupHandler;
+import com.example.ohmobackend.apiPayload.exception.handler.MemberHandler;
 import com.example.ohmobackend.apiPayload.exception.handler.ScheduleHandler;
 import com.example.ohmobackend.converter.ScheduleConverter;
 import com.example.ohmobackend.domain.*;
@@ -11,12 +13,14 @@ import com.example.ohmobackend.repository.TodoRepository;
 import com.example.ohmobackend.web.dto.groupScheduleDto.GroupScheduleRequestDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class AssigneeCommandServiceImpl implements AssigneeCommandService {
 
     private final TodoRepository todoRepository;
@@ -68,6 +72,26 @@ public class AssigneeCommandServiceImpl implements AssigneeCommandService {
                 .collect(Collectors.toList());
 
         scheduleAssigneeRepository.saveAll(assignees);
+    }
+
+    public void updateAssigneeStatus(Long assigneeId, Member member) {
+        ScheduleAssignee scheduleAssignee = scheduleAssigneeRepository.findById(assigneeId)
+                .orElseThrow(() -> new ScheduleHandler(ErrorStatus.ASSIGNEE_NOT_FOUND));
+
+        if (scheduleAssignee.getMemberGroup().getMember() != member) {
+            throw new MemberHandler(ErrorStatus.INVALID_MEMBER);
+        }
+
+        scheduleAssignee.updateStatus();
+        scheduleAssigneeRepository.save(scheduleAssignee);
+
+        //
+        AssignableTask task = scheduleAssignee.getTask();
+
+        boolean allCompleted = task.getAssignees().stream()
+                .allMatch(ScheduleAssignee::isStatus);
+
+        task.updateStatus(allCompleted);
     }
 
     private static void validateScheduleHasGroup(Group group) {

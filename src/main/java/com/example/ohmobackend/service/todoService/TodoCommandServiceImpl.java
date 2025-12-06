@@ -31,6 +31,6 @@ public class TodoCommandServiceImpl implements TodoCommandService{
             throw new MemberHandler(ErrorStatus.INVALID_MEMBER);
         }
 
-        todo.updateStatus();
+        todo.updateStatus(!todo.isStatus());
     }
 }

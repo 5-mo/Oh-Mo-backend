@@ -31,4 +31,14 @@ public class ScheduleAssignee extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "routine_id")
     private Routine routine;
+
+    public void updateStatus() {
+        status = !status;
+    }
+
+    @Transient
+    public AssignableTask getTask() {
+        return todo != null ? todo : routine;
+    }
+
 }

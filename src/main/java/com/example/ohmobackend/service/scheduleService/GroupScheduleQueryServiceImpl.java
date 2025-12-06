@@ -3,13 +3,13 @@ package com.example.ohmobackend.service.scheduleService;
 
 import com.example.ohmobackend.apiPayload.code.status.ErrorStatus;
 import com.example.ohmobackend.apiPayload.exception.handler.GroupHandler;
-import com.example.ohmobackend.apiPayload.exception.handler.ScheduleHandler;
-import com.example.ohmobackend.converter.GroupConverter;
 import com.example.ohmobackend.converter.ScheduleConverter;
-import com.example.ohmobackend.domain.*;
+import com.example.ohmobackend.domain.Group;
+import com.example.ohmobackend.domain.Member;
+import com.example.ohmobackend.domain.Routine;
+import com.example.ohmobackend.domain.Schedule;
 import com.example.ohmobackend.domain.enums.ScheduleType;
 import com.example.ohmobackend.repository.*;
-import com.example.ohmobackend.web.dto.groupDto.GroupResponseDto;
 import com.example.ohmobackend.web.dto.scheduleDto.ScheduleResponseDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -55,6 +55,5 @@ public class GroupScheduleQueryServiceImpl implements GroupScheduleQueryService 
                 .collect(Collectors.toList());
 
         return ScheduleConverter.toScheduleDto(scheduleTodoList, scheduleRoutineList);
-
     }
 }

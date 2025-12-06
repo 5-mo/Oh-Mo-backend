@@ -7,5 +7,7 @@ public interface AssigneeCommandService {
 
     public void addTodoScheduleAssignee(GroupScheduleRequestDto.TodoScheduleAssigneeRequestDto requestDto, Member member);
 
-    public void addRoutineScheduleAssignee(GroupScheduleRequestDto.RoutineScheduleAssigneeRequestDto requestDto, Member member)
+    public void addRoutineScheduleAssignee(GroupScheduleRequestDto.RoutineScheduleAssigneeRequestDto requestDto, Member member);
+
+    public void updateAssigneeStatus(Long assigneeId, Member member);
 }

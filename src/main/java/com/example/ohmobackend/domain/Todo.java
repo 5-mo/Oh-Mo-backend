@@ -17,7 +17,7 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @DynamicUpdate
 @Table(name = "todo")
-public class Todo extends BaseEntity {
+public class Todo extends BaseEntity implements AssignableTask {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,7 +33,13 @@ public class Todo extends BaseEntity {
     @OneToMany(mappedBy = "todo", cascade = CascadeType.ALL)
     private List<ScheduleAssignee> scheduleAssigneeList = new ArrayList<>();
 
-    public void updateStatus() {
-        this.status = !this.status;
+    @Override
+    public void updateStatus(boolean status) {
+        this.status = status;
+    }
+
+    @Override
+    public List<ScheduleAssignee> getAssignees() {
+        return scheduleAssigneeList;
     }
 }
