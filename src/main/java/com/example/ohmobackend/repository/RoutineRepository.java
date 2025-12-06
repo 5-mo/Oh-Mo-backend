@@ -1,5 +1,6 @@
 package com.example.ohmobackend.repository;
 
+import com.example.ohmobackend.domain.Group;
 import com.example.ohmobackend.domain.Member;
 import com.example.ohmobackend.domain.Routine;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -18,6 +19,15 @@ public interface RoutineRepository extends JpaRepository<Routine, Long> {
             "AND mc.member = :member")
     List<Routine> findRoutinesWithScheduleByMemberAndDate(
             @Param("member") Member member,
+            @Param("date") LocalDate date
+    );
+
+    @Query("SELECT DISTINCT r FROM Routine r " +
+            "JOIN FETCH r.schedule s " +
+            "WHERE r.date = :date " +
+            "AND s.group = :group")
+    List<Routine> findRoutinesWithScheduleByGroupAndDate(
+            @Param("group") Group group,
             @Param("date") LocalDate date
     );
 

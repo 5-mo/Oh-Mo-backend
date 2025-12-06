@@ -27,6 +27,6 @@ public class RoutineCommandServiceImpl implements RoutineCommandService {
             throw new MemberHandler(ErrorStatus.INVALID_MEMBER);
         }
 
-        routine.updateStatus();
+        routine.updateStatus(!routine.isStatus());
     }
 }

@@ -57,10 +57,7 @@ public class Schedule extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "created_by")
-    private Member member;
-
-    @OneToMany(mappedBy = "schedule", cascade = CascadeType.ALL)
-    private List<ScheduleAssignee> scheduleAssigneeList = new ArrayList<>();
+    private MemberGroup memberGroup;
 
     @OneToMany(mappedBy = "schedule", cascade = CascadeType.ALL)
     private List<Routine> routineList = new ArrayList<>();

@@ -6,6 +6,9 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.DynamicUpdate;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 @Entity
 @Getter
@@ -14,7 +17,7 @@ import org.hibernate.annotations.DynamicUpdate;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @DynamicUpdate
 @Table(name = "todo")
-public class Todo extends BaseEntity {
+public class Todo extends BaseEntity implements AssignableTask {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,7 +30,16 @@ public class Todo extends BaseEntity {
     @JoinColumn(name = "schedule_id")
     private Schedule schedule;
 
-    public void updateStatus() {
-        this.status = !this.status;
+    @OneToMany(mappedBy = "todo", cascade = CascadeType.ALL)
+    private List<ScheduleAssignee> scheduleAssigneeList = new ArrayList<>();
+
+    @Override
+    public void updateStatus(boolean status) {
+        this.status = status;
+    }
+
+    @Override
+    public List<ScheduleAssignee> getAssignees() {
+        return scheduleAssigneeList;
     }
 }

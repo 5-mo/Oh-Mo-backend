@@ -18,7 +18,7 @@ public enum ErrorStatus implements BaseErrorCode {
     // 유저 관련 응답
     MEMBER_NOT_FOUND(HttpStatus.BAD_REQUEST, "MEMBER4001", "사용자를 찾을 수 없습니다."),
     MEMBER_ALREADY_EXISTS(HttpStatus.BAD_REQUEST, "MEMBER4002", "이미 존재하는 유저입니다."),
-    INVALID_MEMBER(HttpStatus.BAD_REQUEST, "MEMBER4003", "권한이 없스니다."),
+    INVALID_MEMBER(HttpStatus.BAD_REQUEST, "MEMBER4003", "권한이 없습니다."),
 
     // 인증 관련
     INVALID_TOKEN(HttpStatus.BAD_REQUEST, "AUTH4001", "유효하지 않은 토큰입니다"),
@@ -47,14 +47,22 @@ public enum ErrorStatus implements BaseErrorCode {
 
     // 그룹 관련
     GROUP_NOT_FOUND(HttpStatus.BAD_REQUEST, "GROUP4001", "그룹을 찾을 수 없습니다."),
-    GROUP_INVALID_CODE(HttpStatus.BAD_REQUEST, "GROUP4002", "그룹코드는 4자리입니다."),
+    GROUP_INVALID_PASSWORD(HttpStatus.BAD_REQUEST, "GROUP4002", "그룹 비밀번호가 틀렸습니다."),
     MEMBER_GROUP_NOT_FOUND(HttpStatus.BAD_REQUEST, "GROUP4002", "그룹에 가입되어 있지 않습니다."),
+    GROUP_EXISTS_MEMBER(HttpStatus.BAD_REQUEST, "GROUP4002", "그룹에 가입되어 있습니다."),
+    GROUP_NICKNAME_DUPLICATED(HttpStatus.BAD_REQUEST, "GROUP4003", "이미 사용중인 닉네임입니다."),
+    GROUP_MEMBER_LIMIT_EXCEEDED(HttpStatus.BAD_REQUEST, "GROUP4004", "그룹 최대 인원을 초과했습니다."),
 
     // 루틴
     ROUTINE_NOT_FOUND(HttpStatus.BAD_REQUEST, "ROUTINE4001", "루틴을 찾을 수 없습니다."),
+    SCHEDULE_TYPE_NOT_ROUTINE(HttpStatus.BAD_REQUEST, "ROUTINE4002", "스케줄 타입이 루틴이 아닙니다."),
 
     // 투두
     TODO_NOT_FOUND(HttpStatus.BAD_REQUEST, "TODO4001", "투두를 찾을 수 없습니다."),
+    SCHEDULE_TYPE_NOT_TODO(HttpStatus.BAD_REQUEST, "TODO4001", "스케줄 타입이 투두가 아닙니다."),
+
+    // 담당자
+    ASSIGNEE_NOT_FOUND(HttpStatus.BAD_REQUEST, "ASSIGNEE4001", "담당자를 찾을 수 없습니다."),
 
 
     ;

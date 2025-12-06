@@ -1,4 +1,4 @@
-package com.example.ohmobackend.web.dto.scheduleDto;
+package com.example.ohmobackend.web.dto.groupScheduleDto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -9,11 +9,11 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 
-public class ScheduleRequestDto {
+public class GroupScheduleRequestDto {
 
     @Getter
-    public static class AddRequestDto {
-        private Long categoryId;
+    public static class GroupScheduleAddRequestDto {
+        private Long groupId;
 
         @Schema(type = "string")
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:MM", timezone = "Asia/Seoul")
@@ -29,14 +29,14 @@ public class ScheduleRequestDto {
     }
 
     @Getter
-    public static class UpdateTodoDateRequestDto {
-        private Long scheduleId;
-        private LocalDate date;
+    public static class TodoScheduleAssigneeRequestDto {
+        private Long todoId;
+        private List<Long> memberGroupIdList;
     }
 
     @Getter
-    public static class UpdateScheduleAlarmTimeDto {
-        private Long scheduleId;
-        private LocalTime alarmTime;
+    public static class RoutineScheduleAssigneeRequestDto {
+        private Long routineId;
+        private List<Long> memberGroupIdList;
     }
 }

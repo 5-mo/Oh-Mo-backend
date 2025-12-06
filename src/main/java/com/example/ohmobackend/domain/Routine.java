@@ -7,6 +7,8 @@ import org.hibernate.annotations.DynamicUpdate;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -22,7 +24,7 @@ import java.time.LocalDate;
                 @Index(name = "idx_routine_date_schedule", columnList = "date, schedule_id")
         }
 )
-public class Routine extends BaseEntity {
+public class Routine extends BaseEntity implements AssignableTask {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -39,7 +41,17 @@ public class Routine extends BaseEntity {
     @JoinColumn(name = "schedule_id")
     private Schedule schedule;
 
-    public void updateStatus() {
-        this.status = !this.status;
+    @OneToMany(mappedBy = "routine", cascade = CascadeType.ALL)
+    private List<ScheduleAssignee> scheduleAssigneeList = new ArrayList<>();
+
+
+    @Override
+    public void updateStatus(boolean status) {
+        this.status = status;
+    }
+
+    @Override
+    public List<ScheduleAssignee> getAssignees() {
+        return scheduleAssigneeList;
     }
 }

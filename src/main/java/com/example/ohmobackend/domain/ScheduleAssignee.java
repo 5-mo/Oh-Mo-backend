@@ -21,10 +21,24 @@ public class ScheduleAssignee extends BaseEntity {
     private boolean status;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id")
-    private Member member;
+    @JoinColumn(name = "member_group_id")
+    private MemberGroup memberGroup;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "schedule_id")
-    private Schedule schedule;
+    @JoinColumn(name = "todo_id")
+    private Todo todo;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "routine_id")
+    private Routine routine;
+
+    public void updateStatus() {
+        status = !status;
+    }
+
+    @Transient
+    public AssignableTask getTask() {
+        return todo != null ? todo : routine;
+    }
+
 }

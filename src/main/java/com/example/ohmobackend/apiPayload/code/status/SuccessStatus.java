@@ -28,7 +28,6 @@ public enum SuccessStatus implements BaseCode {
     SCHEDULE_UPDATE_ALARM_TIME_OK(HttpStatus.OK, "SCHEDULE2004", "스케줄 알람 시간 변경이 완료되었습니다."),
     SCHEDULE_ROUTINE_STATUS_OK(HttpStatus.OK, "SCHEDULE2005", "루틴 완료 상태 조회가 완료되었습니다."),
     SCHEDULE_COMPLETION_RATE_OK(HttpStatus.OK, "SCHEDULE2006", "completion rate 조회가 완료되었습니다."),
-    SCHEDULE_ASSIGNEE_OK(HttpStatus.OK, "SCHEDULE2007", "일정 담당자 등록이 완료되었습니다."),
 
     // 질문 관련 응답
     QUESTION_REGISTER_OK(HttpStatus.OK, "QUESTION2000", "질문 등록이 완료되었습니다."),
@@ -46,12 +45,26 @@ public enum SuccessStatus implements BaseCode {
 
     // 그룹 관련
     GROUP_REGISTER_OK(HttpStatus.OK, "GROUP_2000", "그룹 등록이 완료되었습니다."),
+    GROUP_FIND_OK(HttpStatus.OK, "GROUP_2001", "그룹 조회가 완료되었습니다."),
+    GROUP_ENTER_OK(HttpStatus.OK, "GROUP_2002", "그룹 입장이 완료되었습니다."),
+    GROUP_MEMBER_OK(HttpStatus.OK, "GROUP_2003", "그룹 멤버 조회가 완료되었습니다."),
+
+    // 공지사항 관련
+    GROUP_NOTICE_REGISTER_OK(HttpStatus.OK, "GROUP_2001", "그룹 공지사항 등록이 완료되었습니다."),
+    GROUP_NOTICE_MODIFY_OK(HttpStatus.OK, "GROUP_2002", "그룹 공지사항 수정이 완료되었습니다."),
+    GROUP_NOTICE_DELETE_OK(HttpStatus.OK, "GROUP_2003", "그룹 공지사항 삭제 완료되었습니다."),
+    GROUP_NOTICE_OK(HttpStatus.OK, "GROUP_2000", "그룹 공지사항 조회가 완료되었습니다."),
 
     // 루틴 관련
     ROUTINE_UPDATE_STATUS_OK(HttpStatus.OK, "ROUTINE_2000", "루틴 상태 변경이 완료되었습니다."),
 
     // 투두 관련
     TODO_UPDATE_STATUS_OK(HttpStatus.OK, "TODO_2000", "투두 상태 변경이 완료되었습니다."),
+
+    // 담당자 관련
+    ASSIGNEE_STATUS_UPDATE_OK(HttpStatus.OK, "ASSIGNEE_2000", "담당자 상태 변경이 완료되었습니다."),
+    ASSIGNEE_ADD_OK(HttpStatus.OK, "ASSIGNEE_2001", "일정 담당자 등록이 완료되었습니다."),
+    ASSIGNEE_OK(HttpStatus.OK, "ASSIGNEE_2002", "일정 담당자 조회가 완료되었습니다."),
 
     ;
 
