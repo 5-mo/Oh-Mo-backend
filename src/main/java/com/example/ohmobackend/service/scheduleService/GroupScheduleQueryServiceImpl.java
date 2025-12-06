@@ -57,47 +57,4 @@ public class GroupScheduleQueryServiceImpl implements GroupScheduleQueryService 
         return ScheduleConverter.toScheduleDto(scheduleTodoList, scheduleRoutineList);
 
     }
-
-    @Override
-    public List<GroupResponseDto.MemberDto> getTodoScheduleAssignee(Long todoId, Member member) {
-        Todo todo = todoRepository.findById(todoId)
-                .orElseThrow(() -> new ScheduleHandler(ErrorStatus.SCHEDULE_NOT_FOUND));
-        Group group = todo.getSchedule().getGroup();
-
-        // 그룹의 일정이 아닌 경우
-        if (group == null) {
-            new ScheduleHandler(ErrorStatus.SCHEDULE_NOT_GROUP_TYPE);
-        }
-
-        // 해당 그룹의 멤버가 아님
-        memberGroupRepository.findByGroupAndMember(group, member)
-                .orElseThrow(() -> new ScheduleHandler(ErrorStatus.MEMBER_GROUP_NOT_FOUND));
-
-        List<ScheduleAssignee> scheduleAssignees = scheduleAssigneeRepository.findAllByTodo(todo);
-
-        return scheduleAssignees.stream().map(
-                scheduleAssignee -> GroupConverter.toAssigneeDto(scheduleAssignee)
-        ).collect(Collectors.toList());
-    }
-
-    @Override
-    public List<GroupResponseDto.MemberDto> getRoutineScheduleAssignee(Long routineId, Member member) {
-        Routine routine = routineRepository.findById(routineId)
-                .orElseThrow(() -> new ScheduleHandler(ErrorStatus.SCHEDULE_NOT_FOUND));
-        Group group = routine.getSchedule().getGroup();
-
-        // 그룹의 일정이 아닌 경우
-        if (group == null) {
-            new ScheduleHandler(ErrorStatus.SCHEDULE_NOT_GROUP_TYPE);
-        }
-
-        // 해당 그룹의 멤버가 아님
-        memberGroupRepository.findByGroupAndMember(group, member)
-                .orElseThrow(() -> new ScheduleHandler(ErrorStatus.MEMBER_GROUP_NOT_FOUND));
-
-        List<ScheduleAssignee> scheduleAssignees = scheduleAssigneeRepository.findAllByRoutine(routine);
-        return scheduleAssignees.stream().map(
-                scheduleAssignee -> GroupConverter.toAssigneeDto(scheduleAssignee)
-        ).collect(Collectors.toList());
-    }
 }

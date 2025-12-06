@@ -4,11 +4,12 @@ import com.example.ohmobackend.apiPayload.ApiResponse;
 import com.example.ohmobackend.apiPayload.code.status.SuccessStatus;
 import com.example.ohmobackend.domain.Member;
 import com.example.ohmobackend.security.handler.AuthUser;
+import com.example.ohmobackend.service.assigneeService.AssigneeCommandService;
+import com.example.ohmobackend.service.assigneeService.AssigneeQueryService;
 import com.example.ohmobackend.service.scheduleService.GroupScheduleCommandServiceImpl;
 import com.example.ohmobackend.service.scheduleService.GroupScheduleQueryService;
 import com.example.ohmobackend.web.dto.groupDto.GroupResponseDto;
 import com.example.ohmobackend.web.dto.groupScheduleDto.GroupScheduleRequestDto;
-import com.example.ohmobackend.web.dto.groupScheduleDto.GroupScheduleResponseDto;
 import com.example.ohmobackend.web.dto.scheduleDto.ScheduleResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
@@ -24,8 +25,11 @@ import java.util.List;
 @Slf4j
 public class GroupScheduleController {
 
-    final GroupScheduleCommandServiceImpl groupScheduleCommandService;
+    private final GroupScheduleCommandServiceImpl groupScheduleCommandService;
     private final GroupScheduleQueryService groupScheduleQueryService;
+    private final AssigneeQueryService assigneeQueryService;
+    private final AssigneeCommandService assigneeCommandService;
+
 
     @PostMapping("/routine")
     @Operation(summary = "그룹 루틴 등록 API", description = "그룹 루틴 등록 API 입니다.")
@@ -44,14 +48,14 @@ public class GroupScheduleController {
     @PostMapping("/assignee-todo")
     @Operation(summary = "그룹 투두 일정 담당자 등록 API", description = "그룹 투두 일정 담당자 등록 API 입니다.")
     public ApiResponse<Object> addTodoScheduleAssignee(@RequestBody GroupScheduleRequestDto.TodoScheduleAssigneeRequestDto request, @AuthUser Member member) {
-        groupScheduleCommandService.addTodoScheduleAssignee(request, member);
+        assigneeCommandService.addTodoScheduleAssignee(request, member);
         return ApiResponse.onSuccess(SuccessStatus.SCHEDULE_ASSIGNEE_OK, null);
     }
 
     @PostMapping("/assignee-routine")
     @Operation(summary = "그룹 루틴 일정 담당자 등록 API", description = "그룹 루틴 일정 담당자 등록 API 입니다.")
     public ApiResponse<Object> addRoutineScheduleAssignee(@RequestBody GroupScheduleRequestDto.RoutineScheduleAssigneeRequestDto request, @AuthUser Member member) {
-        groupScheduleCommandService.addRoutineScheduleAssignee(request, member);
+        assigneeCommandService.addRoutineScheduleAssignee(request, member);
         return ApiResponse.onSuccess(SuccessStatus.SCHEDULE_ASSIGNEE_OK, null);
     }
 
@@ -65,14 +69,14 @@ public class GroupScheduleController {
     @GetMapping("/assignee-todo")
     @Operation(summary = "투두 일정 담당자 조회 API")
     public ApiResponse<List<GroupResponseDto.MemberDto>> getTodoAssignees(@RequestParam(name = "todoId") Long todoId, @AuthUser Member member) {
-        List<GroupResponseDto.MemberDto> scheduleAssignees = groupScheduleQueryService.getTodoScheduleAssignee(todoId, member);
+        List<GroupResponseDto.MemberDto> scheduleAssignees = assigneeQueryService.getTodoScheduleAssignee(todoId, member);
         return ApiResponse.onSuccess(SuccessStatus.SCHEDULE_OK, scheduleAssignees);
     }
 
     @GetMapping("/assignee-routine")
     @Operation(summary = "루틴 일정 담당자 조회 API")
     public ApiResponse<List<GroupResponseDto.MemberDto>> getRoutineAssignees(@RequestParam(name = "routineId") Long routineId, @AuthUser Member member) {
-        List<GroupResponseDto.MemberDto> scheduleAssignees = groupScheduleQueryService.getRoutineScheduleAssignee(routineId, member);
+        List<GroupResponseDto.MemberDto> scheduleAssignees = assigneeQueryService.getRoutineScheduleAssignee(routineId, member);
         return ApiResponse.onSuccess(SuccessStatus.SCHEDULE_OK, scheduleAssignees);
     }
 }
