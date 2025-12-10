@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+
 public class TodoResponseDto {
 
     @Getter
@@ -14,5 +16,6 @@ public class TodoResponseDto {
     public static class TodoDto {
         private Long todoId;
         private boolean status;
+        private LocalDate date;
     }
 }

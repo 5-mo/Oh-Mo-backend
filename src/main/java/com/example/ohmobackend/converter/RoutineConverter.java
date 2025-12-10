@@ -17,8 +17,8 @@ public class RoutineConverter {
                 .build();
     }
 
-    public static RoutineResponseDto.routineDto toRoutineDto(Routine routine) {
-        return RoutineResponseDto.routineDto.builder()
+    public static RoutineResponseDto.RoutineDto toRoutineDto(Routine routine) {
+        return RoutineResponseDto.RoutineDto.builder()
                 .routineId(routine.getId())
                 .date(routine.getDate())
                 .status(routine.isStatus())

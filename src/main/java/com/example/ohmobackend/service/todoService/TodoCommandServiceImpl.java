@@ -4,6 +4,7 @@ import com.example.ohmobackend.apiPayload.code.status.ErrorStatus;
 import com.example.ohmobackend.apiPayload.exception.handler.MemberHandler;
 import com.example.ohmobackend.apiPayload.exception.handler.ScheduleHandler;
 import com.example.ohmobackend.converter.ScheduleConverter;
+import com.example.ohmobackend.converter.TodoConverter;
 import com.example.ohmobackend.domain.Member;
 import com.example.ohmobackend.domain.Schedule;
 import com.example.ohmobackend.domain.Todo;
@@ -11,6 +12,7 @@ import com.example.ohmobackend.domain.enums.ScheduleType;
 import com.example.ohmobackend.repository.TodoRepository;
 import com.example.ohmobackend.web.dto.scheduleDto.ScheduleRequestDto;
 import com.example.ohmobackend.web.dto.scheduleDto.ScheduleResponseDto;
+import com.example.ohmobackend.web.dto.todoDto.TodoResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,7 +25,7 @@ public class TodoCommandServiceImpl implements TodoCommandService{
 
     @Override
     @Transactional
-    public void updateTodoStatus(Long todoId, Member member) {
+    public TodoResponseDto.TodoDto updateTodoStatus(Long todoId, Member member) {
         Todo todo = todoRepository.findById(todoId)
                 .orElseThrow(() -> new ScheduleHandler(ErrorStatus.SCHEDULE_NOT_FOUND));
 
@@ -32,6 +34,7 @@ public class TodoCommandServiceImpl implements TodoCommandService{
         }
 
         todo.updateStatus(!todo.isStatus());
+        return TodoConverter.toTodoDto(todo);
     }
 
     @Override
