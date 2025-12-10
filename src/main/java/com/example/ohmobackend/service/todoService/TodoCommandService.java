@@ -6,4 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 public interface TodoCommandService {
     @Transactional
     void updateTodoStatus(Long routineId, Member member);
+
+    @Transactional
+    public void deleteTodo(Long todoId, Member member);
 }

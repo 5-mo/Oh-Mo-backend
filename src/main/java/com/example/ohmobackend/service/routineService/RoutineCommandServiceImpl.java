@@ -29,4 +29,17 @@ public class RoutineCommandServiceImpl implements RoutineCommandService {
 
         routine.updateStatus(!routine.isStatus());
     }
+
+    @Override
+    @Transactional
+    public void deleteRoutine(Long routineId, Member member) {
+        Routine routine = routineRepository.findById(routineId)
+                .orElseThrow(() -> new ScheduleHandler(ErrorStatus.SCHEDULE_NOT_FOUND));
+
+        if(routine.getSchedule().getMemberCategory().getMember() != member) {
+            throw new MemberHandler(ErrorStatus.INVALID_MEMBER);
+        }
+
+        routineRepository.delete(routine);
+    }
 }

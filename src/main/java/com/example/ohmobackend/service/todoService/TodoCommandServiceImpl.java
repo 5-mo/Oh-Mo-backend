@@ -33,4 +33,17 @@ public class TodoCommandServiceImpl implements TodoCommandService{
 
         todo.updateStatus(!todo.isStatus());
     }
+
+    @Override
+    @Transactional
+    public void deleteTodo(Long todoId, Member member) {
+        Todo todo = todoRepository.findById(todoId)
+                .orElseThrow(() -> new ScheduleHandler(ErrorStatus.SCHEDULE_NOT_FOUND));
+
+        if(todo.getSchedule().getMemberCategory().getMember() != member) {
+            throw new MemberHandler(ErrorStatus.INVALID_MEMBER);
+        }
+
+        todoRepository.delete(todo);
+    }
 }

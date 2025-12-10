@@ -9,10 +9,7 @@ import com.example.ohmobackend.service.todoService.TodoCommandService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
 @RestController
@@ -27,6 +24,13 @@ public class TodoController {
     public ApiResponse<Object> updateRoutineStatus(@PathVariable(name = "todoId") Long todoId, @AuthUser Member member) {
         todoCommandService.updateTodoStatus(todoId, member);
         return ApiResponse.onSuccess(SuccessStatus.ROUTINE_UPDATE_STATUS_OK, null);
+    }
+
+    @DeleteMapping("/{todoId}")
+    @Operation(summary = "투두 삭제 API", description = "투두 삭제 API 입니다.")
+    public ApiResponse<Object> deleteTodo(@PathVariable(name = "todoId") Long todoId, @AuthUser Member member) {
+        todoCommandService.deleteTodo(todoId, member);
+        return ApiResponse.onSuccess(SuccessStatus.TODO_DELETE_OK, null);
     }
 
 }
