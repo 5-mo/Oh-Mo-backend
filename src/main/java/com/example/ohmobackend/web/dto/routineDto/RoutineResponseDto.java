@@ -14,7 +14,7 @@ public class RoutineResponseDto {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class routineDto {
+    public static class RoutineDto {
         private Long routineId;
         private LocalDate date;
         private boolean status;

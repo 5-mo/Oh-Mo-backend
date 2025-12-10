@@ -17,6 +17,7 @@ public class TodoConverter {
         return TodoResponseDto.TodoDto.builder()
                 .todoId(todo.getId())
                 .status(todo.isStatus())
+                .date(todo.getSchedule().getDate())
                 .build();
     }
 }

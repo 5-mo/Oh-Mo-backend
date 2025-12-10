@@ -89,7 +89,7 @@ public class ScheduleConverter {
     static public ScheduleResponseDto.ScheduleWithRoutineListDto toScheduleWithRoutineListDto(
             Schedule schedule, List<Routine> routineList) {
 
-        List<RoutineResponseDto.routineDto> routineDtoList = routineList.stream()
+        List<RoutineResponseDto.RoutineDto> routineDtoList = routineList.stream()
                 .map(routine -> RoutineConverter.toRoutineDto(routine))
                 .toList();
 

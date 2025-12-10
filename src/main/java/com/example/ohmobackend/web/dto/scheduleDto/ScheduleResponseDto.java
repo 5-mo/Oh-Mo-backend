@@ -3,7 +3,6 @@ package com.example.ohmobackend.web.dto.scheduleDto;
 import com.example.ohmobackend.domain.enums.ScheduleType;
 import com.example.ohmobackend.web.dto.memberCategoryDto.MemberCategoryResponseDto;
 import com.example.ohmobackend.web.dto.routineDto.RoutineResponseDto;
-import com.example.ohmobackend.web.dto.todoDto.TodoRequestDto;
 import com.example.ohmobackend.web.dto.todoDto.TodoResponseDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -52,7 +51,7 @@ public class ScheduleResponseDto {
         private String content;
         private ScheduleType scheduleType;
         private MemberCategoryResponseDto.CategoryResponseDto category;
-        private RoutineResponseDto.routineDto routine;
+        private RoutineResponseDto.RoutineDto routine;
     }
 
     @Getter
@@ -67,7 +66,7 @@ public class ScheduleResponseDto {
         private String content;
         private ScheduleType scheduleType;
         private MemberCategoryResponseDto.CategoryResponseDto category;
-        private List<RoutineResponseDto.routineDto> routineByDateList;
+        private List<RoutineResponseDto.RoutineDto> routineByDateList;
         private List<String> repeatWeek;
     }
 

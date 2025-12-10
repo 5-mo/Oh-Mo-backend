@@ -81,7 +81,8 @@ public class GroupScheduleController {
     }
 
     @PostMapping("/assignee/status")
-    @Operation(summary = "루틴 일정 상태 변경 API")
+    @Operation(summary = "담당자 일정 상태 변경 API",
+            description = "루틴, 투두 관계 없이 담당자 아이디만 필요, 일전 관련된 모든 담당자가 완료하면 일정의 완료 상태는 자동으로 업데이트")
     public ApiResponse<Object> updateAssigneeStatus(@RequestParam(name = "assigneeId") Long assigneeId, @AuthUser Member member) {
         assigneeCommandService.updateAssigneeStatus(assigneeId, member);
         return ApiResponse.onSuccess(SuccessStatus.ASSIGNEE_STATUS_UPDATE_OK, null);

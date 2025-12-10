@@ -6,6 +6,8 @@ import com.example.ohmobackend.apiPayload.code.status.SuccessStatus;
 import com.example.ohmobackend.domain.Member;
 import com.example.ohmobackend.security.handler.AuthUser;
 import com.example.ohmobackend.service.todoService.TodoCommandService;
+import com.example.ohmobackend.web.dto.routineDto.RoutineResponseDto;
+import com.example.ohmobackend.web.dto.todoDto.TodoResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,9 +23,9 @@ public class TodoController {
 
     @PatchMapping("/{todoId}")
     @Operation(summary = "투두 상태 변경 API", description = "상태 변경 API 입니다.")
-    public ApiResponse<Object> updateRoutineStatus(@PathVariable(name = "todoId") Long todoId, @AuthUser Member member) {
-        todoCommandService.updateTodoStatus(todoId, member);
-        return ApiResponse.onSuccess(SuccessStatus.ROUTINE_UPDATE_STATUS_OK, null);
+    public ApiResponse<TodoResponseDto.TodoDto> updateRoutineStatus(@PathVariable(name = "todoId") Long todoId, @AuthUser Member member) {
+        TodoResponseDto.TodoDto todoDto = todoCommandService.updateTodoStatus(todoId, member);
+        return ApiResponse.onSuccess(SuccessStatus.TODO_UPDATE_STATUS_OK, todoDto);
     }
 
     @DeleteMapping("/{todoId}")
