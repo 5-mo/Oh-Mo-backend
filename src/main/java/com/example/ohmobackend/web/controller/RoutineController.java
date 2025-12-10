@@ -20,8 +20,15 @@ public class RoutineController {
 
     @PatchMapping("/{routineId}")
     @Operation(summary = "루틴 상태 변경 API", description = "상태 변경 API 입니다.")
-    public ApiResponse<Object> updateRoutineStatus(@PathVariable(name = "routineId") Long scheduleId, @AuthUser Member member) {
-        routineCommandService.updateRoutineStatus(scheduleId, member);
+    public ApiResponse<Object> updateRoutineStatus(@PathVariable(name = "routineId") Long routineId, @AuthUser Member member) {
+        routineCommandService.updateRoutineStatus(routineId, member);
         return ApiResponse.onSuccess(SuccessStatus.ROUTINE_UPDATE_STATUS_OK, null);
+    }
+
+    @DeleteMapping("/{routineId}")
+    @Operation(summary = "루틴 삭제 API", description = "루틴 삭제 API 입니다.")
+    public ApiResponse<Object> deleteRoutine(@PathVariable(name = "routineId") Long routineId, @AuthUser Member member) {
+        routineCommandService.deleteRoutine(routineId, member);
+        return ApiResponse.onSuccess(SuccessStatus.ROUTINE_DELETE_OK, null);
     }
 }
