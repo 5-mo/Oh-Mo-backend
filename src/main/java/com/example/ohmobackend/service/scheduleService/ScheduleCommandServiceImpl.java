@@ -7,15 +7,13 @@ import com.example.ohmobackend.apiPayload.exception.handler.ScheduleHandler;
 import com.example.ohmobackend.converter.RoutineConverter;
 import com.example.ohmobackend.converter.ScheduleConverter;
 import com.example.ohmobackend.converter.TodoConverter;
-import com.example.ohmobackend.domain.Member;
-import com.example.ohmobackend.domain.MemberCategory;
-import com.example.ohmobackend.domain.Routine;
-import com.example.ohmobackend.domain.Schedule;
+import com.example.ohmobackend.domain.*;
 import com.example.ohmobackend.domain.enums.ScheduleType;
 import com.example.ohmobackend.repository.*;
 import com.example.ohmobackend.web.dto.routineDto.RoutineResponseDto;
 import com.example.ohmobackend.web.dto.scheduleDto.ScheduleRequestDto;
 import com.example.ohmobackend.web.dto.scheduleDto.ScheduleResponseDto;
+import com.example.ohmobackend.web.dto.todoDto.TodoResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,8 +36,7 @@ public class ScheduleCommandServiceImpl implements ScheduleCommandService {
 
     @Override
     public List<RoutineResponseDto.RoutineDto> addRoutine(ScheduleRequestDto.AddRequestDto requestDto, Member member) {
-        MemberCategory memberCategory = memberCategoryRepository.findById(requestDto.getCategoryId())
-                .orElseThrow(() -> new ScheduleHandler(ErrorStatus.MEMBER_CATEGORY_NOT_FOUND));
+        MemberCategory memberCategory = getMemberCategory(requestDto, member, ScheduleType.ROUTINE);
 
         if(!member.equals(memberCategory.getMember())) {
             throw new MemberCategoryHandler(ErrorStatus.INVALID_MEMBER_CATEGORY);
@@ -74,9 +71,8 @@ public class ScheduleCommandServiceImpl implements ScheduleCommandService {
     }
 
     @Override
-    public void addTodo(ScheduleRequestDto.AddRequestDto requestDto, Member member) {
-        MemberCategory memberCategory = memberCategoryRepository.findById(requestDto.getCategoryId())
-                .orElseThrow(() -> new ScheduleHandler(ErrorStatus.MEMBER_CATEGORY_NOT_FOUND));
+    public TodoResponseDto.TodoDto addTodo(ScheduleRequestDto.AddRequestDto requestDto, Member member) {
+        MemberCategory memberCategory = getMemberCategory(requestDto, member, ScheduleType.TO_DO);
 
         if(!member.equals(memberCategory.getMember())) {
             throw new MemberCategoryHandler(ErrorStatus.INVALID_MEMBER_CATEGORY);
@@ -87,7 +83,8 @@ public class ScheduleCommandServiceImpl implements ScheduleCommandService {
         }
 
         Schedule schedule = scheduleRepository.save(ScheduleConverter.toEntity(requestDto, memberCategory));
-        todoRepository.save(TodoConverter.toEntity(schedule));
+        Todo todo = todoRepository.save(TodoConverter.toEntity(schedule));
+        return TodoConverter.toTodoDto(todo);
     }
 
     @Override
@@ -119,5 +116,14 @@ public class ScheduleCommandServiceImpl implements ScheduleCommandService {
         }
 
         schedule.updateAlarmTime(requestDto.getAlarmTime());
+    }
+
+    private MemberCategory getMemberCategory(ScheduleRequestDto.AddRequestDto requestDto, Member member, ScheduleType scheduleType) {
+        MemberCategory memberCategory = (requestDto.getCategoryId() == null)
+                ? memberCategoryRepository.findByMemberAndCategoryNameAndScheduleType(member, "default", scheduleType)
+                .orElseThrow(() -> new ScheduleHandler(ErrorStatus.DEFAULT_MEMBER_CATEGORY_NOT_FOUND))
+                : memberCategoryRepository.findById(requestDto.getCategoryId() )
+                .orElseThrow(() -> new ScheduleHandler(ErrorStatus.MEMBER_CATEGORY_NOT_FOUND));
+        return memberCategory;
     }
 }

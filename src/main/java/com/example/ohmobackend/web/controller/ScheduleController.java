@@ -10,6 +10,7 @@ import com.example.ohmobackend.service.scheduleService.ScheduleQueryService;
 import com.example.ohmobackend.web.dto.routineDto.RoutineResponseDto;
 import com.example.ohmobackend.web.dto.scheduleDto.ScheduleRequestDto;
 import com.example.ohmobackend.web.dto.scheduleDto.ScheduleResponseDto;
+import com.example.ohmobackend.web.dto.todoDto.TodoResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -33,17 +34,17 @@ public class ScheduleController {
             description = "루틴 등록 API 입니다." +
                     "입력 필수 요소: date(끝나는 날짜), 반복 요일, 내용")
     public ApiResponse<List<RoutineResponseDto.RoutineDto>> addRoutine(@Valid @RequestBody ScheduleRequestDto.AddRequestDto request, @AuthUser Member member) {
-        scheduleCommandService.addRoutine(request, member);
-        return ApiResponse.onSuccess(SuccessStatus.SCHEDULE_ROUTINE_OK, null);
+        List<RoutineResponseDto.RoutineDto> routineDtos = scheduleCommandService.addRoutine(request, member);
+        return ApiResponse.onSuccess(SuccessStatus.SCHEDULE_ROUTINE_OK, routineDtos);
     }
 
     @PostMapping("/todo")
     @Operation(summary = "투두 등록 API",
             description = "투두 등록 API 입니다." +
                     "입력 필수 요소: date(투두 날짜), 내용")
-    public ApiResponse<Object> addTodo(@Valid @RequestBody ScheduleRequestDto.AddRequestDto request, @AuthUser Member member) {
-        scheduleCommandService.addTodo(request, member);
-        return ApiResponse.onSuccess(SuccessStatus.SCHEDULE_TO_DO_OK, null);
+    public ApiResponse<TodoResponseDto.TodoDto> addTodo(@Valid @RequestBody ScheduleRequestDto.AddRequestDto request, @AuthUser Member member) {
+        TodoResponseDto.TodoDto todoDto = scheduleCommandService.addTodo(request, member);
+        return ApiResponse.onSuccess(SuccessStatus.SCHEDULE_TO_DO_OK, todoDto);
     }
 
     @PatchMapping ("/alarm")
