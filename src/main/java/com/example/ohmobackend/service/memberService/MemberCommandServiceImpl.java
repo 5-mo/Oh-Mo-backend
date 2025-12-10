@@ -2,11 +2,16 @@ package com.example.ohmobackend.service.memberService;
 
 import com.example.ohmobackend.apiPayload.code.status.ErrorStatus;
 import com.example.ohmobackend.apiPayload.exception.handler.MemberHandler;
+import com.example.ohmobackend.converter.MemberCategoryConverter;
 import com.example.ohmobackend.converter.MemberConverter;
 import com.example.ohmobackend.domain.Member;
+import com.example.ohmobackend.domain.MemberCategory;
+import com.example.ohmobackend.domain.enums.ScheduleType;
+import com.example.ohmobackend.repository.MemberCategoryRepository;
 import com.example.ohmobackend.repository.MemberRepository;
 import com.example.ohmobackend.security.JwtToken;
 import com.example.ohmobackend.security.provider.TokenProvider;
+import com.example.ohmobackend.web.dto.memberCategoryDto.MemberCategoryDtoRequest;
 import com.example.ohmobackend.web.dto.memberDto.MemberRequestDto;
 import com.example.ohmobackend.web.dto.memberDto.MemberResponseDto;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +30,7 @@ public class MemberCommandServiceImpl implements MemberCommandService {
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final TokenProvider tokenProvider;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final MemberCategoryRepository memberCategoryRepository;
 
     @Override
     public MemberResponseDto.SignupResponseDto signup(MemberRequestDto.SignupRequestDto request) {
@@ -35,7 +41,21 @@ public class MemberCommandServiceImpl implements MemberCommandService {
         Member member = MemberConverter.toEntity(request, bCryptPasswordEncoder.encode(request.getPassword()));
         Member newMember = memberRepository.save(member);
 
+        // default 카테고리 추가
+        saveDefaultCategory(member, ScheduleType.TO_DO);
+        saveDefaultCategory(member, ScheduleType.ROUTINE);
+
         return MemberConverter.toDto(newMember);
+    }
+
+    private void saveDefaultCategory(Member member, ScheduleType scheduleType) {
+        MemberCategoryDtoRequest.addCategoryRequest todoCategory = MemberCategoryDtoRequest.addCategoryRequest.builder()
+                .color("#000000")
+                .scheduleType(scheduleType)
+                .categoryName("default")
+                .build();
+        MemberCategory defaultCategoryEntity = MemberCategoryConverter.toMemberCategoryEntity(todoCategory, member);
+        memberCategoryRepository.save(defaultCategoryEntity);
     }
 
     @Transactional
