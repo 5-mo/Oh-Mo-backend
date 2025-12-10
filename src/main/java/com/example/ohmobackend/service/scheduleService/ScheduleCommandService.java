@@ -1,12 +1,15 @@
 package com.example.ohmobackend.service.scheduleService;
 
 import com.example.ohmobackend.domain.Member;
+import com.example.ohmobackend.web.dto.routineDto.RoutineResponseDto;
 import com.example.ohmobackend.web.dto.scheduleDto.ScheduleRequestDto;
 import com.example.ohmobackend.web.dto.scheduleDto.ScheduleResponseDto;
 
+import java.util.List;
+
 public interface ScheduleCommandService {
 
-    public void addRoutine(ScheduleRequestDto.AddRequestDto requestDto, Member member);
+    public List<RoutineResponseDto.RoutineDto> addRoutine(ScheduleRequestDto.AddRequestDto requestDto, Member member);
 
     public void addTodo(ScheduleRequestDto.AddRequestDto requestDto, Member member);
 

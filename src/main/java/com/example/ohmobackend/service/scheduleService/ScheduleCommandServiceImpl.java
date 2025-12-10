@@ -13,6 +13,7 @@ import com.example.ohmobackend.domain.Routine;
 import com.example.ohmobackend.domain.Schedule;
 import com.example.ohmobackend.domain.enums.ScheduleType;
 import com.example.ohmobackend.repository.*;
+import com.example.ohmobackend.web.dto.routineDto.RoutineResponseDto;
 import com.example.ohmobackend.web.dto.scheduleDto.ScheduleRequestDto;
 import com.example.ohmobackend.web.dto.scheduleDto.ScheduleResponseDto;
 import lombok.RequiredArgsConstructor;
@@ -32,12 +33,11 @@ public class ScheduleCommandServiceImpl implements ScheduleCommandService {
 
     final private MemberCategoryRepository memberCategoryRepository;
     final private ScheduleRepository scheduleRepository;
-    final private MemberRepository memberRepository;
     final private TodoRepository todoRepository;
     final private RoutineRepository routineRepository;
 
     @Override
-    public void addRoutine(ScheduleRequestDto.AddRequestDto requestDto, Member member) {
+    public List<RoutineResponseDto.RoutineDto> addRoutine(ScheduleRequestDto.AddRequestDto requestDto, Member member) {
         MemberCategory memberCategory = memberCategoryRepository.findById(requestDto.getCategoryId())
                 .orElseThrow(() -> new ScheduleHandler(ErrorStatus.MEMBER_CATEGORY_NOT_FOUND));
 
@@ -52,9 +52,10 @@ public class ScheduleCommandServiceImpl implements ScheduleCommandService {
         Schedule schedule = ScheduleConverter.toEntity(requestDto, memberCategory);
 
         // repeatWeek 저장
-        if (requestDto.getRoutineWeek() != null && !requestDto.getRoutineWeek().isEmpty()) {
-            schedule.getRepeatWeek().addAll(requestDto.getRoutineWeek());
+        if (requestDto.getRoutineWeek() == null || requestDto.getRoutineWeek().isEmpty()) {
+            throw new ScheduleHandler(ErrorStatus.REPEAT_WEEK_IS_EMPTY);
         }
+        schedule.getRepeatWeek().addAll(requestDto.getRoutineWeek());
 
         // DB에 저장
         scheduleRepository.save(schedule);
@@ -67,6 +68,9 @@ public class ScheduleCommandServiceImpl implements ScheduleCommandService {
                 .collect(Collectors.toList());
 
         routineRepository.saveAll(routineList);
+        return routineList.stream()
+                .map(RoutineConverter::toRoutineDto)
+                .collect(Collectors.toList());
     }
 
     @Override
