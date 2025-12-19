@@ -18,10 +18,10 @@ public class ScheduleRequestDto {
         private Long categoryId;
 
         @Schema(type = "string")
-        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:MM", timezone = "Asia/Seoul")
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm", timezone = "Asia/Seoul")
         private LocalTime time;
         @Schema(type = "string")
-        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:MM", timezone = "Asia/Seoul")
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm", timezone = "Asia/Seoul")
         private LocalTime alarmTime;
         @NotEmpty(message = "내용은 필수입니다.")
         private String content;
