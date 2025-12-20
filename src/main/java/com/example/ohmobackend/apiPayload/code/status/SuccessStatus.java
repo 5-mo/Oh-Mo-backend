@@ -63,7 +63,7 @@ public enum SuccessStatus implements BaseCode {
     // 투두 관련
     TODO_UPDATE_STATUS_OK(HttpStatus.OK, "TODO_2000", "투두 상태 변경이 완료되었습니다."),
     TODO_DELETE_OK(HttpStatus.OK, "TODO_2001", "투두 삭제가 완료되었습니다."),
-    TODO_PATCH_OK(HttpStatus.OK, "TODO_2002", "투두 수정이 완료되었습니다."),
+    TODO_UPDATE_OK(HttpStatus.OK, "TODO_2002", "투두 수정이 완료되었습니다."),
 
     // 담당자 관련
     ASSIGNEE_STATUS_UPDATE_OK(HttpStatus.OK, "ASSIGNEE_2000", "담당자 상태 변경이 완료되었습니다."),

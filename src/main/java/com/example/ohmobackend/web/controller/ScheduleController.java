@@ -39,8 +39,7 @@ public class ScheduleController {
 
     @PatchMapping("/{scheduleId}/routine")
     @Operation(summary = "루틴 수정 API",
-            description = "루틴 수정 API 입니다." +
-                    "입력 필수 요소: date(끝나는 날짜), 반복 요일, 내용")
+            description = "루틴 수정 API 입니다.")
     public ApiResponse<List<RoutineResponseDto.RoutineDto>> updateRoutine(
             @Valid @RequestBody ScheduleRequestDto.AddRequestDto request,
             @PathVariable(name = "scheduleId") Long scheduleId,
@@ -56,6 +55,17 @@ public class ScheduleController {
     public ApiResponse<TodoResponseDto.TodoDto> addTodo(@Valid @RequestBody ScheduleRequestDto.AddRequestDto request, @AuthUser Member member) {
         TodoResponseDto.TodoDto todoDto = scheduleCommandService.addTodo(request, member);
         return ApiResponse.onSuccess(SuccessStatus.SCHEDULE_TO_DO_OK, todoDto);
+    }
+
+    @PatchMapping("/{scheduleId}/todo")
+    @Operation(summary = "투두 수정 API",
+            description = "투두 수정 API 입니다." )
+    public ApiResponse<TodoResponseDto.TodoDto> updateTodo(
+            @Valid @RequestBody ScheduleRequestDto.AddRequestDto request,
+            @PathVariable(name = "scheduleId") Long scheduleId,
+            @AuthUser Member member) {
+        TodoResponseDto.TodoDto todoDto  = scheduleCommandService.updateTodo(scheduleId, request, member);
+        return ApiResponse.onSuccess(SuccessStatus.TODO_UPDATE_OK, todoDto);
     }
 
     @PatchMapping ("/alarm")
