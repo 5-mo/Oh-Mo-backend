@@ -79,7 +79,27 @@ public class Schedule extends BaseEntity {
         this.date = date;
     }
 
-    public void updateAlarmTime(LocalTime time) {
-        this.alarmTime = time;
+    public void updateTime(LocalTime time) {
+        this.time = time;
+    }
+
+    public void updateAlarmTime(LocalTime alarmTime) {
+        this.alarmTime = alarmTime;
+    }
+
+    public void updateContent(String content) {
+        this.content = content;
+    }
+
+    public void updateRepeatWeek(Set<DayOfWeek> repeatWeek) {
+        this.repeatWeek.clear();
+
+        if (repeatWeek != null && !repeatWeek.isEmpty()) {
+            this.repeatWeek.addAll(repeatWeek);
+        }
+    }
+
+    public void changeMemberCategory(MemberCategory memberCategory) {
+        this.memberCategory = memberCategory;
     }
 }

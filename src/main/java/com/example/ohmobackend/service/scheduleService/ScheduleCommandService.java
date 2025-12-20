@@ -12,6 +12,8 @@ public interface ScheduleCommandService {
 
     public List<RoutineResponseDto.RoutineDto> addRoutine(ScheduleRequestDto.AddRequestDto requestDto, Member member);
 
+    public List<RoutineResponseDto.RoutineDto> updateRoutine(Long scheduleId, ScheduleRequestDto.AddRequestDto requestDto, Member member);
+
     public TodoResponseDto.TodoDto addTodo(ScheduleRequestDto.AddRequestDto requestDto, Member member);
 
     public ScheduleResponseDto.ScheduleTodoDto updateScheduleDate(ScheduleRequestDto.UpdateTodoDateRequestDto requestDto, Member member);

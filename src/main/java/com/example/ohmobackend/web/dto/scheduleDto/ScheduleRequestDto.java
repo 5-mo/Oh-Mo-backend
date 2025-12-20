@@ -9,7 +9,7 @@ import lombok.Getter;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.List;
+import java.util.Set;
 
 public class ScheduleRequestDto {
 
@@ -28,7 +28,7 @@ public class ScheduleRequestDto {
         @NotNull(message = "날짜는 필수입니다. 루틴은 endDate, 투두는 날짜")
         private LocalDate date;
         @JsonFormat(with = JsonFormat.Feature.ACCEPT_CASE_INSENSITIVE_PROPERTIES)
-        private List<DayOfWeek> routineWeek;
+        private Set<DayOfWeek> routineWeek;
     }
 
     @Getter

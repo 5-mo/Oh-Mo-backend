@@ -19,7 +19,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import static com.example.ohmobackend.service.scheduleService.DateCalculator.getDatesFromNowDate;
@@ -35,7 +37,9 @@ public class ScheduleCommandServiceImpl implements ScheduleCommandService {
     final private RoutineRepository routineRepository;
 
     @Override
-    public List<RoutineResponseDto.RoutineDto> addRoutine(ScheduleRequestDto.AddRequestDto requestDto, Member member) {
+    public List<RoutineResponseDto.RoutineDto> addRoutine(
+            ScheduleRequestDto.AddRequestDto requestDto,
+            Member member) {
         MemberCategory memberCategory = getMemberCategory(requestDto, member, ScheduleType.ROUTINE);
 
         if(!member.equals(memberCategory.getMember())) {
@@ -68,6 +72,26 @@ public class ScheduleCommandServiceImpl implements ScheduleCommandService {
         return routineList.stream()
                 .map(RoutineConverter::toRoutineDto)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional
+    public List<RoutineResponseDto.RoutineDto> updateRoutine(
+            Long scheduleId,
+            ScheduleRequestDto.AddRequestDto requestDto,
+            Member member
+    ) {
+        Schedule schedule = getValidatedRoutineSchedule(scheduleId, member);
+
+        boolean routineChanged = applySchedulePatch(schedule, requestDto);
+
+        if (routineChanged) {
+            return regenerateRoutines(schedule);
+        }
+
+        return routineRepository.findAllBySchedule(schedule).stream()
+                .map(RoutineConverter::toRoutineDto)
+                .toList();
     }
 
     @Override
@@ -126,4 +150,67 @@ public class ScheduleCommandServiceImpl implements ScheduleCommandService {
                 .orElseThrow(() -> new ScheduleHandler(ErrorStatus.MEMBER_CATEGORY_NOT_FOUND));
         return memberCategory;
     }
+
+    private Schedule getValidatedRoutineSchedule(Long scheduleId, Member member) {
+        Schedule schedule = scheduleRepository.findById(scheduleId)
+                .orElseThrow(() -> new ScheduleHandler(ErrorStatus.SCHEDULE_NOT_FOUND));
+
+        MemberCategory memberCategory = schedule.getMemberCategory();
+
+        if (!member.equals(memberCategory.getMember())) {
+            throw new MemberCategoryHandler(ErrorStatus.INVALID_MEMBER_CATEGORY);
+        }
+
+        if (memberCategory.getScheduleType() != ScheduleType.ROUTINE) {
+            throw new MemberCategoryHandler(ErrorStatus.MEMBER_CATEGORY_NOT_ROUTINE_TYPE);
+        }
+
+        return schedule;
+    }
+
+    private boolean applySchedulePatch(
+            Schedule schedule,
+            ScheduleRequestDto.AddRequestDto dto
+    ) {
+        boolean routineChanged = false;
+
+        routineChanged |= patchIfPresent(dto.getDate(), schedule::updateDate);
+        routineChanged |= patchIfPresent(dto.getRoutineWeek(),
+                weeks -> schedule.updateRepeatWeek(new HashSet<>(weeks)));
+
+        patchIfPresent(dto.getTime(), schedule::updateTime);
+        patchIfPresent(dto.getAlarmTime(), schedule::updateAlarmTime);
+        patchIfPresent(dto.getContent(), schedule::updateContent);
+
+        return routineChanged;
+    }
+
+    private <T> boolean patchIfPresent(T value, Consumer<T> updater) {
+        if (value == null) {
+            return false;
+        }
+        updater.accept(value);
+        return true;
+    }
+
+    private List<RoutineResponseDto.RoutineDto> regenerateRoutines(Schedule schedule) {
+        routineRepository.deleteAllBySchedule(schedule);
+
+        List<LocalDate> dates = getDatesFromNowDate(
+                schedule.getDate(),
+                schedule.getRepeatWeek()
+        );
+
+        List<Routine> routines = dates.stream()
+                .map(date -> RoutineConverter.toEntity(schedule, date))
+                .toList();
+
+        routineRepository.saveAll(routines);
+
+        return routines.stream()
+                .map(RoutineConverter::toRoutineDto)
+                .toList();
+    }
+
+
 }
