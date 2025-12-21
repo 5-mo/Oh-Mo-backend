@@ -162,14 +162,20 @@ public class ScheduleCommandServiceImpl implements ScheduleCommandService {
         boolean routineChanged = false;
 
         routineChanged |= patchIfPresent(dto.getDate(), schedule::updateDate);
-        routineChanged |= patchIfPresent(dto.getRoutineWeek(),
-                weeks -> schedule.updateRepeatWeek(new HashSet<>(weeks)));
+
+        if (scheduleType == ScheduleType.ROUTINE) {
+            routineChanged |= patchIfPresent(
+                    dto.getRoutineWeek(),
+                    weeks -> schedule.updateRepeatWeek(new HashSet<>(weeks))
+            );
+        }
 
         patchIfPresent(dto.getTime(), schedule::updateTime);
         patchIfPresent(dto.getAlarmTime(), schedule::updateAlarmTime);
         patchIfPresent(dto.getContent(), schedule::updateContent);
         patchIfPresent(dto.getCategoryId(),
                 memberCategoryId -> changeMemberCategory(schedule, memberCategoryId, scheduleType));
+
         return routineChanged;
     }
 
