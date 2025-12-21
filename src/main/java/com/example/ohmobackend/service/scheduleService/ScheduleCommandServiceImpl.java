@@ -21,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -84,12 +85,10 @@ public class ScheduleCommandServiceImpl implements ScheduleCommandService {
         boolean routineChanged = applySchedulePatch(schedule, requestDto, ScheduleType.ROUTINE);
 
         if (routineChanged) {
-            return regenerateRoutines(schedule);
+            return updateRoutinesIncrementally(schedule);
         }
 
-        return routineRepository.findAllBySchedule(schedule).stream()
-                .map(RoutineConverter::toRoutineDto)
-                .toList();
+        return findRoutineDtos(schedule);
     }
 
     @Override
@@ -193,24 +192,57 @@ public class ScheduleCommandServiceImpl implements ScheduleCommandService {
         return true;
     }
 
-    private List<RoutineResponseDto.RoutineDto> regenerateRoutines(Schedule schedule) {
-        routineRepository.deleteAllBySchedule(schedule);
+    private List<RoutineResponseDto.RoutineDto> updateRoutinesIncrementally(Schedule schedule) {
 
-        List<LocalDate> dates = getDatesFromNowDate(
-                schedule.getDate(),
-                schedule.getRepeatWeek()
+        Set<LocalDate> existingDates = findExistingRoutineDates(schedule);
+        Set<LocalDate> newDates = calculateNewRoutineDates(schedule);
+
+        deleteObsoleteRoutines(schedule, newDates);
+        addMissingRoutines(schedule, existingDates, newDates);
+
+        return findRoutineDtos(schedule);
+    }
+
+    private Set<LocalDate> findExistingRoutineDates(Schedule schedule) {
+        return routineRepository.findAllBySchedule(schedule).stream()
+                .map(Routine::getDate)
+                .collect(Collectors.toSet());
+    }
+
+    private Set<LocalDate> calculateNewRoutineDates(Schedule schedule) {
+        return new HashSet<>(
+                getDatesFromNowDate(
+                        schedule.getDate(),
+                        schedule.getRepeatWeek()
+                )
         );
+    }
 
-        List<Routine> routines = dates.stream()
+    private void deleteObsoleteRoutines(Schedule schedule, Set<LocalDate> newDates) {
+        List<Routine> toDelete = routineRepository.findAllBySchedule(schedule).stream()
+                .filter(routine -> !newDates.contains(routine.getDate()))
+                .toList();
+
+        routineRepository.deleteAll(toDelete);
+    }
+
+    private void addMissingRoutines(
+            Schedule schedule,
+            Set<LocalDate> existingDates,
+            Set<LocalDate> newDates
+    ) {
+        List<Routine> toAdd = newDates.stream()
+                .filter(date -> !existingDates.contains(date))
                 .map(date -> RoutineConverter.toEntity(schedule, date))
                 .toList();
 
-        routineRepository.saveAll(routines);
+        routineRepository.saveAll(toAdd);
+    }
 
-        return routines.stream()
+    private List<RoutineResponseDto.RoutineDto> findRoutineDtos(Schedule schedule) {
+        return routineRepository.findAllBySchedule(schedule).stream()
                 .map(RoutineConverter::toRoutineDto)
                 .toList();
     }
-
 
 }
