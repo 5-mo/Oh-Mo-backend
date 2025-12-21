@@ -42,4 +42,9 @@ public class ScheduleRequestDto {
         private Long scheduleId;
         private LocalTime alarmTime;
     }
+
+    @Getter
+    public static class NlpAddRequestDto {
+        private String text;
+    }
 }
