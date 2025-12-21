@@ -15,6 +15,7 @@ import com.example.ohmobackend.web.dto.scheduleDto.ScheduleRequestDto;
 import com.example.ohmobackend.web.dto.scheduleDto.ScheduleResponseDto;
 import com.example.ohmobackend.web.dto.todoDto.TodoResponseDto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -39,10 +40,13 @@ import static com.example.ohmobackend.service.scheduleService.DateCalculator.get
 @Transactional
 public class ScheduleCommandServiceImpl implements ScheduleCommandService {
 
+    @Value("${nlp.api-url}")
+    private String nlpApiUrl;
     final private MemberCategoryRepository memberCategoryRepository;
     final private ScheduleRepository scheduleRepository;
     final private TodoRepository todoRepository;
     final private RoutineRepository routineRepository;
+
 
     @Override
     public List<RoutineResponseDto.RoutineDto> addRoutine(
@@ -275,8 +279,7 @@ public class ScheduleCommandServiceImpl implements ScheduleCommandService {
         headers.setContentType(MediaType.TEXT_PLAIN);
         HttpEntity<String> entity = new HttpEntity<>(text, headers);
 
-        String apiUrl = "http://localhost:8000/nlp/extract-text";
-        ResponseEntity<Map> response = restTemplate.postForEntity(apiUrl, entity, Map.class);
+        ResponseEntity<Map> response = restTemplate.postForEntity(nlpApiUrl + "/nlp/extract-text", entity, Map.class);
 
         if (!response.getStatusCode().is2xxSuccessful() || response.getBody() == null) {
             throw new ScheduleHandler(ErrorStatus.NLP_PARSE_FAILED);
@@ -284,6 +287,7 @@ public class ScheduleCommandServiceImpl implements ScheduleCommandService {
 
         return (Map<String, Object>) response.getBody().get("result");
     }
+
 
 
 }
