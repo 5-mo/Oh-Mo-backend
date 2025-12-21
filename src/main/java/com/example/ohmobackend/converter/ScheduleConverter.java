@@ -10,8 +10,10 @@ import com.example.ohmobackend.web.dto.scheduleDto.ScheduleResponseDto;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -20,16 +22,50 @@ public class ScheduleConverter {
     static public Schedule toEntity(
             ScheduleRequestDto.AddRequestDto requestDto,
             MemberCategory memberCategory) {
-        return Schedule.builder()
+        Schedule.ScheduleBuilder builder = Schedule.builder()
                 .date(requestDto.getDate())
                 .time(requestDto.getTime())
                 .alarmTime(requestDto.getAlarmTime())
                 .content(requestDto.getContent())
                 .scheduleType(memberCategory.getScheduleType())
-                .memberCategory(memberCategory)
-                .repeatWeek(new HashSet<>())
-                .build();
+                .memberCategory(memberCategory);
 
+        if (memberCategory.getScheduleType() == ScheduleType.ROUTINE) {
+            builder.repeatWeek(new HashSet<>(requestDto.getRoutineWeek()));
+        }
+
+        return builder.build();
+    }
+
+    static public Schedule parsedResultToEntity(
+            Map<String, Object> parsedResult,
+            MemberCategory memberCategory) {
+
+        LocalDate date = parseDate(parsedResult.get("date"));
+        LocalTime time = parseTime(parsedResult.get("time"));
+        LocalTime alarmTime = parseTime(parsedResult.get("alarm_time"));
+
+        return Schedule.builder()
+                .date(date)
+                .time(time)
+                .alarmTime(alarmTime)
+                .content((String) parsedResult.get("content"))
+                .scheduleType(memberCategory.getScheduleType())
+                .memberCategory(memberCategory).build();
+    }
+
+    private static LocalDate parseDate(Object obj) {
+        if (obj instanceof String str && !str.isEmpty()) {
+            return LocalDate.parse(str);
+        }
+        return null;
+    }
+
+    private static LocalTime parseTime(Object obj) {
+        if (obj instanceof String str && !str.isEmpty()) {
+            return LocalTime.parse(str);
+        }
+        return null;
     }
 
     static public Schedule groupScheduleToEntity(

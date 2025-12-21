@@ -40,6 +40,7 @@ public enum ErrorStatus implements BaseErrorCode {
     SCHEDULE_NOT_TO_DO_TYPE(HttpStatus.BAD_REQUEST, "SCHEDULE4004", "일정이 투두가 아닙니다."),
     SCHEDULE_INVALID_ALARM_TIME(HttpStatus.BAD_REQUEST, "SCHEDULE4005", "알람 시간 등록이 불가능한 일정입니다."),
     SCHEDULE_NOT_GROUP_TYPE(HttpStatus.BAD_REQUEST, "SCHEDULE4006", "그룹 일정이 아닙니다."),
+    NLP_PARSE_FAILED(HttpStatus.BAD_REQUEST, "SCHEDULE4007", "텍스트 파싱 실패"),
 
     // 질문 관련
     QUESTION_NOT_FOUND(HttpStatus.BAD_REQUEST, "QUESTION4001", "등록된 질문이 없습니다."),

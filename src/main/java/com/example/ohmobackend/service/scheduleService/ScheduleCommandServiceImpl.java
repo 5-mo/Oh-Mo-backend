@@ -15,12 +15,18 @@ import com.example.ohmobackend.web.dto.scheduleDto.ScheduleRequestDto;
 import com.example.ohmobackend.web.dto.scheduleDto.ScheduleResponseDto;
 import com.example.ohmobackend.web.dto.todoDto.TodoResponseDto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -71,7 +77,6 @@ public class ScheduleCommandServiceImpl implements ScheduleCommandService {
     }
 
     @Override
-    @Transactional
     public List<RoutineResponseDto.RoutineDto> updateRoutine(
             Long scheduleId,
             ScheduleRequestDto.AddRequestDto requestDto,
@@ -96,6 +101,19 @@ public class ScheduleCommandServiceImpl implements ScheduleCommandService {
         MemberCategory memberCategory = getMemberCategory(requestDto, member, ScheduleType.TO_DO);
         validateMemberCategory(memberCategory, member, ScheduleType.TO_DO);
         Schedule schedule = scheduleRepository.save(ScheduleConverter.toEntity(requestDto, memberCategory));
+        Todo todo = todoRepository.save(TodoConverter.toEntity(schedule));
+        return TodoConverter.toTodoDto(todo);
+    }
+
+    @Override
+    public TodoResponseDto.TodoDto nlpAddTodo(ScheduleRequestDto.NlpAddRequestDto requestDto, Member member) {
+        Map<String, Object> parsedResult = callNlpApi(requestDto.getText());
+        MemberCategory memberCategory = memberCategoryRepository.findByMemberAndCategoryNameAndScheduleType(
+                        member, "default", ScheduleType.TO_DO)
+                .orElseThrow(() -> new MemberCategoryHandler(ErrorStatus.MEMBER_CATEGORY_NOT_FOUND));
+
+        Schedule schedule = ScheduleConverter.parsedResultToEntity(parsedResult, memberCategory);
+        scheduleRepository.save(schedule);
         Todo todo = todoRepository.save(TodoConverter.toEntity(schedule));
         return TodoConverter.toTodoDto(todo);
     }
@@ -250,5 +268,22 @@ public class ScheduleCommandServiceImpl implements ScheduleCommandService {
                 .map(RoutineConverter::toRoutineDto)
                 .toList();
     }
+
+    private Map<String, Object> callNlpApi(String text) {
+        RestTemplate restTemplate = new RestTemplate();
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.TEXT_PLAIN);
+        HttpEntity<String> entity = new HttpEntity<>(text, headers);
+
+        String apiUrl = "http://localhost:8000/nlp/extract-text";
+        ResponseEntity<Map> response = restTemplate.postForEntity(apiUrl, entity, Map.class);
+
+        if (!response.getStatusCode().is2xxSuccessful() || response.getBody() == null) {
+            throw new ScheduleHandler(ErrorStatus.NLP_PARSE_FAILED);
+        }
+
+        return (Map<String, Object>) response.getBody().get("result");
+    }
+
 
 }
