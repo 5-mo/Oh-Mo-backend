@@ -3,7 +3,6 @@ package com.example.ohmobackend.web.controller;
 import com.example.ohmobackend.apiPayload.ApiResponse;
 import com.example.ohmobackend.apiPayload.code.status.SuccessStatus;
 import com.example.ohmobackend.domain.Member;
-import com.example.ohmobackend.domain.enums.ScheduleType;
 import com.example.ohmobackend.security.handler.AuthUser;
 import com.example.ohmobackend.service.scheduleService.ScheduleCommandService;
 import com.example.ohmobackend.service.scheduleService.ScheduleQueryService;
@@ -38,6 +37,17 @@ public class ScheduleController {
         return ApiResponse.onSuccess(SuccessStatus.SCHEDULE_ROUTINE_OK, routineDtos);
     }
 
+    @PatchMapping("/{scheduleId}/routine")
+    @Operation(summary = "루틴 수정 API",
+            description = "루틴 수정 API 입니다.")
+    public ApiResponse<List<RoutineResponseDto.RoutineDto>> updateRoutine(
+            @Valid @RequestBody ScheduleRequestDto.AddRequestDto request,
+            @PathVariable(name = "scheduleId") Long scheduleId,
+            @AuthUser Member member) {
+        List<RoutineResponseDto.RoutineDto> routineDtos = scheduleCommandService.updateRoutine(scheduleId, request, member);
+        return ApiResponse.onSuccess(SuccessStatus.ROUTINE_UPDATE_OK, routineDtos);
+    }
+
     @PostMapping("/todo")
     @Operation(summary = "투두 등록 API",
             description = "투두 등록 API 입니다." +
@@ -45,6 +55,17 @@ public class ScheduleController {
     public ApiResponse<TodoResponseDto.TodoDto> addTodo(@Valid @RequestBody ScheduleRequestDto.AddRequestDto request, @AuthUser Member member) {
         TodoResponseDto.TodoDto todoDto = scheduleCommandService.addTodo(request, member);
         return ApiResponse.onSuccess(SuccessStatus.SCHEDULE_TO_DO_OK, todoDto);
+    }
+
+    @PatchMapping("/{scheduleId}/todo")
+    @Operation(summary = "투두 수정 API",
+            description = "투두 수정 API 입니다." )
+    public ApiResponse<TodoResponseDto.TodoDto> updateTodo(
+            @Valid @RequestBody ScheduleRequestDto.AddRequestDto request,
+            @PathVariable(name = "scheduleId") Long scheduleId,
+            @AuthUser Member member) {
+        TodoResponseDto.TodoDto todoDto  = scheduleCommandService.updateTodo(scheduleId, request, member);
+        return ApiResponse.onSuccess(SuccessStatus.TODO_UPDATE_OK, todoDto);
     }
 
     @PatchMapping ("/alarm")

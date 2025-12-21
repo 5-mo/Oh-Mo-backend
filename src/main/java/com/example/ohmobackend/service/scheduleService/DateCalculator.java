@@ -4,10 +4,11 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 public class DateCalculator {
 
-    public static List<LocalDate> getDates(LocalDate startDate, LocalDate endDate, List<DayOfWeek> weeks) {
+    public static List<LocalDate> getDates(LocalDate startDate, LocalDate endDate, Set<DayOfWeek> weeks) {
         List<LocalDate> dates = new ArrayList<>();
         LocalDate currentDate = startDate;
 
@@ -22,7 +23,7 @@ public class DateCalculator {
         return dates;
     }
 
-    public static List<LocalDate> getDatesFromNowDate(LocalDate endDate, List<DayOfWeek> weeks) {
+    public static List<LocalDate> getDatesFromNowDate(LocalDate endDate, Set<DayOfWeek> weeks) {
         LocalDate startDate = LocalDate.now();  // 시작 날짜 (오늘)
         return getDates(startDate, endDate, weeks);
     }

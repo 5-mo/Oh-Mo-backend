@@ -3,6 +3,7 @@ package com.example.ohmobackend.repository;
 import com.example.ohmobackend.domain.Group;
 import com.example.ohmobackend.domain.Member;
 import com.example.ohmobackend.domain.Routine;
+import com.example.ohmobackend.domain.Schedule;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -41,5 +42,9 @@ public interface RoutineRepository extends JpaRepository<Routine, Long> {
             @Param("startDate") LocalDate startDate,
             @Param("endDate") LocalDate endDate
     );
+
+    void deleteAllBySchedule(Schedule schedule);
+
+    List<Routine> findAllBySchedule(Schedule schedule);
 
 }
