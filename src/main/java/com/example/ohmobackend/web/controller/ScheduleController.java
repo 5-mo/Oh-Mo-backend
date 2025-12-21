@@ -68,7 +68,7 @@ public class ScheduleController {
         return ApiResponse.onSuccess(SuccessStatus.TODO_UPDATE_OK, todoDto);
     }
 
-    @PatchMapping("/nlp/todo")
+    @PostMapping("/nlp/todo")
     @Operation(summary = "투두 AI 일정 등록 API",
             description = "투두 AI 일정 등록 API입니다. " +
                     "입력 필수 요소: text")
@@ -76,7 +76,7 @@ public class ScheduleController {
             @Valid @RequestBody ScheduleRequestDto.NlpAddRequestDto request,
             @AuthUser Member member) {
         TodoResponseDto.TodoDto todoDto = scheduleCommandService.nlpAddTodo(request, member);
-        return ApiResponse.onSuccess(SuccessStatus.ROUTINE_UPDATE_OK, todoDto);
+        return ApiResponse.onSuccess(SuccessStatus.SCHEDULE_TO_DO_OK, todoDto);
     }
 
     @PatchMapping ("/alarm")
