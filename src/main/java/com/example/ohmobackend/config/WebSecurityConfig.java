@@ -33,6 +33,7 @@ class WebSecurityConfig {
                         .requestMatchers("/api/member/login").permitAll()
                         .requestMatchers("/", "/api-docs/**", "/api-docs/swagger-config/*", "/swagger-ui/*", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
                         .requestMatchers("/api/member/test").permitAll()
+                        .requestMatchers("/actuator/**").permitAll()
                         .anyRequest().authenticated())
                 .addFilterBefore(new JwtTokenFilter(tokenProvider)
                         , UsernamePasswordAuthenticationFilter.class)// 위에서 설정한 url 이외의 요청에 대해서 인증이 성공된 상태만 접근 가능

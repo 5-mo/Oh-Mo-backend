@@ -21,7 +21,6 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/schedule")
 @Slf4j
 public class ScheduleController {
 

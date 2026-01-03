@@ -9,6 +9,7 @@ import com.example.ohmobackend.domain.Member;
 import com.example.ohmobackend.domain.Schedule;
 import com.example.ohmobackend.domain.Todo;
 import com.example.ohmobackend.domain.enums.ScheduleType;
+import com.example.ohmobackend.repository.ScheduleRepository;
 import com.example.ohmobackend.repository.TodoRepository;
 import com.example.ohmobackend.web.dto.scheduleDto.ScheduleRequestDto;
 import com.example.ohmobackend.web.dto.scheduleDto.ScheduleResponseDto;
@@ -22,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class TodoCommandServiceImpl implements TodoCommandService{
 
     final TodoRepository todoRepository;
+    final ScheduleRepository scheduleRepository;
 
     @Override
     @Transactional
@@ -47,6 +49,6 @@ public class TodoCommandServiceImpl implements TodoCommandService{
             throw new MemberHandler(ErrorStatus.INVALID_MEMBER);
         }
 
-        todoRepository.delete(todo);
+        scheduleRepository.delete(todo.getSchedule());
     }
 }
