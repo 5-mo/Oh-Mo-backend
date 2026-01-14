@@ -9,7 +9,8 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
   sql:
     init:
-      mode: never
+      mode: always
+      schema-locations: classpath:db/idx_optimization.sql
   jpa:
     properties:
       hibernate:
@@ -20,9 +21,22 @@ spring:
         hbm2ddl:
           auto: update
         default_batch_fetch_size: 1000${}
-
+    defer-datasource-initialization: true
 jwt:
   secret: ${JWT_SECRET_KEY}
 
 nlp:
   api-url: ${NLP_API_URL:http://localhost:8000}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, prometheus
+        management:
+  metrics:
+    distribution:
+      percentiles-histogram:
+        http:
+          server:
+            requests: true
