@@ -23,8 +23,7 @@ public class DateCalculator {
         return dates;
     }
 
-    public static List<LocalDate> getDatesFromNowDate(LocalDate endDate, Set<DayOfWeek> weeks) {
-        LocalDate startDate = LocalDate.now();  // 시작 날짜 (오늘)
+    public static List<LocalDate> getDatesFromRepeatWeeks(LocalDate startDate, LocalDate endDate, Set<DayOfWeek> weeks) {
         return getDates(startDate, endDate, weeks);
     }
 }

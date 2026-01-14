@@ -16,7 +16,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.example.ohmobackend.service.scheduleService.DateCalculator.getDatesFromNowDate;
+import static com.example.ohmobackend.service.scheduleService.DateCalculator.getDatesFromRepeatWeeks;
 
 @Service
 @RequiredArgsConstructor
@@ -46,7 +46,7 @@ public class GroupScheduleCommandServiceImpl {
 
         scheduleRepository.save(schedule);
 
-        List<LocalDate> dates = getDatesFromNowDate(requestDto.getDate(), requestDto.getRoutineWeek()); // 반복 요일에 해당하는 날짜 리스트
+        List<LocalDate> dates = getDatesFromRepeatWeeks(LocalDate.now(), requestDto.getDate(), requestDto.getRoutineWeek()); // 반복 요일에 해당하는 날짜 리스트
 
         List<Routine> routineList = dates.stream()
                 .map(date -> RoutineConverter.toEntity(schedule, date))
