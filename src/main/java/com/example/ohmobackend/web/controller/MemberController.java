@@ -2,6 +2,8 @@ package com.example.ohmobackend.web.controller;
 
 import com.example.ohmobackend.apiPayload.ApiResponse;
 import com.example.ohmobackend.apiPayload.code.status.SuccessStatus;
+import com.example.ohmobackend.domain.Member;
+import com.example.ohmobackend.security.handler.AuthUser;
 import com.example.ohmobackend.service.memberService.MemberCommandService;
 import com.example.ohmobackend.web.dto.memberDto.MemberRequestDto;
 import com.example.ohmobackend.web.dto.memberDto.MemberResponseDto;
@@ -38,6 +40,7 @@ public class MemberController {
     }
 
     @PostMapping("/reissue")
+    @Operation(summary = "토큰 재발급 API")
     public ApiResponse<MemberResponseDto.LoginResponseDto> reissue(
             @RequestBody MemberRequestDto.RefreshTokenRequestDto request) {
 
@@ -51,5 +54,12 @@ public class MemberController {
         String accessToken = authorizationHeader.replace("Bearer ", "");
         memberCommandService.logout(accessToken);
         return ApiResponse.onSuccess(SuccessStatus.MEMBER_LOGOUT_OK, null);
+    }
+
+    @DeleteMapping("/withdraw")
+    @Operation(summary = "회원 탈퇴 API", description = "회원 정보를 삭제하고 로그아웃 처리")
+    public ApiResponse<Void> withdraw(@AuthUser Member member) {
+        memberCommandService.withdraw(member);
+        return ApiResponse.onSuccess(SuccessStatus.MEMBER_WITHDRAW_OK, null);
     }
 }

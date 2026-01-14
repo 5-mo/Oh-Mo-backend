@@ -12,4 +12,6 @@ public interface MemberCommandService {
     public MemberResponseDto.LoginResponseDto reissue(String refreshToken);
 
     public void logout(String token);
+
+    public void withdraw(Member member);
 }

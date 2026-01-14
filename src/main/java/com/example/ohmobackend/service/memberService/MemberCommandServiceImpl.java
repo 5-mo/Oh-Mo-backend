@@ -134,4 +134,9 @@ public class MemberCommandServiceImpl implements MemberCommandService {
         member.updateRefreshToken(null);
     }
 
+    @Transactional
+    public void withdraw(Member member) {
+        memberRepository.delete(member);
+    }
+
 }
