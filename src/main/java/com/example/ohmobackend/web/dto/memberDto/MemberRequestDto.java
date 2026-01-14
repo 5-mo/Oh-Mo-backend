@@ -1,5 +1,6 @@
 package com.example.ohmobackend.web.dto.memberDto;
 
+import lombok.Data;
 import lombok.Getter;
 
 public class MemberRequestDto {
@@ -15,5 +16,10 @@ public class MemberRequestDto {
     public static class LoginRequestDto {
         private String email;
         private String password;
+    }
+
+    @Getter
+    public static class RefreshTokenRequestDto {
+        private String refreshToken;
     }
 }

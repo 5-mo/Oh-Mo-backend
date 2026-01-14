@@ -14,6 +14,7 @@ public enum SuccessStatus implements BaseCode {
     MEMBER_OK(HttpStatus.OK, "MEMBER_1000", "성공입니다."),
     MEMBER_SIGNUP_OK(HttpStatus.OK, "AUTH2000", "회원 가입이 완료되었습니다."),
     MEMBER_LOGIN_OK(HttpStatus.OK, "AUTH2001", "로그인이 완료되었습니다."),
+    MEMBER_REISSUE_OK(HttpStatus.OK, "AUTH2002", "토큰 재발급이 완료되었습니다."),
 
     // 카텍고리 관련 응답
     MEMBER_CATEGORY_REGISTER_OK(HttpStatus.OK, "CATEGORY2000", "카테고리 등록이 완료되었습니다."),

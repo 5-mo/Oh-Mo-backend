@@ -1,6 +1,7 @@
 package com.example.ohmobackend.service.memberService;
 
 import com.example.ohmobackend.apiPayload.code.status.ErrorStatus;
+import com.example.ohmobackend.apiPayload.exception.handler.AuthHandler;
 import com.example.ohmobackend.apiPayload.exception.handler.MemberHandler;
 import com.example.ohmobackend.converter.MemberCategoryConverter;
 import com.example.ohmobackend.converter.MemberConverter;
@@ -10,6 +11,8 @@ import com.example.ohmobackend.domain.enums.ScheduleType;
 import com.example.ohmobackend.repository.MemberCategoryRepository;
 import com.example.ohmobackend.repository.MemberRepository;
 import com.example.ohmobackend.security.JwtToken;
+import com.example.ohmobackend.security.principal.PrincipalDetails;
+import com.example.ohmobackend.security.principal.PrincipalDetailsService;
 import com.example.ohmobackend.security.provider.TokenProvider;
 import com.example.ohmobackend.web.dto.memberCategoryDto.MemberCategoryDtoRequest;
 import com.example.ohmobackend.web.dto.memberDto.MemberRequestDto;
@@ -18,6 +21,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,6 +35,7 @@ public class MemberCommandServiceImpl implements MemberCommandService {
     private final TokenProvider tokenProvider;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final MemberCategoryRepository memberCategoryRepository;
+    private final PrincipalDetailsService principalDetailsService;
 
     @Override
     public MemberResponseDto.SignupResponseDto signup(MemberRequestDto.SignupRequestDto request) {
@@ -83,5 +88,38 @@ public class MemberCommandServiceImpl implements MemberCommandService {
     public Member getByEmail(String email) {
         return memberRepository.findByEmail(email)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+    }
+
+    @Transactional
+    public MemberResponseDto.LoginResponseDto reissue(String refreshToken) {
+        tokenProvider.validateToken(refreshToken);
+        String email = tokenProvider.getEmail(refreshToken);
+        System.out.println("Reissue email from token: " + email);
+        Member member = memberRepository.findByEmail(email)
+                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+
+        // 4️⃣ DB에 저장된 Refresh Token과 비교
+        if (member.getRefreshToken() == null ||
+                !member.getRefreshToken().equals(refreshToken)) {
+
+            throw new AuthHandler(ErrorStatus.INVALID_TOKEN);
+        }
+
+        UserDetails userDetails =
+                principalDetailsService.loadUserByUsername(member.getEmail());
+
+        Authentication authentication =
+                new UsernamePasswordAuthenticationToken(
+                        userDetails,
+                        null,
+                        userDetails.getAuthorities()
+                );
+
+        JwtToken jwtToken = tokenProvider.generateTokenDto(authentication);
+
+        // Refresh Token 갱신
+        member.updateRefreshToken(jwtToken.getRefreshToken());
+
+        return MemberConverter.toLoginResponseDto(member, jwtToken);
     }
 }

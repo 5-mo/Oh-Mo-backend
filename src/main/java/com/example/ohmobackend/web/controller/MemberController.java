@@ -6,6 +6,7 @@ import com.example.ohmobackend.service.memberService.MemberCommandService;
 import com.example.ohmobackend.web.dto.memberDto.MemberRequestDto;
 import com.example.ohmobackend.web.dto.memberDto.MemberResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -36,4 +37,11 @@ public class MemberController {
         return "테스트ㅡㅡ";
     }
 
+    @PostMapping("/reissue")
+    public ApiResponse<MemberResponseDto.LoginResponseDto> reissue(
+            @RequestBody MemberRequestDto.RefreshTokenRequestDto request) {
+
+        MemberResponseDto.LoginResponseDto responseDto = memberCommandService.reissue(request.getRefreshToken());
+        return ApiResponse.onSuccess(SuccessStatus.MEMBER_REISSUE_OK, responseDto);
+    }
 }

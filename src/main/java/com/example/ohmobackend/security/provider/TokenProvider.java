@@ -55,8 +55,8 @@ public class TokenProvider {
                 .signWith(key, SignatureAlgorithm.HS256)    // header "alg": "HS512"
                 .compact();
 
-        // Refresh Token 생성
         String refreshToken = Jwts.builder()
+                .setSubject(authentication.getName())
                 .setExpiration(new Date(now + REFRESH_TOKEN_EXPIRE_TIME))
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
