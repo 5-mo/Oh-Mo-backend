@@ -38,6 +38,7 @@ public enum SuccessStatus implements BaseCode {
 
     // 데이로그 관련 응답
     EMOJI_REGISTER_OK(HttpStatus.OK, "DAY_LOG2000", "이모지 등록이 완료되었습니다."),
+    EMOJI_OK(HttpStatus.OK, "DAY_LOG2001", "이모지 조회가 완료되었습니다."),
 
     // 일기 관련 응답
     DIARY_REGISTER_OK(HttpStatus.OK, "DIARY_2000", "일기 등록이 완료되었습니다."),
