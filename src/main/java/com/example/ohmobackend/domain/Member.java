@@ -31,8 +31,6 @@ public class Member extends BaseEntity {
     @Column(nullable = false)
     private String password;
 
-    private boolean diaryStatus;
-
     private String refreshToken;
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
