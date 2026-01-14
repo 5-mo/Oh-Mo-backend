@@ -10,4 +10,6 @@ public interface MemberCommandService {
     public MemberResponseDto.LoginResponseDto login(MemberRequestDto.LoginRequestDto request);
     public Member getByEmail(String email);
     public MemberResponseDto.LoginResponseDto reissue(String refreshToken);
+
+    public void logout(String token);
 }

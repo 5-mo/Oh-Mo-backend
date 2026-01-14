@@ -122,4 +122,16 @@ public class MemberCommandServiceImpl implements MemberCommandService {
 
         return MemberConverter.toLoginResponseDto(member, jwtToken);
     }
+
+    @Transactional
+    @Override
+    public void logout(String accessToken) {
+        String email = tokenProvider.getEmail(accessToken);
+        Member member = memberRepository.findByEmail(email)
+                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+
+        // Refresh Token 제거
+        member.updateRefreshToken(null);
+    }
+
 }

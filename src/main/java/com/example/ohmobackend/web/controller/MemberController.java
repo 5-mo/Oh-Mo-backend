@@ -44,4 +44,12 @@ public class MemberController {
         MemberResponseDto.LoginResponseDto responseDto = memberCommandService.reissue(request.getRefreshToken());
         return ApiResponse.onSuccess(SuccessStatus.MEMBER_REISSUE_OK, responseDto);
     }
+
+    @PostMapping("/logout")
+    @Operation(summary = "로그아웃 API", description = "로그아웃 시 Refresh Token 삭제")
+    public ApiResponse<Void> logout(@RequestHeader("Authorization") String authorizationHeader) {
+        String accessToken = authorizationHeader.replace("Bearer ", "");
+        memberCommandService.logout(accessToken);
+        return ApiResponse.onSuccess(SuccessStatus.MEMBER_LOGOUT_OK, null);
+    }
 }
