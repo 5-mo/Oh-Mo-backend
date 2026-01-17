@@ -37,6 +37,17 @@ public class GroupConverter {
                 .build();
     }
 
+    public static GroupResponseDto.GroupDto toGroupWithManagerDto(Group group, Member member) {
+        return GroupResponseDto.GroupDto.builder()
+                .groupId(group.getId())
+                .groupName(group.getGroupName())
+                .groupCode(group.getGroupCode())
+                .groupColor(group.getGroupColor())
+                .numPeople(group.getNumPeople())
+                .managerEmail(member.getEmail())
+                .build();
+    }
+
     public static GroupResponseDto.GroupMembersDto toGroupMembersDto(Group group, List<MemberGroup> memberGroupList) {
         List<GroupResponseDto.MemberDto> memberDtoList = memberGroupList.stream()
                 .map(memberGroup -> toMemberDto(memberGroup.getMember(), memberGroup.getNickname()))

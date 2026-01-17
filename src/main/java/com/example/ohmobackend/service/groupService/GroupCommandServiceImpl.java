@@ -32,7 +32,7 @@ public class GroupCommandServiceImpl implements GroupCommandService {
         MemberGroup memberGroup = MemberGroupConverter.toMemberGroupEntity(member, group, requestDto.getNickname(), GroupRole.MANAGER
         );
         memberGroupRepository.save(memberGroup);
-        return GroupConverter.toGroupDto(newGroup);
+        return GroupConverter.toGroupWithManagerDto(newGroup, member);
     }
 
     @Override
@@ -45,7 +45,7 @@ public class GroupCommandServiceImpl implements GroupCommandService {
         validateDuplicateNickname(group, requestDto.getNickname());
         validateGroupCount(group);
 
-        MemberGroup memberGroup = MemberGroupConverter.toMemberGroupEntity(member, group, requestDto.getNickname(), GroupRole.MANAGER);
+        MemberGroup memberGroup = MemberGroupConverter.toMemberGroupEntity(member, group, requestDto.getNickname(), GroupRole.MEMBER);
         memberGroupRepository.save(memberGroup);
         return GroupConverter.toGroupDto(group);
     }

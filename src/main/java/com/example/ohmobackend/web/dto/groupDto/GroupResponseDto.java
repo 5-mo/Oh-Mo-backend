@@ -20,6 +20,7 @@ public class GroupResponseDto {
         private String groupCode;
         private String groupColor;
         private int numPeople;
+        private String managerEmail;
     }
 
     @Getter

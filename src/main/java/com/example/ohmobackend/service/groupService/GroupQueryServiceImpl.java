@@ -36,11 +36,11 @@ public class GroupQueryServiceImpl implements GroupQueryService {
     }
 
     public List<GroupResponseDto.GroupDto> getGroups(Member member) {
-        List<MemberGroup> memberGroups = memberGroupRepository.findAllByMember(member);
-        List<GroupResponseDto.GroupDto> groups = memberGroups.stream().map(
-                memberGroup -> GroupConverter.toGroupDto(memberGroup.getGroup())
+        List<MemberGroup> managerMemberGroups = memberGroupRepository.findHostMemberGroupsByMember(member);
+        List<GroupResponseDto.GroupDto> groups = managerMemberGroups.stream().map(
+                memberGroup -> GroupConverter.toGroupWithManagerDto(memberGroup.getGroup(), memberGroup.getMember())
         ).collect(Collectors.toList());
+
         return groups;
     }
-
 }
