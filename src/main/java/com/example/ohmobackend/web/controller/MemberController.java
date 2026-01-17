@@ -2,6 +2,7 @@ package com.example.ohmobackend.web.controller;
 
 import com.example.ohmobackend.apiPayload.ApiResponse;
 import com.example.ohmobackend.apiPayload.code.status.SuccessStatus;
+import com.example.ohmobackend.converter.MemberConverter;
 import com.example.ohmobackend.domain.Member;
 import com.example.ohmobackend.security.handler.AuthUser;
 import com.example.ohmobackend.service.memberService.MemberCommandService;
@@ -61,5 +62,12 @@ public class MemberController {
     public ApiResponse<Void> withdraw(@AuthUser Member member) {
         memberCommandService.withdraw(member);
         return ApiResponse.onSuccess(SuccessStatus.MEMBER_WITHDRAW_OK, null);
+    }
+
+    @GetMapping("")
+    @Operation(summary = "회원 정보 조회 API", description = "회원 정보 조회")
+    public ApiResponse<MemberResponseDto.MemberInfoResponseDto> getMember(@AuthUser Member member) {
+        MemberResponseDto.MemberInfoResponseDto memberInfoResponseDto = MemberConverter.toMemberInfoResponseDto(member);
+        return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, memberInfoResponseDto);
     }
 }

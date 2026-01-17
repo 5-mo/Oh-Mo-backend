@@ -32,4 +32,12 @@ public class MemberConverter {
                 .build();
     }
 
+    public static MemberResponseDto.MemberInfoResponseDto toMemberInfoResponseDto(Member member) {
+        return MemberResponseDto.MemberInfoResponseDto.builder()
+                .memberId(member.getId())
+                .email(member.getEmail())
+                .nickname(member.getNickname())
+                .build();
+    }
+
 }

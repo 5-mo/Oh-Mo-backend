@@ -27,4 +27,14 @@ public class MemberResponseDto {
         private String nickname;
         private JwtToken token;
     }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class MemberInfoResponseDto {
+        private Long memberId;
+        private String email;
+        private String nickname;
+    }
 }
