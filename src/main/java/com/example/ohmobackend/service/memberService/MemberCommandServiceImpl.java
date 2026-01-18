@@ -40,7 +40,7 @@ public class MemberCommandServiceImpl implements MemberCommandService {
     private final FileUploadService fileUploadService;
 
     @Override
-    public MemberResponseDto.SignupResponseDto signup(MemberRequestDto.SignupRequestDto request, MultipartFile profileImage) {
+    public MemberResponseDto.MemberInfoResponseDto signup(MemberRequestDto.SignupRequestDto request, MultipartFile profileImage) {
         if (memberRepository.existsByEmail(request.getEmail())) {
             throw new MemberHandler(ErrorStatus.MEMBER_ALREADY_EXISTS);
         }
@@ -59,7 +59,7 @@ public class MemberCommandServiceImpl implements MemberCommandService {
         saveDefaultCategory(member, ScheduleType.TO_DO);
         saveDefaultCategory(member, ScheduleType.ROUTINE);
 
-        return MemberConverter.toDto(newMember);
+        return MemberConverter.toMemberInfoResponseDto(newMember);
     }
 
     private void saveDefaultCategory(Member member, ScheduleType scheduleType) {

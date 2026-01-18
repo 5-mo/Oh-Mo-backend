@@ -22,11 +22,11 @@ public class MemberController {
 
     @PostMapping(value = "/signup", consumes = "multipart/form-data")
     @Operation(summary = "이메일 회원 가입 API", description = "이메일 회원 가입 API 입니다.")
-    public ApiResponse<MemberResponseDto.SignupResponseDto> signup(
+    public ApiResponse<MemberResponseDto.MemberInfoResponseDto> signup(
             @RequestPart("request") MemberRequestDto.SignupRequestDto request,
             @RequestPart(value = "profileImage", required = false) MultipartFile profileImage
     ) {
-        MemberResponseDto.SignupResponseDto responseDto =
+        MemberResponseDto.MemberInfoResponseDto responseDto =
                 memberCommandService.signup(request, profileImage);
 
         return ApiResponse.onSuccess(SuccessStatus.MEMBER_SIGNUP_OK, responseDto);

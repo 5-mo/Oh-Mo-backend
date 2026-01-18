@@ -7,7 +7,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 public interface MemberCommandService {
 
-    public MemberResponseDto.SignupResponseDto signup(MemberRequestDto.SignupRequestDto request, MultipartFile profileImage);
+    public MemberResponseDto.MemberInfoResponseDto signup(MemberRequestDto.SignupRequestDto request, MultipartFile profileImage);
     public MemberResponseDto.LoginResponseDto login(MemberRequestDto.LoginRequestDto request);
     public Member getByEmail(String email);
     public MemberResponseDto.LoginResponseDto reissue(String refreshToken);
