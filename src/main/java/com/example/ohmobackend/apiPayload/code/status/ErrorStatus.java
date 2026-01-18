@@ -68,6 +68,13 @@ public enum ErrorStatus implements BaseErrorCode {
     // 담당자
     ASSIGNEE_NOT_FOUND(HttpStatus.BAD_REQUEST, "ASSIGNEE4001", "담당자를 찾을 수 없습니다."),
 
+    // s3 이미지 업로드
+    FILE_IS_EMPTY(HttpStatus.BAD_REQUEST, "S3FILE4001", "파일이 비어있습니다."),
+    FILE_UPLOAD_FAILED(HttpStatus.BAD_REQUEST, "S3FILE4002",  "파일 업로드에 실패했습니다"),
+    FILE_DELETE_FAILED(HttpStatus.BAD_REQUEST, "S3FILE4002",  "파일 삭제에 실패했습니다"),
+    FILE_NOT_FOUND(HttpStatus.BAD_REQUEST, "S3FILE4003",   "파일을 찾을 수 없습니다"),
+    FILE_READ_FAILED(HttpStatus.BAD_REQUEST, "S3FILE4003",   "파일을 읽을 수 없습니다"),
+
 
     ;
 
