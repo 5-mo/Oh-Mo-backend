@@ -1,6 +1,5 @@
 package com.example.ohmobackend.web.dto.groupDto;
 
-import com.example.ohmobackend.web.dto.memberDto.MemberResponseDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

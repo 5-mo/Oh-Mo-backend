@@ -9,6 +9,8 @@ import com.example.ohmobackend.domain.*;
 import com.example.ohmobackend.domain.enums.ScheduleType;
 import com.example.ohmobackend.repository.*;
 import com.example.ohmobackend.web.dto.groupScheduleDto.GroupScheduleRequestDto;
+import com.example.ohmobackend.web.dto.routineDto.RoutineResponseDto;
+import com.example.ohmobackend.web.dto.todoDto.TodoResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -26,11 +28,9 @@ public class GroupScheduleCommandServiceImpl {
     final private RoutineRepository routineRepository;
     final private TodoRepository todoRepository;
     final private MemberGroupRepository memberGroupRepository;
-    final private ScheduleAssigneeRepository scheduleAssigneeRepository;
     final private ScheduleRepository scheduleRepository;
-    final private MemberRepository memberRepository;
 
-    public void addGroupRoutine(GroupScheduleRequestDto.GroupScheduleAddRequestDto requestDto, Member member) {
+    public List<RoutineResponseDto.RoutineDto> addGroupRoutine(GroupScheduleRequestDto.GroupScheduleAddRequestDto requestDto, Member member) {
         Group group = groupRepository.findById(requestDto.getGroupId())
                 .orElseThrow(() -> new ScheduleHandler(ErrorStatus.GROUP_NOT_FOUND));
 
@@ -43,6 +43,7 @@ public class GroupScheduleCommandServiceImpl {
         if (requestDto.getRoutineWeek() != null && !requestDto.getRoutineWeek().isEmpty()) {
             schedule.getRepeatWeek().addAll(requestDto.getRoutineWeek());
         }
+        schedule.getRepeatWeek().addAll(requestDto.getRoutineWeek());
 
         scheduleRepository.save(schedule);
 
@@ -53,19 +54,23 @@ public class GroupScheduleCommandServiceImpl {
                 .collect(Collectors.toList());
 
         routineRepository.saveAll(routineList);
+
+        return routineList.stream()
+                .map(RoutineConverter::toRoutineDto)
+                .collect(Collectors.toList());
     }
 
-    public void addGroupTodo(GroupScheduleRequestDto.GroupScheduleAddRequestDto requestDto, Member member) {
+    public TodoResponseDto.TodoDto addGroupTodo(GroupScheduleRequestDto.GroupScheduleAddRequestDto requestDto, Member member) {
         Group group = groupRepository.findById(requestDto.getGroupId())
                 .orElseThrow(() -> new ScheduleHandler(ErrorStatus.GROUP_NOT_FOUND));
 
         // 루틴 추가할 권한 없음(해당 그룹의 멤버가 아님)
         validateMemberGroup(member, group);
 
-
         Schedule schedule = ScheduleConverter.groupScheduleToEntity(requestDto, group, ScheduleType.TO_DO);
         scheduleRepository.save(schedule);
-        todoRepository.save(TodoConverter.toEntity(schedule));
+        Todo todo = todoRepository.save(TodoConverter.toEntity(schedule));
+        return TodoConverter.toTodoDto(todo);
     }
 
     private void validateMemberGroup(Member member, Group group) {

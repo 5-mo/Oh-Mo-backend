@@ -10,7 +10,9 @@ import com.example.ohmobackend.service.scheduleService.GroupScheduleCommandServi
 import com.example.ohmobackend.service.scheduleService.GroupScheduleQueryService;
 import com.example.ohmobackend.web.dto.groupDto.GroupResponseDto;
 import com.example.ohmobackend.web.dto.groupScheduleDto.GroupScheduleRequestDto;
+import com.example.ohmobackend.web.dto.routineDto.RoutineResponseDto;
 import com.example.ohmobackend.web.dto.scheduleDto.ScheduleResponseDto;
+import com.example.ohmobackend.web.dto.todoDto.TodoResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,16 +35,16 @@ public class GroupScheduleController {
 
     @PostMapping("/routine")
     @Operation(summary = "그룹 루틴 등록 API", description = "그룹 루틴 등록 API 입니다.")
-    public ApiResponse<Object> addGroupRoutine(@RequestBody GroupScheduleRequestDto.GroupScheduleAddRequestDto request, @AuthUser Member member) {
-        groupScheduleCommandService.addGroupRoutine(request, member);
-        return ApiResponse.onSuccess(SuccessStatus.SCHEDULE_ROUTINE_OK, null);
+    public ApiResponse<List<RoutineResponseDto.RoutineDto>> addGroupRoutine(@RequestBody GroupScheduleRequestDto.GroupScheduleAddRequestDto request, @AuthUser Member member) {
+        List<RoutineResponseDto.RoutineDto> routineDtos = groupScheduleCommandService.addGroupRoutine(request, member);
+        return ApiResponse.onSuccess(SuccessStatus.SCHEDULE_ROUTINE_OK, routineDtos);
     }
 
     @PostMapping("/todo")
     @Operation(summary = "그룹 투두 등록 API", description = "그룹 투두 등록 API 입니다.")
-    public ApiResponse<Object> addGroupTodo(@RequestBody GroupScheduleRequestDto.GroupScheduleAddRequestDto request, @AuthUser Member member) {
-        groupScheduleCommandService.addGroupTodo(request, member);
-        return ApiResponse.onSuccess(SuccessStatus.SCHEDULE_TO_DO_OK, null);
+    public ApiResponse<TodoResponseDto.TodoDto> addGroupTodo(@RequestBody GroupScheduleRequestDto.GroupScheduleAddRequestDto request, @AuthUser Member member) {
+        TodoResponseDto.TodoDto todoDto = groupScheduleCommandService.addGroupTodo(request, member);
+        return ApiResponse.onSuccess(SuccessStatus.SCHEDULE_TO_DO_OK, todoDto);
     }
 
     @PostMapping("/assignee-todo")
