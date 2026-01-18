@@ -8,6 +8,7 @@ import com.example.ohmobackend.repository.MemberGroupRepository;
 import com.example.ohmobackend.repository.RoutineRepository;
 import com.example.ohmobackend.repository.ScheduleAssigneeRepository;
 import com.example.ohmobackend.repository.TodoRepository;
+import com.example.ohmobackend.web.dto.MemberAssigneeDto.MemberAssigneeResponseDto;
 import com.example.ohmobackend.web.dto.groupDto.GroupResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -25,7 +26,7 @@ public class AssigneeQueryServiceImpl implements AssigneeQueryService {
     private final RoutineRepository routineRepository;
 
     @Override
-    public List<GroupResponseDto.MemberDto> getTodoScheduleAssignee(Long todoId, Member member) {
+    public List<MemberAssigneeResponseDto.MemberAssigneeInfoResponseDto> getTodoScheduleAssignee(Long todoId, Member member) {
         Todo todo = todoRepository.findById(todoId)
                 .orElseThrow(() -> new ScheduleHandler(ErrorStatus.SCHEDULE_NOT_FOUND));
         Group group = todo.getSchedule().getGroup();
@@ -47,7 +48,7 @@ public class AssigneeQueryServiceImpl implements AssigneeQueryService {
     }
 
     @Override
-    public List<GroupResponseDto.MemberDto> getRoutineScheduleAssignee(Long routineId, Member member) {
+    public List<MemberAssigneeResponseDto.MemberAssigneeInfoResponseDto> getRoutineScheduleAssignee(Long routineId, Member member) {
         Routine routine = routineRepository.findById(routineId)
                 .orElseThrow(() -> new ScheduleHandler(ErrorStatus.SCHEDULE_NOT_FOUND));
         Group group = routine.getSchedule().getGroup();

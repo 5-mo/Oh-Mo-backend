@@ -18,6 +18,7 @@ public class MemberGroupConverter {
 
     public static MemberGroupResponseDto.MemberGroupInfoDto toMemberGroupInfoDto(MemberGroup memberGroup) {
         return MemberGroupResponseDto.MemberGroupInfoDto.builder()
+                .memberInfo(MemberConverter.toMemberInfoResponseDto(memberGroup.getMember()))
                 .memberGroupId(memberGroup.getId())
                 .role(memberGroup.getRole())
                 .nickname(memberGroup.getNickname())

@@ -48,7 +48,7 @@ public class Schedule extends BaseEntity {
     private Group group;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "created_by")
+    @JoinColumn(name = "member_group_id")
     private MemberGroup createdBy;
 
     @OneToMany(mappedBy = "schedule", cascade = CascadeType.ALL)

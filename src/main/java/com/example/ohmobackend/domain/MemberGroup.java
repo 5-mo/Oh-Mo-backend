@@ -35,7 +35,7 @@ public class MemberGroup extends BaseEntity {
     @JoinColumn(name = "member_id")
     private Member member;
 
-    @OneToMany(mappedBy = "memberGroup", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "createdBy", cascade = CascadeType.ALL)
     private List<Schedule> scheduleList = new ArrayList<>();
 
     @OneToMany(mappedBy = "memberGroup", cascade = CascadeType.ALL)
