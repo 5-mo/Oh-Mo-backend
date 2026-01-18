@@ -12,9 +12,11 @@ import com.example.ohmobackend.repository.GroupRepository;
 import com.example.ohmobackend.repository.MemberGroupRepository;
 import com.example.ohmobackend.web.dto.groupDto.GroupRequestDto;
 import com.example.ohmobackend.web.dto.groupDto.GroupResponseDto;
+import com.example.ohmobackend.web.dto.memberGroupDto.MemberGroupResponseDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -29,8 +31,7 @@ public class GroupCommandServiceImpl implements GroupCommandService {
         Group group = GroupConverter.toGroupEntity(requestDto);
         Group newGroup = groupRepository.save(group);
 
-        MemberGroup memberGroup = MemberGroupConverter.toMemberGroupEntity(member, group, requestDto.getNickname(), GroupRole.MANAGER
-        );
+        MemberGroup memberGroup = MemberGroupConverter.toMemberGroupEntity(member, group, GroupRole.MANAGER);
         memberGroupRepository.save(memberGroup);
         return GroupConverter.toGroupWithManagerDto(newGroup, member);
     }
@@ -42,12 +43,23 @@ public class GroupCommandServiceImpl implements GroupCommandService {
 
         validateGroupPassword(requestDto.getGroupPassword(), group);
         validateExistMember(member, group);
-        validateDuplicateNickname(group, requestDto.getNickname());
         validateGroupCount(group);
 
-        MemberGroup memberGroup = MemberGroupConverter.toMemberGroupEntity(member, group, requestDto.getNickname(), GroupRole.MEMBER);
+        MemberGroup memberGroup = MemberGroupConverter.toMemberGroupEntity(member, group, GroupRole.MEMBER);
         memberGroupRepository.save(memberGroup);
         return GroupConverter.toGroupDto(group);
+    }
+
+    @Override
+    @Transactional
+    public MemberGroupResponseDto.MemberGroupInfoDto updateNickname(Member member, GroupRequestDto.AddGroupNicknameDto requestDto) {
+        Group group = groupRepository.findById(requestDto.getGroupId())
+                .orElseThrow(() -> new GroupHandler(ErrorStatus.GROUP_NOT_FOUND));
+        validateDuplicateNickname(group, requestDto.getNickname());
+
+        MemberGroup memberGroup = memberGroupRepository.findByMemberAndGroup(member, group);
+        memberGroup.updateNickname(requestDto.getNickname());
+        return MemberGroupConverter.toMemberGroupInfoDto(memberGroup);
     }
 
     private void validateGroupPassword(String password, Group group) {

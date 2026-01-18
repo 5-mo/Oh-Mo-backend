@@ -25,6 +25,16 @@ public class GroupRequestDto {
     public static class EnterGroupRequestDto {
         private String groupCode;
         private String groupPassword;
+    }
+
+    @Getter
+    @Setter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class AddGroupNicknameDto {
+        private Long groupId;
         private String nickname;
     }
+
 }

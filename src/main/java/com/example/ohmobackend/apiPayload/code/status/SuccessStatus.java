@@ -52,6 +52,7 @@ public enum SuccessStatus implements BaseCode {
     GROUP_FIND_OK(HttpStatus.OK, "GROUP_2001", "그룹 조회가 완료되었습니다."),
     GROUP_ENTER_OK(HttpStatus.OK, "GROUP_2002", "그룹 입장이 완료되었습니다."),
     GROUP_MEMBER_OK(HttpStatus.OK, "GROUP_2003", "그룹 멤버 조회가 완료되었습니다."),
+    UPDATE_GROUP_NICKNAME_OK(HttpStatus.OK, "GROUP_2004", "그룹 닉네임 업데이트가 완료되었습니다."),
 
     // 공지사항 관련
     GROUP_NOTICE_REGISTER_OK(HttpStatus.OK, "GROUP_2001", "그룹 공지사항 등록이 완료되었습니다."),

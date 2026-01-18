@@ -40,4 +40,9 @@ public class MemberGroup extends BaseEntity {
 
     @OneToMany(mappedBy = "memberGroup", cascade = CascadeType.ALL)
     private List<ScheduleAssignee> scheduleAssigneeList = new ArrayList<>();
+
+    public void updateNickname(String nickname) {
+        this.nickname = nickname;
+    }
+
 }
