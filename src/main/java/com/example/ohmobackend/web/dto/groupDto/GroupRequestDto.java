@@ -37,4 +37,14 @@ public class GroupRequestDto {
         private String nickname;
     }
 
+    @Getter
+    @Setter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class DeleteGroupRequestDto {
+        private Long groupId;
+        private String groupPassword;
+    }
+
 }

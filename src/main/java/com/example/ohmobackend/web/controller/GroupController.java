@@ -61,4 +61,11 @@ public class GroupController {
         List<GroupResponseDto.GroupDto> responseDto = groupQueryService.getGroups(member);
         return ApiResponse.onSuccess(SuccessStatus.GROUP_FIND_OK, responseDto);
     }
+
+    @DeleteMapping("")
+    @Operation(summary = "그룹 삭제 API", description = "그룹 삭제 API 입니다.")
+    public ApiResponse<Object> deleteGroup(@AuthUser Member member, @RequestBody GroupRequestDto.DeleteGroupRequestDto request) {
+        groupQueryService.deleteGroup(member, request);
+        return ApiResponse.onSuccess(SuccessStatus.GROUP_DELETE_OK, null);
+    }
 }
