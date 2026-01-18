@@ -9,9 +9,9 @@ import com.example.ohmobackend.service.memberService.MemberCommandService;
 import com.example.ohmobackend.web.dto.memberDto.MemberRequestDto;
 import com.example.ohmobackend.web.dto.memberDto.MemberResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
-import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RequiredArgsConstructor
 @RestController
@@ -20,24 +20,29 @@ public class MemberController {
 
     final MemberCommandService memberCommandService;
 
-    @PostMapping("/signup")
-    @Operation(summary = "이메일 회원 가입 API",description = "이메일 회원 가입 API 입니다.")
-    public ApiResponse<MemberResponseDto.SignupResponseDto> signup(@RequestBody MemberRequestDto.SignupRequestDto request) {
-        MemberResponseDto.SignupResponseDto responseDto = memberCommandService.signup(request);
+    @PostMapping(value = "/signup", consumes = "multipart/form-data")
+    @Operation(summary = "이메일 회원 가입 API", description = "이메일 회원 가입 API 입니다.")
+    public ApiResponse<MemberResponseDto.SignupResponseDto> signup(
+            @RequestPart("request") MemberRequestDto.SignupRequestDto request,
+            @RequestPart(value = "profileImage", required = false) MultipartFile profileImage
+    ) {
+        MemberResponseDto.SignupResponseDto responseDto =
+                memberCommandService.signup(request, profileImage);
+
         return ApiResponse.onSuccess(SuccessStatus.MEMBER_SIGNUP_OK, responseDto);
     }
 
     @PostMapping("/login")
-    @Operation(summary = "이메일 로그인 API",description = "이메일 로그인 API 입니다.")
+    @Operation(summary = "이메일 로그인 API", description = "이메일 로그인 API 입니다.")
     public ApiResponse<MemberResponseDto.LoginResponseDto> login(@RequestBody MemberRequestDto.LoginRequestDto request) {
         MemberResponseDto.LoginResponseDto responseDto = memberCommandService.login(request);
         return ApiResponse.onSuccess(SuccessStatus.MEMBER_LOGIN_OK, responseDto);
     }
 
     @GetMapping("/test")
-    @Operation(summary = "테스트 API",description = "테스트")
+    @Operation(summary = "테스트 API", description = "테스트")
     public String test() {
-        return "테스트ㅡㅡ";
+        return "테스트ㅡㅡ" ;
     }
 
     @PostMapping("/reissue")

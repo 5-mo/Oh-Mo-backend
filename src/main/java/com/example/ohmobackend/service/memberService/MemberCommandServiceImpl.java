@@ -11,9 +11,9 @@ import com.example.ohmobackend.domain.enums.ScheduleType;
 import com.example.ohmobackend.repository.MemberCategoryRepository;
 import com.example.ohmobackend.repository.MemberRepository;
 import com.example.ohmobackend.security.JwtToken;
-import com.example.ohmobackend.security.principal.PrincipalDetails;
 import com.example.ohmobackend.security.principal.PrincipalDetailsService;
 import com.example.ohmobackend.security.provider.TokenProvider;
+import com.example.ohmobackend.service.fileService.FileUploadService;
 import com.example.ohmobackend.web.dto.memberCategoryDto.MemberCategoryDtoRequest;
 import com.example.ohmobackend.web.dto.memberDto.MemberRequestDto;
 import com.example.ohmobackend.web.dto.memberDto.MemberResponseDto;
@@ -25,6 +25,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @RequiredArgsConstructor
@@ -36,14 +37,22 @@ public class MemberCommandServiceImpl implements MemberCommandService {
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final MemberCategoryRepository memberCategoryRepository;
     private final PrincipalDetailsService principalDetailsService;
+    private final FileUploadService fileUploadService;
 
     @Override
-    public MemberResponseDto.SignupResponseDto signup(MemberRequestDto.SignupRequestDto request) {
+    public MemberResponseDto.SignupResponseDto signup(MemberRequestDto.SignupRequestDto request, MultipartFile profileImage) {
         if (memberRepository.existsByEmail(request.getEmail())) {
             throw new MemberHandler(ErrorStatus.MEMBER_ALREADY_EXISTS);
         }
 
-        Member member = MemberConverter.toEntity(request, bCryptPasswordEncoder.encode(request.getPassword()));
+        String profileImageUrl = null;
+
+        if (profileImage != null && !profileImage.isEmpty()) {
+            String fileName = generateProfileImageName(request.getEmail());
+            profileImageUrl = fileUploadService.upload(profileImage, fileName);
+        }
+
+        Member member = MemberConverter.toEntity(request, bCryptPasswordEncoder.encode(request.getPassword()), profileImageUrl);
         Member newMember = memberRepository.save(member);
 
         // default 카테고리 추가
@@ -61,6 +70,10 @@ public class MemberCommandServiceImpl implements MemberCommandService {
                 .build();
         MemberCategory defaultCategoryEntity = MemberCategoryConverter.toMemberCategoryEntity(todoCategory, member);
         memberCategoryRepository.save(defaultCategoryEntity);
+    }
+
+    private String generateProfileImageName(String email) {
+        return "profile/" + email + "_" + System.currentTimeMillis();
     }
 
     @Transactional

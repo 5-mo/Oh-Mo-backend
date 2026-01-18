@@ -1,6 +1,5 @@
 package com.example.ohmobackend.web.dto.memberDto;
 
-import lombok.Data;
 import lombok.Getter;
 
 public class MemberRequestDto {

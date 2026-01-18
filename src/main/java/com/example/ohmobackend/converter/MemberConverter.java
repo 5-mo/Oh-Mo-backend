@@ -8,11 +8,12 @@ import com.example.ohmobackend.web.dto.memberDto.MemberResponseDto;
 public class MemberConverter {
 
 
-    public static Member toEntity(MemberRequestDto.SignupRequestDto dto, String password) {
+    public static Member toEntity(MemberRequestDto.SignupRequestDto dto, String password, String profileImageUrl) {
         return Member.builder()
                 .nickname(dto.getNickname())
                 .email(dto.getEmail())
                 .password(password)
+                .profileImageUrl(profileImageUrl)
                 .build();
     }
 

@@ -33,6 +33,9 @@ public class Member extends BaseEntity {
 
     private String refreshToken;
 
+    @Column(name = "profile_image_url")
+    private String profileImageUrl;
+
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
     private List<MemberCategory> userCategoryList = new ArrayList<>();
 
