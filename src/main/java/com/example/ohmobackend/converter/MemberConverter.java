@@ -38,6 +38,7 @@ public class MemberConverter {
                 .memberId(member.getId())
                 .email(member.getEmail())
                 .nickname(member.getNickname())
+                .profileImageUrl(member.getProfileImageUrl())
                 .build();
     }
 
