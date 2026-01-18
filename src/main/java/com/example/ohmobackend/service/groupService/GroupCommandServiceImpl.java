@@ -25,6 +25,7 @@ public class GroupCommandServiceImpl implements GroupCommandService {
 
     final GroupRepository groupRepository;
     final MemberGroupRepository memberGroupRepository;
+    final GroupValidator groupValidator;
 
     @Override
     public GroupResponseDto.GroupDto addGroup(Member member, GroupRequestDto.AddGroupRequestDto requestDto) {
@@ -41,9 +42,9 @@ public class GroupCommandServiceImpl implements GroupCommandService {
         Group group = groupRepository.findByGroupCode(requestDto.getGroupCode())
                 .orElseThrow(() -> new GroupHandler(ErrorStatus.GROUP_NOT_FOUND));
 
-        validateGroupPassword(requestDto.getGroupPassword(), group);
-        validateExistMember(member, group);
-        validateGroupCount(group);
+        groupValidator.validateGroupPassword(requestDto.getGroupPassword(), group);
+        groupValidator.validateExistMember(member, group);
+        groupValidator.validateGroupCount(group);
 
         MemberGroup memberGroup = MemberGroupConverter.toMemberGroupEntity(member, group, GroupRole.MEMBER);
         memberGroupRepository.save(memberGroup);
@@ -55,39 +56,10 @@ public class GroupCommandServiceImpl implements GroupCommandService {
     public MemberGroupResponseDto.MemberGroupInfoDto updateNickname(Member member, GroupRequestDto.AddGroupNicknameDto requestDto) {
         Group group = groupRepository.findById(requestDto.getGroupId())
                 .orElseThrow(() -> new GroupHandler(ErrorStatus.GROUP_NOT_FOUND));
-        validateDuplicateNickname(group, requestDto.getNickname());
+        groupValidator.validateDuplicateNickname(group, requestDto.getNickname());
 
         MemberGroup memberGroup = memberGroupRepository.findByMemberAndGroup(member, group);
         memberGroup.updateNickname(requestDto.getNickname());
         return MemberGroupConverter.toMemberGroupInfoDto(memberGroup);
-    }
-
-    private void validateGroupPassword(String password, Group group) {
-        if (!password.equals(group.getGroupPassword())) {
-            throw new GroupHandler(ErrorStatus.GROUP_INVALID_PASSWORD);
-        }
-    }
-
-    private void validateExistMember(Member member, Group group) {
-        if (!memberGroupRepository.findByGroupAndMember(group, member).isEmpty()) {
-            throw new GroupHandler(ErrorStatus.GROUP_EXISTS_MEMBER);
-        }
-    }
-
-    private void validateDuplicateNickname(Group group, String nickname) {
-        boolean nicknameExists = memberGroupRepository
-                .existsByGroupAndNickname(group, nickname);
-
-        if (nicknameExists) {
-            throw new GroupHandler(ErrorStatus.GROUP_NICKNAME_DUPLICATED);
-        }
-    }
-
-    private void validateGroupCount(Group group) {
-        long currentCount = memberGroupRepository.countByGroup(group);
-
-        if (currentCount >= group.getNumPeople()) {
-            throw new GroupHandler(ErrorStatus.GROUP_MEMBER_LIMIT_EXCEEDED);
-        }
     }
 }
