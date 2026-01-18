@@ -1,5 +1,6 @@
 package com.example.ohmobackend.web.dto.groupDto;
 
+import com.example.ohmobackend.web.dto.memberGroupDto.MemberGroupResponseDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -32,18 +33,7 @@ public class GroupResponseDto {
         private String groupCode;
         private String groupColor;
         private int numPeople;
-        private List<GroupResponseDto.MemberDto> memberDtoList;
+        private List<MemberGroupResponseDto.MemberGroupInfoDto> memberGroupInfos;
     }
 
-    @Getter
-    @Builder
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class MemberDto {
-        private String email;
-        private String nickname;
-        private Long assigneeId;
-        private String groupNickname;
-        private boolean status;
-    }
 }

@@ -36,12 +36,4 @@ public class MemberConverter {
                 .build();
     }
 
-    public static MemberResponseDto.MemberInfoWithoutProfileDto toMemberInfoWithoutProfileDto(Member member) {
-        return MemberResponseDto.MemberInfoWithoutProfileDto.builder()
-                .memberId(member.getId())
-                .email(member.getEmail())
-                .nickname(member.getNickname())
-                .build();
-    }
-
 }

@@ -12,16 +12,6 @@ public class MemberResponseDto {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class MemberInfoWithoutProfileDto {
-        private Long memberId;
-        private String email;
-        private String nickname;
-    }
-
-    @Getter
-    @Builder
-    @NoArgsConstructor
-    @AllArgsConstructor
     public static class LoginResponseDto {
         private Long memberId;
         private String email;

@@ -4,12 +4,15 @@ import com.example.ohmobackend.domain.Group;
 import com.example.ohmobackend.domain.Member;
 import com.example.ohmobackend.domain.MemberGroup;
 import com.example.ohmobackend.domain.ScheduleAssignee;
+import com.example.ohmobackend.web.dto.MemberAssigneeDto.MemberAssigneeResponseDto;
 import com.example.ohmobackend.web.dto.groupDto.GroupRequestDto;
 import com.example.ohmobackend.web.dto.groupDto.GroupResponseDto;
+import com.example.ohmobackend.web.dto.memberGroupDto.MemberGroupResponseDto;
 
 import java.security.SecureRandom;
 import java.util.List;
 import java.util.stream.Collectors;
+
 
 public class GroupConverter {
 
@@ -49,8 +52,8 @@ public class GroupConverter {
     }
 
     public static GroupResponseDto.GroupMembersDto toGroupMembersDto(Group group, List<MemberGroup> memberGroupList) {
-        List<GroupResponseDto.MemberDto> memberDtoList = memberGroupList.stream()
-                .map(memberGroup -> toMemberDto(memberGroup.getMember(), memberGroup.getNickname()))
+        List<MemberGroupResponseDto.MemberGroupInfoDto> memberGroupDtoList = memberGroupList.stream()
+                .map(MemberGroupConverter::toMemberGroupInfoDto)
                 .collect(Collectors.toList());
 
         return GroupResponseDto.GroupMembersDto.builder()
@@ -59,7 +62,7 @@ public class GroupConverter {
                 .groupCode(group.getGroupCode())
                 .groupColor(group.getGroupColor())
                 .numPeople(group.getNumPeople())
-                .memberDtoList(memberDtoList)
+                .memberGroupInfos(memberGroupDtoList)
                 .build();
     }
 
@@ -72,21 +75,12 @@ public class GroupConverter {
         return sb.toString();
     }
 
-    public static GroupResponseDto.MemberDto toAssigneeDto(ScheduleAssignee assignee) {
-        return GroupResponseDto.MemberDto.builder()
-                .email(assignee.getMemberGroup().getMember().getEmail())
-                .nickname(assignee.getMemberGroup().getMember().getNickname())
-                .assigneeId(assignee.getId())
-                .groupNickname(assignee.getMemberGroup().getNickname())
-                .status(assignee.isStatus())
-                .build();
-    }
+    public static MemberAssigneeResponseDto.MemberAssigneeInfoResponseDto toAssigneeDto(ScheduleAssignee assignee) {
 
-    public static GroupResponseDto.MemberDto toMemberDto(Member member, String groupNickName) {
-        return GroupResponseDto.MemberDto.builder()
-                .email(member.getEmail())
-                .nickname(member.getNickname())
-                .groupNickname(groupNickName)
+        return MemberAssigneeResponseDto.MemberAssigneeInfoResponseDto.builder()
+                .assigneeId(assignee.getId())
+                .status(assignee.isStatus())
+                .memberGroupInfo(MemberGroupConverter.toMemberGroupInfoDto(assignee.getMemberGroup()))
                 .build();
     }
 }
