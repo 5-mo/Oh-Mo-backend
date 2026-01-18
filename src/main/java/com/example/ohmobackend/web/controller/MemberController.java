@@ -75,4 +75,20 @@ public class MemberController {
         MemberResponseDto.MemberInfoResponseDto memberInfoResponseDto = MemberConverter.toMemberInfoResponseDto(member);
         return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, memberInfoResponseDto);
     }
+
+    @PatchMapping("nickname")
+    @Operation(summary = "회원 닉네임 수정 API", description = "회원 닉네임 수정 ")
+    public ApiResponse<MemberResponseDto.MemberInfoResponseDto> updateMemberNickname(@AuthUser Member member,
+                                                                                       @RequestBody MemberRequestDto.UpdateNicknameRequestDto request) {
+        MemberResponseDto.MemberInfoResponseDto memberInfoWithoutProfileDto = memberCommandService.updateMemberNickName(member, request);
+        return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, memberInfoWithoutProfileDto);
+    }
+
+    @PatchMapping(value= "profile-image", consumes = "multipart/form-data")
+    @Operation(summary = "회원 프로필 사진 수정 API", description = "회원 프로필 사진 수정 ")
+    public ApiResponse<MemberResponseDto.MemberInfoResponseDto>
+    updateMemberProfileImage(@AuthUser Member member, @RequestPart(value = "profileImage", required = false) MultipartFile profileImage) {
+        MemberResponseDto.MemberInfoResponseDto memberInfoWithoutProfileDto = memberCommandService.updateMemberProfileImage(member, profileImage);
+        return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, memberInfoWithoutProfileDto);
+    }
 }

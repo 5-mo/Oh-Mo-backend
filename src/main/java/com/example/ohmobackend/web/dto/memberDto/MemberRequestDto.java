@@ -21,4 +21,9 @@ public class MemberRequestDto {
     public static class RefreshTokenRequestDto {
         private String refreshToken;
     }
+
+    @Getter
+    public static class UpdateNicknameRequestDto {
+        private String nickname;
+    }
 }

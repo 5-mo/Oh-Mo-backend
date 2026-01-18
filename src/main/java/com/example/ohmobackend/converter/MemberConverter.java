@@ -17,12 +17,6 @@ public class MemberConverter {
                 .build();
     }
 
-    public static MemberResponseDto.SignupResponseDto toDto(Member member) {
-        return MemberResponseDto.SignupResponseDto.builder()
-                .email(member.getEmail())
-                .nickname(member.getNickname())
-                .build();
-    }
 
     public static MemberResponseDto.LoginResponseDto toLoginResponseDto(Member member, JwtToken jwtToken) {
         return MemberResponseDto.LoginResponseDto.builder()
@@ -39,6 +33,14 @@ public class MemberConverter {
                 .email(member.getEmail())
                 .nickname(member.getNickname())
                 .profileImageUrl(member.getProfileImageUrl())
+                .build();
+    }
+
+    public static MemberResponseDto.MemberInfoWithoutProfileDto toMemberInfoWithoutProfileDto(Member member) {
+        return MemberResponseDto.MemberInfoWithoutProfileDto.builder()
+                .memberId(member.getId())
+                .email(member.getEmail())
+                .nickname(member.getNickname())
                 .build();
     }
 

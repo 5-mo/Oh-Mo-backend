@@ -15,4 +15,7 @@ public interface MemberCommandService {
     public void logout(String token);
 
     public void withdraw(Member member);
+
+    public MemberResponseDto.MemberInfoResponseDto updateMemberNickName(Member member, MemberRequestDto.UpdateNicknameRequestDto request);
+    public MemberResponseDto.MemberInfoResponseDto updateMemberProfileImage(Member member, MultipartFile profileImage);
 }

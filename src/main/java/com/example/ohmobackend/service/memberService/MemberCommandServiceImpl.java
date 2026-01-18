@@ -18,6 +18,7 @@ import com.example.ohmobackend.web.dto.memberCategoryDto.MemberCategoryDtoReques
 import com.example.ohmobackend.web.dto.memberDto.MemberRequestDto;
 import com.example.ohmobackend.web.dto.memberDto.MemberResponseDto;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
@@ -29,6 +30,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class MemberCommandServiceImpl implements MemberCommandService {
 
     private final MemberRepository memberRepository;
@@ -151,5 +153,32 @@ public class MemberCommandServiceImpl implements MemberCommandService {
     public void withdraw(Member member) {
         memberRepository.delete(member);
     }
+
+    @Override
+    @Transactional
+    public MemberResponseDto.MemberInfoResponseDto updateMemberNickName(Member member, MemberRequestDto.UpdateNicknameRequestDto request) {
+        member.updateNickname(request.getNickname());
+        return MemberConverter.toMemberInfoResponseDto(member);
+    }
+
+    @Override
+    @Transactional
+    public MemberResponseDto.MemberInfoResponseDto updateMemberProfileImage(Member member, MultipartFile profileImage) {
+        String oldImageUrl = member.getProfileImageUrl();
+        String newImageUrl = null;
+
+        if (oldImageUrl != null && !oldImageUrl.isEmpty()) {
+            fileUploadService.delete(oldImageUrl);
+        }
+
+        if (profileImage != null && !profileImage.isEmpty()) {
+            String fileName = generateProfileImageName(member.getEmail());
+            newImageUrl = fileUploadService.upload(profileImage, fileName);
+        }
+
+        member.updateProfileImage(newImageUrl);
+        return MemberConverter.toMemberInfoResponseDto(member);
+    }
+
 
 }
