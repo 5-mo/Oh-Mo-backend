@@ -151,6 +151,10 @@ public class MemberCommandServiceImpl implements MemberCommandService {
 
     @Transactional
     public void withdraw(Member member) {
+        String imageUrl = member.getProfileImageUrl();
+        if (imageUrl != null && !imageUrl.isEmpty()) {
+            fileUploadService.delete(imageUrl);
+        }
         memberRepository.delete(member);
     }
 
