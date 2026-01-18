@@ -35,9 +35,9 @@ public class GroupScheduleCommandServiceImpl {
                 .orElseThrow(() -> new ScheduleHandler(ErrorStatus.GROUP_NOT_FOUND));
 
         // 루틴 추가할 권한 없음(해당 그룹의 멤버가 아님)
-        validateMemberGroup(member, group);
+        MemberGroup memberGroup = validateMemberGroup(member, group);
 
-        Schedule schedule = ScheduleConverter.groupScheduleToEntity(requestDto, group, ScheduleType.ROUTINE);
+        Schedule schedule = ScheduleConverter.groupScheduleToEntity(requestDto, group, ScheduleType.ROUTINE, memberGroup);
 
         // repeatWeek 저장
         if (requestDto.getRoutineWeek() != null && !requestDto.getRoutineWeek().isEmpty()) {
@@ -65,16 +65,16 @@ public class GroupScheduleCommandServiceImpl {
                 .orElseThrow(() -> new ScheduleHandler(ErrorStatus.GROUP_NOT_FOUND));
 
         // 루틴 추가할 권한 없음(해당 그룹의 멤버가 아님)
-        validateMemberGroup(member, group);
+        MemberGroup memberGroup = validateMemberGroup(member, group);
 
-        Schedule schedule = ScheduleConverter.groupScheduleToEntity(requestDto, group, ScheduleType.TO_DO);
+        Schedule schedule = ScheduleConverter.groupScheduleToEntity(requestDto, group, ScheduleType.TO_DO, memberGroup);
         scheduleRepository.save(schedule);
         Todo todo = todoRepository.save(TodoConverter.toEntity(schedule));
         return TodoConverter.toTodoDto(todo);
     }
 
-    private void validateMemberGroup(Member member, Group group) {
-        memberGroupRepository.findByGroupAndMember(group, member)
+    private MemberGroup validateMemberGroup(Member member, Group group) {
+        return memberGroupRepository.findByGroupAndMember(group, member)
                 .orElseThrow(() -> new ScheduleHandler(ErrorStatus.MEMBER_GROUP_NOT_FOUND));
     }
 }

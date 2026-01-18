@@ -70,7 +70,7 @@ public class ScheduleConverter {
 
     static public Schedule groupScheduleToEntity(
             GroupScheduleRequestDto.GroupScheduleAddRequestDto requestDto,
-            Group group, ScheduleType scheduleType) {
+            Group group, ScheduleType scheduleType, MemberGroup memberGroup) {
         return Schedule.builder()
                 .date(requestDto.getDate())
                 .time(requestDto.getTime())
@@ -79,6 +79,7 @@ public class ScheduleConverter {
                 .scheduleType(scheduleType)
                 .group(group)
                 .repeatWeek(new HashSet<>())
+                .createdBy(memberGroup)
                 .build();
 
     }
