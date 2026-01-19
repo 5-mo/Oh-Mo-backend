@@ -52,4 +52,7 @@ jobs:
               -e DATABASE_PASSWORD=${{ secrets.DATABASE_PASSWORD }} \
               -e JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }} \
               -e NLP_API_URL=${{ secrets.NLP_API_URL }} \
+              -e S3_BUCKET=${{ secrets.S3_BUCKET }} \
+              -e AWS_ACCESS_KEY=${{ secrets.AWS_ACCESS_KEY }} \
+              -e AWS_SECRET_KEY=${{ secrets.AWS_SECRET_KEY }} \
               ${{ secrets.DOCKER_USERNAME }}/ohmo:latest
