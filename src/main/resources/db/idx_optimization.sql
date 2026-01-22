@@ -4,4 +4,4 @@ CREATE INDEX idx_schedule_member_date_type
 
 -- Routine 테이블: 날짜별 조회를 위한 인덱스
 CREATE INDEX idx_routine_date
-    ON routine (date);
+    ON routine (schedule_id, date);
