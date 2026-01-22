@@ -13,11 +13,11 @@ import java.util.List;
 
 public interface RoutineRepository extends JpaRepository<Routine, Long> {
 
-    @Query("SELECT DISTINCT r FROM Routine r " +
-            "JOIN FETCH r.schedule s " +
-            "JOIN FETCH s.memberCategory mc " +
-            "WHERE r.date = :date " +
-            "AND mc.member = :member")
+    @Query("SELECT r FROM MemberCategory mc " +
+            "JOIN mc.scheduleList s " +
+            "JOIN s.routineList r " +
+            "WHERE mc.member = :member " +
+            "AND r.date = :date")
     List<Routine> findRoutinesWithScheduleByMemberAndDate(
             @Param("member") Member member,
             @Param("date") LocalDate date
