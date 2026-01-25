@@ -28,164 +28,57 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+@Transactional
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class MemberCommandServiceImpl implements MemberCommandService {
 
     private final MemberRepository memberRepository;
-    private final AuthenticationManagerBuilder authenticationManagerBuilder;
-    private final TokenProvider tokenProvider;
-    private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final MemberCategoryRepository memberCategoryRepository;
-    private final PrincipalDetailsService principalDetailsService;
     private final FileUploadService fileUploadService;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
-    @Override
-    public MemberResponseDto.MemberInfoResponseDto signup(MemberRequestDto.SignupRequestDto request, MultipartFile profileImage) {
-        if (memberRepository.existsByEmail(request.getEmail())) {
-            throw new MemberHandler(ErrorStatus.MEMBER_ALREADY_EXISTS);
-        }
+    private static final String DEFAULT_CATEGORY_COLOR_CODE = "#000000";
+    private static final String DEFAULT_CATEGORY_NAME = "default";
 
-        String profileImageUrl = null;
 
-        if (profileImage != null && !profileImage.isEmpty()) {
-            String fileName = generateProfileImageName(request.getEmail());
-            profileImageUrl = fileUploadService.upload(profileImage, fileName);
-        }
-
-        Member member = MemberConverter.toEntity(request, bCryptPasswordEncoder.encode(request.getPassword()), profileImageUrl);
-        Member newMember = memberRepository.save(member);
-
-        // default 카테고리 추가
-        saveDefaultCategory(member, ScheduleType.TO_DO);
-        saveDefaultCategory(member, ScheduleType.ROUTINE);
-
-        return MemberConverter.toMemberInfoResponseDto(newMember);
-    }
-
-    private void saveDefaultCategory(Member member, ScheduleType scheduleType) {
+    public void saveDefaultCategory(Member member, ScheduleType scheduleType) {
         MemberCategoryDtoRequest.addCategoryRequest todoCategory = MemberCategoryDtoRequest.addCategoryRequest.builder()
-                .color("#000000")
+                .color(DEFAULT_CATEGORY_COLOR_CODE)
                 .scheduleType(scheduleType)
-                .categoryName("default")
+                .categoryName(DEFAULT_CATEGORY_NAME)
                 .build();
         MemberCategory defaultCategoryEntity = MemberCategoryConverter.toMemberCategoryEntity(todoCategory, member);
         memberCategoryRepository.save(defaultCategoryEntity);
     }
 
-    private String generateProfileImageName(String email) {
-        return "profile/" + email + "_" + System.currentTimeMillis();
-    }
-
-    @Transactional
-    public MemberResponseDto.LoginResponseDto login(MemberRequestDto.LoginRequestDto loginRequest) {
-        System.out.println(loginRequest.getPassword());
-        // 1. username + password 를 기반으로 Authentication 객체 생성
-        // 이때 authentication 은 인증 여부를 확인하는 authenticated 값이 false
-        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword());
-
-        // 2. 실제 검증. authenticate() 메서드를 통해 요청된 Member 에 대한 검증 진행
-        // authenticate 메서드가 실행될 때 UserDetailsService 에서 만든 loadUserByUsername 메서드 실행
-        Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
-
-        // 3. 인증 정보를 기반으로 JWT 토큰 생성
-        JwtToken jwtToken = tokenProvider.generateTokenDto(authentication);
-
-        Member member = memberRepository.findByEmail(authentication.getName())
-                        .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
-        member.updateRefreshToken(jwtToken.getRefreshToken());
-
-        return MemberConverter.toLoginResponseDto(member, jwtToken);
-    }
-
     @Override
-    public Member getByEmail(String email) {
+    public Member findMemberByEmail(String email) {
         return memberRepository.findByEmail(email)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
     }
 
-    @Transactional
-    public MemberResponseDto.LoginResponseDto reissue(String refreshToken) {
-        tokenProvider.validateToken(refreshToken);
-        String email = tokenProvider.getEmail(refreshToken);
-        System.out.println("Reissue email from token: " + email);
-        Member member = memberRepository.findByEmail(email)
-                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
-
-        // 4️⃣ DB에 저장된 Refresh Token과 비교
-        if (member.getRefreshToken() == null ||
-                !member.getRefreshToken().equals(refreshToken)) {
-
-            throw new AuthHandler(ErrorStatus.INVALID_TOKEN);
-        }
-
-        UserDetails userDetails =
-                principalDetailsService.loadUserByUsername(member.getEmail());
-
-        Authentication authentication =
-                new UsernamePasswordAuthenticationToken(
-                        userDetails,
-                        null,
-                        userDetails.getAuthorities()
-                );
-
-        JwtToken jwtToken = tokenProvider.generateTokenDto(authentication);
-
-        // Refresh Token 갱신
-        member.updateRefreshToken(jwtToken.getRefreshToken());
-
-        return MemberConverter.toLoginResponseDto(member, jwtToken);
-    }
-
-    @Transactional
     @Override
-    public void logout(String accessToken) {
-        String email = tokenProvider.getEmail(accessToken);
-        Member member = memberRepository.findByEmail(email)
-                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
-
-        // Refresh Token 제거
-        member.updateRefreshToken(null);
-    }
-
-    @Transactional
-    public void withdraw(Member member) {
-        String imageUrl = member.getProfileImageUrl();
-        if (imageUrl != null && !imageUrl.isEmpty()) {
-            fileUploadService.delete(imageUrl);
-        }
-        memberRepository.delete(member);
-    }
-
-    @Override
-    @Transactional
     public MemberResponseDto.MemberInfoResponseDto updateMemberNickName(Member member, MemberRequestDto.UpdateNicknameRequestDto request) {
         member.updateNickname(request.getNickname());
         return MemberConverter.toMemberInfoResponseDto(member);
     }
 
     @Override
-    @Transactional
     public MemberResponseDto.MemberInfoResponseDto updateMemberProfileImage(Member member, MultipartFile profileImage) {
         String oldImageUrl = member.getProfileImageUrl();
-        String newImageUrl = null;
-
         if (oldImageUrl != null && !oldImageUrl.isEmpty()) {
             fileUploadService.delete(oldImageUrl);
         }
 
-        if (profileImage != null && !profileImage.isEmpty()) {
-            String fileName = generateProfileImageName(member.getEmail());
-            newImageUrl = fileUploadService.upload(profileImage, fileName);
-        }
+        String newImageUrl = uploadProfileImageToS3(profileImage, member.getEmail());
 
         member.updateProfileImage(newImageUrl);
         return MemberConverter.toMemberInfoResponseDto(member);
     }
 
     @Override
-    @Transactional
     public void updatePassword(Member member, MemberRequestDto.UpdatePasswordDto request) {
         if (!bCryptPasswordEncoder.matches(request.getOldPassword(), member.getPassword())) {
             throw new MemberHandler(ErrorStatus.INVALID_PASSWORD);
@@ -193,5 +86,20 @@ public class MemberCommandServiceImpl implements MemberCommandService {
 
         String encodedNewPassword = bCryptPasswordEncoder.encode(request.getNewPassword());
         member.updatePassword(encodedNewPassword);
+    }
+
+    public void deleteMemberProfileImageFromS3(Member member) {
+        String imageUrl = member.getProfileImageUrl();
+        if (imageUrl != null && !imageUrl.isEmpty()) {
+            fileUploadService.delete(imageUrl);
+        }
+    }
+
+    public String uploadProfileImageToS3(MultipartFile profileImage, String email) {
+        if (profileImage == null || profileImage.isEmpty()) {
+            return null;
+        }
+        String fileName = "profile/" + email + "_" + System.currentTimeMillis();
+        return fileUploadService.upload(profileImage, fileName);
     }
 }

@@ -43,7 +43,7 @@ public class AuthUserArgumentResolver implements HandlerMethodArgumentResolver {
 
         // 토큰에서 이메일 추출 후 해당 Member 반환
         String email = tokenProvider.getEmail(token);
-        return memberService.getByEmail(email);
+        return memberService.findMemberByEmail(email);
     }
 
     private String extractTokenFromHeader(HttpServletRequest request) {
