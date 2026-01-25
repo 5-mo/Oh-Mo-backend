@@ -52,10 +52,8 @@ public class ScheduleCommandServiceImpl implements ScheduleCommandService {
     public List<RoutineResponseDto.RoutineDto> addRoutine(
             ScheduleRequestDto.AddRequestDto requestDto,
             Member member) {
-        MemberCategory memberCategory = getMemberCategory(requestDto, member, ScheduleType.ROUTINE);
-
+        MemberCategory memberCategory = getMemberCategory(requestDto.getCategoryId(), member, ScheduleType.ROUTINE);
         validateMemberCategory(memberCategory, member, ScheduleType.ROUTINE);
-
         Schedule schedule = ScheduleConverter.toEntity(requestDto, memberCategory);
 
         // repeatWeek 저장
@@ -69,7 +67,6 @@ public class ScheduleCommandServiceImpl implements ScheduleCommandService {
 
         // 반복 요일 기반 Routine 생성
         List<LocalDate> dates = getDatesFromRepeatWeeks(LocalDate.now(), requestDto.getDate(), requestDto.getRoutineWeek()); // 반복 요일에 해당하는 날짜 리스트
-
         List<Routine> routineList = dates.stream()
                 .map(date -> RoutineConverter.toEntity(schedule, date))
                 .collect(Collectors.toList());
@@ -86,8 +83,7 @@ public class ScheduleCommandServiceImpl implements ScheduleCommandService {
             ScheduleRequestDto.AddRequestDto requestDto,
             Member member
     ) {
-        Schedule schedule = scheduleRepository.findById(scheduleId)
-                .orElseThrow(() -> new ScheduleHandler(ErrorStatus.SCHEDULE_NOT_FOUND));
+        Schedule schedule = getSchedule(scheduleId);
         MemberCategory memberCategory = schedule.getMemberCategory();
         validateMemberCategory(memberCategory, member, ScheduleType.ROUTINE);
 
@@ -96,13 +92,12 @@ public class ScheduleCommandServiceImpl implements ScheduleCommandService {
         if (routineChanged) {
             return updateRoutinesIncrementally(schedule);
         }
-
         return findRoutineDtos(schedule);
     }
 
     @Override
     public TodoResponseDto.TodoDto addTodo(ScheduleRequestDto.AddRequestDto requestDto, Member member) {
-        MemberCategory memberCategory = getMemberCategory(requestDto, member, ScheduleType.TO_DO);
+        MemberCategory memberCategory = getMemberCategory(requestDto.getCategoryId(), member, ScheduleType.TO_DO);
         validateMemberCategory(memberCategory, member, ScheduleType.TO_DO);
         Schedule schedule = scheduleRepository.save(ScheduleConverter.toEntity(requestDto, memberCategory));
         Todo todo = todoRepository.save(TodoConverter.toEntity(schedule));
@@ -124,8 +119,7 @@ public class ScheduleCommandServiceImpl implements ScheduleCommandService {
 
     @Override
     public TodoResponseDto.TodoDto updateTodo(Long scheduleId, ScheduleRequestDto.AddRequestDto requestDto, Member member) {
-        Schedule schedule = scheduleRepository.findById(scheduleId)
-                .orElseThrow(() -> new ScheduleHandler(ErrorStatus.SCHEDULE_NOT_FOUND));
+        Schedule schedule = getSchedule(scheduleId);
         MemberCategory memberCategory = schedule.getMemberCategory();
         validateMemberCategory(memberCategory, member, ScheduleType.TO_DO);
         applySchedulePatch(schedule, requestDto, ScheduleType.TO_DO);
@@ -136,19 +130,17 @@ public class ScheduleCommandServiceImpl implements ScheduleCommandService {
     @Override
     @Transactional
     public ScheduleResponseDto.ScheduleTodoDto updateScheduleDate(ScheduleRequestDto.UpdateTodoDateRequestDto requestDto, Member member) {
-        Schedule schedule = scheduleRepository.findById(requestDto.getScheduleId())
-                .orElseThrow(() -> new ScheduleHandler(ErrorStatus.SCHEDULE_NOT_FOUND));
+        Schedule schedule = getSchedule(requestDto.getScheduleId());
         MemberCategory memberCategory = schedule.getMemberCategory();
         validateMemberCategory(memberCategory, member, ScheduleType.TO_DO);
         schedule.updateDate(requestDto.getDate());
 
-        return ScheduleConverter.toScheduleTodoDto(schedule, schedule.getTodo());
+        return ScheduleConverter.toScheduleTodoDto(schedule);
     }
 
     @Override
     public void updateScheduleAlarmTime(ScheduleRequestDto.UpdateScheduleAlarmTimeDto requestDto, Member member) {
-        Schedule schedule = scheduleRepository.findById(requestDto.getScheduleId())
-                .orElseThrow(() -> new ScheduleHandler(ErrorStatus.SCHEDULE_NOT_FOUND));
+        Schedule schedule = getSchedule(requestDto.getScheduleId());
 
         if (schedule.getMemberCategory().getMember() != member) {
             throw new MemberHandler(ErrorStatus.INVALID_MEMBER);
@@ -157,11 +149,17 @@ public class ScheduleCommandServiceImpl implements ScheduleCommandService {
         schedule.updateAlarmTime(requestDto.getAlarmTime());
     }
 
-    private MemberCategory getMemberCategory(ScheduleRequestDto.AddRequestDto requestDto, Member member, ScheduleType scheduleType) {
-        MemberCategory memberCategory = (requestDto.getCategoryId() == null)
+    private Schedule getSchedule(Long ScheduleId) {
+        Schedule schedule = scheduleRepository.findById(ScheduleId)
+                .orElseThrow(() -> new ScheduleHandler(ErrorStatus.SCHEDULE_NOT_FOUND));
+        return schedule;
+    }
+
+    private MemberCategory getMemberCategory(Long categoryId, Member member, ScheduleType scheduleType) {
+        MemberCategory memberCategory = (categoryId == null)
                 ? memberCategoryRepository.findByMemberAndCategoryNameAndScheduleType(member, "default", scheduleType)
                 .orElseThrow(() -> new ScheduleHandler(ErrorStatus.DEFAULT_MEMBER_CATEGORY_NOT_FOUND))
-                : memberCategoryRepository.findById(requestDto.getCategoryId())
+                : memberCategoryRepository.findById(categoryId)
                 .orElseThrow(() -> new ScheduleHandler(ErrorStatus.MEMBER_CATEGORY_NOT_FOUND));
         return memberCategory;
     }
@@ -288,7 +286,4 @@ public class ScheduleCommandServiceImpl implements ScheduleCommandService {
 
         return (Map<String, Object>) response.getBody().get("result");
     }
-
-
-
 }

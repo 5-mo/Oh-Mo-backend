@@ -40,15 +40,10 @@ public class AssigneeCommandServiceImpl implements AssigneeCommandService {
         memberGroupRepository.findByGroupAndMember(group, member)
                 .orElseThrow(() -> new ScheduleHandler(ErrorStatus.MEMBER_GROUP_NOT_FOUND));
 
-        List<ScheduleAssignee> assignees = requestDto.getMemberGroupIdList().stream()
-                .map(memberGroupId -> {
-                    MemberGroup memberGroup = memberGroupRepository.findById(memberGroupId)
-                            .orElseThrow(() -> new ScheduleHandler(ErrorStatus.MEMBER_NOT_FOUND));
-                    return ScheduleConverter.todoScheduleAssigneeToEntity(memberGroup, todo);
-                })
-                .collect(Collectors.toList());
-
-        scheduleAssigneeRepository.saveAll(assignees);
+        MemberGroup memberGroup = memberGroupRepository.findById(requestDto.getMemberGroupId())
+                .orElseThrow(() -> new ScheduleHandler(ErrorStatus.MEMBER_NOT_FOUND));
+        ScheduleAssignee scheduleAssignee = ScheduleConverter.todoScheduleAssigneeToEntity(memberGroup, todo);
+        scheduleAssigneeRepository.save(scheduleAssignee);
     }
 
     public void addRoutineScheduleAssignee(GroupScheduleRequestDto.RoutineScheduleAssigneeRequestDto requestDto, Member member) {
@@ -63,15 +58,10 @@ public class AssigneeCommandServiceImpl implements AssigneeCommandService {
         memberGroupRepository.findByGroupAndMember(group, member)
                 .orElseThrow(() -> new ScheduleHandler(ErrorStatus.MEMBER_GROUP_NOT_FOUND));
 
-        ;List<ScheduleAssignee> assignees = requestDto.getMemberGroupIdList().stream()
-                .map(memberGroupId -> {
-                    MemberGroup memberGroup = memberGroupRepository.findById(memberGroupId)
-                            .orElseThrow(() -> new ScheduleHandler(ErrorStatus.MEMBER_NOT_FOUND));
-                    return ScheduleConverter.routineScheduleAssigneeToEntity(memberGroup, routine);
-                })
-                .collect(Collectors.toList());
-
-        scheduleAssigneeRepository.saveAll(assignees);
+        MemberGroup memberGroup = memberGroupRepository.findById(requestDto.getMemberGroupId())
+                .orElseThrow(() -> new ScheduleHandler(ErrorStatus.MEMBER_NOT_FOUND));
+        ScheduleAssignee scheduleAssignee = ScheduleConverter.routineScheduleAssigneeToEntity(memberGroup, routine);
+        scheduleAssigneeRepository.save(scheduleAssignee);
     }
 
     public void updateAssigneeStatus(Long assigneeId, Member member) {

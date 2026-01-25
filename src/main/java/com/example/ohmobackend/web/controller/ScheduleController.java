@@ -95,8 +95,8 @@ public class ScheduleController {
     // 일정 조회 관련
     @GetMapping("/by-date")
     @Operation(summary = "일별 일정 조회 API", description = "일별 일정 조회 API 입니다.")
-    public ApiResponse<ScheduleResponseDto.ScheduleDto> getScheduleList(@RequestParam(name = "date")LocalDate date, @AuthUser Member member) {
-        ScheduleResponseDto.ScheduleDto scheduleDtoList = scheduleQueryService.getScheduleList(date, member);
+    public ApiResponse<ScheduleResponseDto.ScheduleByDateDto> getScheduleList(@RequestParam(name = "date")LocalDate date, @AuthUser Member member) {
+        ScheduleResponseDto.ScheduleByDateDto scheduleDtoList = scheduleQueryService.getScheduleList(date, member);
         return ApiResponse.onSuccess(SuccessStatus.SCHEDULE_OK, scheduleDtoList);
     }
 
@@ -118,9 +118,8 @@ public class ScheduleController {
 
     @GetMapping("")
     @Operation(summary = "검색어로 스케줄 조회 API", description = "검색어로 스케줄 조회 API 입니다.")
-    public ApiResponse<ScheduleResponseDto.ScheduleDto> getScheduleList(@RequestParam(name = "query")String keyword, @AuthUser Member member) {
-        ScheduleResponseDto.ScheduleDto scheduleDtoList = scheduleQueryService.getScheduleListByKeyword(keyword, member);
-
+    public ApiResponse<ScheduleResponseDto.ScheduleByKeyWordDto> getScheduleList(@RequestParam(name = "query")String keyword, @AuthUser Member member) {
+        ScheduleResponseDto.ScheduleByKeyWordDto scheduleDtoList = scheduleQueryService.getScheduleListByKeyword(keyword, member);
         return ApiResponse.onSuccess(SuccessStatus.SCHEDULE_OK, scheduleDtoList);
     }
 

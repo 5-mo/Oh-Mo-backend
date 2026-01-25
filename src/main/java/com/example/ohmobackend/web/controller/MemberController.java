@@ -5,6 +5,7 @@ import com.example.ohmobackend.apiPayload.code.status.SuccessStatus;
 import com.example.ohmobackend.converter.MemberConverter;
 import com.example.ohmobackend.domain.Member;
 import com.example.ohmobackend.security.handler.AuthUser;
+import com.example.ohmobackend.service.authService.AuthService;
 import com.example.ohmobackend.service.memberService.MemberCommandService;
 import com.example.ohmobackend.web.dto.memberDto.MemberRequestDto;
 import com.example.ohmobackend.web.dto.memberDto.MemberResponseDto;
@@ -18,7 +19,8 @@ import org.springframework.web.multipart.MultipartFile;
 @RequestMapping("/api/member")
 public class MemberController {
 
-    final MemberCommandService memberCommandService;
+    private final MemberCommandService memberCommandService;
+    private final AuthService authService;
 
     @PostMapping(value = "/signup", consumes = "multipart/form-data")
     @Operation(summary = "이메일 회원 가입 API", description = "이메일 회원 가입 API 입니다.")
@@ -27,7 +29,7 @@ public class MemberController {
             @RequestPart(value = "profileImage", required = false) MultipartFile profileImage
     ) {
         MemberResponseDto.MemberInfoResponseDto responseDto =
-                memberCommandService.signup(request, profileImage);
+                authService.signup(request, profileImage);
 
         return ApiResponse.onSuccess(SuccessStatus.MEMBER_SIGNUP_OK, responseDto);
     }
@@ -35,7 +37,7 @@ public class MemberController {
     @PostMapping("/login")
     @Operation(summary = "이메일 로그인 API", description = "이메일 로그인 API 입니다.")
     public ApiResponse<MemberResponseDto.LoginResponseDto> login(@RequestBody MemberRequestDto.LoginRequestDto request) {
-        MemberResponseDto.LoginResponseDto responseDto = memberCommandService.login(request);
+        MemberResponseDto.LoginResponseDto responseDto = authService.login(request);
         return ApiResponse.onSuccess(SuccessStatus.MEMBER_LOGIN_OK, responseDto);
     }
 
@@ -50,7 +52,7 @@ public class MemberController {
     public ApiResponse<MemberResponseDto.LoginResponseDto> reissue(
             @RequestBody MemberRequestDto.RefreshTokenRequestDto request) {
 
-        MemberResponseDto.LoginResponseDto responseDto = memberCommandService.reissue(request.getRefreshToken());
+        MemberResponseDto.LoginResponseDto responseDto = authService.reissue(request.getRefreshToken());
         return ApiResponse.onSuccess(SuccessStatus.MEMBER_REISSUE_OK, responseDto);
     }
 
@@ -58,14 +60,14 @@ public class MemberController {
     @Operation(summary = "로그아웃 API", description = "로그아웃 시 Refresh Token 삭제")
     public ApiResponse<Void> logout(@RequestHeader("Authorization") String authorizationHeader) {
         String accessToken = authorizationHeader.replace("Bearer ", "");
-        memberCommandService.logout(accessToken);
+        authService.logout(accessToken);
         return ApiResponse.onSuccess(SuccessStatus.MEMBER_LOGOUT_OK, null);
     }
 
     @DeleteMapping("/withdraw")
     @Operation(summary = "회원 탈퇴 API", description = "회원 정보를 삭제하고 로그아웃 처리")
     public ApiResponse<Void> withdraw(@AuthUser Member member) {
-        memberCommandService.withdraw(member);
+        authService.withdraw(member);
         return ApiResponse.onSuccess(SuccessStatus.MEMBER_WITHDRAW_OK, null);
     }
 
