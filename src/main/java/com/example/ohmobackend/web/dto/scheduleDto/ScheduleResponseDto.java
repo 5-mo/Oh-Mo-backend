@@ -19,7 +19,16 @@ public class ScheduleResponseDto {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class ScheduleDto {
+    public static class ScheduleByDateDto {
+        List<ScheduleResponseDto.ScheduleTodoDto> todoList;
+        List<ScheduleResponseDto.ScheduleRoutineDto> routineList;
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class ScheduleByKeyWordDto {
         List<ScheduleResponseDto.ScheduleTodoDto> todoList;
         List<ScheduleResponseDto.ScheduleWithRoutineListDto> routineList;
     }
@@ -52,6 +61,7 @@ public class ScheduleResponseDto {
         private ScheduleType scheduleType;
         private MemberCategoryResponseDto.CategoryResponseDto category;
         private RoutineResponseDto.RoutineDto routine;
+        private List<String> repeatWeek;
     }
 
     @Getter
@@ -87,4 +97,5 @@ public class ScheduleResponseDto {
         private LocalDate date;
         private double rate;
     }
+
 }

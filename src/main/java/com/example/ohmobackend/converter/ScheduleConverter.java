@@ -84,9 +84,17 @@ public class ScheduleConverter {
 
     }
 
-    static public ScheduleResponseDto.ScheduleDto toScheduleDto(List<ScheduleResponseDto.ScheduleTodoDto> todoList,
-                                                                List<ScheduleResponseDto.ScheduleWithRoutineListDto> routineList) {
-        return ScheduleResponseDto.ScheduleDto.builder()
+    // 루틴 하나 버전
+    static public ScheduleResponseDto.ScheduleByKeyWordDto toScheduleByKeywordDto(List<ScheduleResponseDto.ScheduleTodoDto> todoList, List<ScheduleResponseDto.ScheduleWithRoutineListDto> routineList) {
+        return ScheduleResponseDto.ScheduleByKeyWordDto.builder()
+                .todoList(todoList)
+                .routineList(routineList)
+                .build();
+    }
+
+    static public ScheduleResponseDto.ScheduleByDateDto toScheduleByDateDto(List<ScheduleResponseDto.ScheduleTodoDto> todoList,
+                                                                            List<ScheduleResponseDto.ScheduleRoutineDto> routineList) {
+        return ScheduleResponseDto.ScheduleByDateDto.builder()
                 .todoList(todoList)
                 .routineList(routineList)
                 .build();
@@ -108,6 +116,7 @@ public class ScheduleConverter {
                 .build();
     }
 
+    // 스케줄 + 루틴 하나 (date로 구분)
     static public ScheduleResponseDto.ScheduleRoutineDto toScheduleRoutineDto(
             Schedule schedule, Routine routine) {
 
@@ -123,6 +132,7 @@ public class ScheduleConverter {
                 .build();
     }
 
+    // 스케줄 + 루틴 여러개
     static public ScheduleResponseDto.ScheduleWithRoutineListDto toScheduleWithRoutineListDto(
             Schedule schedule, List<Routine> routineList) {
 

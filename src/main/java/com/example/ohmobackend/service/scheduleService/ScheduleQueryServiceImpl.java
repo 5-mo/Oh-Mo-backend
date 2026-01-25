@@ -18,7 +18,6 @@ import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -30,15 +29,15 @@ public class ScheduleQueryServiceImpl implements ScheduleQueryService {
     final RoutineRepository routineRepository;
 
     @Override
-    public ScheduleResponseDto.ScheduleDto getScheduleList(LocalDate date, Member member) {
+    public ScheduleResponseDto.ScheduleByDateDto getScheduleList(LocalDate date, Member member) {
         // 투두 찾기
         List<Schedule> todoScheduleList = scheduleRepository.findSchedulesByMemberAndDateAndScheduleType(member, date, ScheduleType.TO_DO);
         List<ScheduleResponseDto.ScheduleTodoDto> scheduleTodoList = getTodoDtosByDate(todoScheduleList);
 
         // 루틴 찾기
         List<Routine> routineList = routineRepository.findRoutinesWithScheduleByMemberAndDate(member, date);
-        List<ScheduleResponseDto.ScheduleWithRoutineListDto> scheduleRoutineList = getRoutineDtosByDate(routineList);
-        return ScheduleConverter.toScheduleDto(scheduleTodoList, scheduleRoutineList);
+        List<ScheduleResponseDto.ScheduleRoutineDto> scheduleRoutineList = getRoutineDtosByDate(routineList);
+        return ScheduleConverter.toScheduleByDateDto(scheduleTodoList, scheduleRoutineList);
     }
 
     @Override
@@ -88,12 +87,10 @@ public class ScheduleQueryServiceImpl implements ScheduleQueryService {
                 .toList();
     }
 
-    private List<ScheduleResponseDto.ScheduleWithRoutineListDto> getRoutineDtosByDate(List<Routine> routineList) {
+    private List<ScheduleResponseDto.ScheduleRoutineDto> getRoutineDtosByDate(List<Routine> routineList) {
         return routineList.stream()
                 .filter(r -> r.getSchedule().getScheduleType() == ScheduleType.ROUTINE)
-                .collect(Collectors.groupingBy(Routine::getSchedule))
-                .entrySet().stream()
-                .map(e -> ScheduleConverter.toScheduleWithRoutineListDto(e.getKey(), e.getValue()))
+                .map(r -> ScheduleConverter.toScheduleRoutineDto(r.getSchedule(), r))
                 .toList();
     }
 
@@ -105,7 +102,7 @@ public class ScheduleQueryServiceImpl implements ScheduleQueryService {
     }
 
     @Override
-    public ScheduleResponseDto.ScheduleDto getScheduleListByKeyword(String keyword, Member member) {
+    public ScheduleResponseDto.ScheduleByKeyWordDto getScheduleListByKeyword(String keyword, Member member) {
         List<MemberCategory> memberCategoryList = memberCategoryRepository.findByMember(member);
 
         if (memberCategoryList.isEmpty()) {
@@ -130,7 +127,7 @@ public class ScheduleQueryServiceImpl implements ScheduleQueryService {
                 .map(schedule -> ScheduleConverter.toScheduleWithRoutineListDto(schedule, schedule.getRoutineList()))
                 .collect(Collectors.toList());
 
-        return ScheduleConverter.toScheduleDto(scheduleTodoList, scheduleRoutineList);
+        return ScheduleConverter.toScheduleByKeywordDto(scheduleTodoList, scheduleRoutineList);
     }
 
 
