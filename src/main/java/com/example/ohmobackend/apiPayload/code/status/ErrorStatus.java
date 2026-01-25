@@ -20,6 +20,7 @@ public enum ErrorStatus implements BaseErrorCode {
     MEMBER_ALREADY_EXISTS(HttpStatus.BAD_REQUEST, "MEMBER4002", "이미 존재하는 유저입니다."),
     MEMBER_EMAIL_ALREADY_EXISTS(HttpStatus.BAD_REQUEST, "MEMBER4003", "이미 존재하는 이메일입니다."),
     INVALID_MEMBER(HttpStatus.BAD_REQUEST, "MEMBER4004", "권한이 없습니다."),
+    INVALID_PASSWORD(HttpStatus.BAD_REQUEST, "MEMBER4005", "비밀번호가 틀렸습니다."),
 
     // 인증 관련
     INVALID_TOKEN(HttpStatus.BAD_REQUEST, "AUTH4001", "유효하지 않은 토큰입니다"),

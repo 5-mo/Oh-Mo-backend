@@ -184,5 +184,14 @@ public class MemberCommandServiceImpl implements MemberCommandService {
         return MemberConverter.toMemberInfoResponseDto(member);
     }
 
+    @Override
+    @Transactional
+    public void updatePassword(Member member, MemberRequestDto.UpdatePasswordDto request) {
+        if (!bCryptPasswordEncoder.matches(request.getOldPassword(), member.getPassword())) {
+            throw new MemberHandler(ErrorStatus.INVALID_PASSWORD);
+        }
 
+        String encodedNewPassword = bCryptPasswordEncoder.encode(request.getNewPassword());
+        member.updatePassword(encodedNewPassword);
+    }
 }
