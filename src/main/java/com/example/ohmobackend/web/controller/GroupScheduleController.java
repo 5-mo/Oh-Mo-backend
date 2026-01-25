@@ -8,11 +8,9 @@ import com.example.ohmobackend.service.assigneeService.AssigneeCommandService;
 import com.example.ohmobackend.service.assigneeService.AssigneeQueryService;
 import com.example.ohmobackend.service.scheduleService.GroupScheduleCommandServiceImpl;
 import com.example.ohmobackend.service.scheduleService.GroupScheduleQueryService;
-import com.example.ohmobackend.web.dto.MemberAssigneeDto.MemberAssigneeResponseDto;
 import com.example.ohmobackend.web.dto.groupScheduleDto.GroupScheduleRequestDto;
 import com.example.ohmobackend.web.dto.groupScheduleDto.GroupScheduleResponseDto;
 import com.example.ohmobackend.web.dto.routineDto.RoutineResponseDto;
-import com.example.ohmobackend.web.dto.scheduleDto.ScheduleResponseDto;
 import com.example.ohmobackend.web.dto.todoDto.TodoResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
@@ -64,20 +62,20 @@ public class GroupScheduleController {
 
     @GetMapping("/by-date")
     @Operation(summary = "그룹 일별 일정 조회 API", description = "그룹 일별 일정 조회 API 입니다.")
-    public ApiResponse<ScheduleResponseDto.ScheduleDto> getScheduleList(@RequestParam(name = "groupId") Long groupId, @RequestParam(name = "date") LocalDate date, @AuthUser Member member) {
-        ScheduleResponseDto.ScheduleDto scheduleDtoList = groupScheduleQueryService.getScheduleList(groupId, date, member);
+    public ApiResponse<GroupScheduleResponseDto.GroupSchedulesDto> getScheduleList(@RequestParam(name = "groupId") Long groupId, @RequestParam(name = "date") LocalDate date, @AuthUser Member member) {
+        GroupScheduleResponseDto.GroupSchedulesDto scheduleDtoList = groupScheduleQueryService.getScheduleList(groupId, date, member);
         return ApiResponse.onSuccess(SuccessStatus.SCHEDULE_OK, scheduleDtoList);
     }
 
     @GetMapping("/assignee-todo")
-    @Operation(summary = "투두 일정 담당자 조회 API")
+    @Operation(summary = "투두 일정 담당자 조회(완료 상태 조회) API")
     public ApiResponse<GroupScheduleResponseDto.GroupTodoWithAssigneeDto > getTodoAssignees(@RequestParam(name = "todoId") Long todoId, @AuthUser Member member) {
         GroupScheduleResponseDto.GroupTodoWithAssigneeDto todoScheduleAssignee = assigneeQueryService.getTodoScheduleAssignee(todoId, member);
         return ApiResponse.onSuccess(SuccessStatus.ASSIGNEE_OK, todoScheduleAssignee);
     }
 
     @GetMapping("/assignee-routine")
-    @Operation(summary = "루틴 일정 담당자 조회 API")
+    @Operation(summary = "루틴 일정 담당자 조회(완료 상태 조회) API")
     public ApiResponse<GroupScheduleResponseDto.GroupRoutineWithAssigneeDto> getRoutineAssignees(@RequestParam(name = "routineId") Long routineId, @AuthUser Member member) {
         GroupScheduleResponseDto.GroupRoutineWithAssigneeDto routineScheduleAssignee = assigneeQueryService.getRoutineScheduleAssignee(routineId, member);
         return ApiResponse.onSuccess(SuccessStatus.ASSIGNEE_OK, routineScheduleAssignee);

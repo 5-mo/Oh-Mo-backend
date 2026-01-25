@@ -55,10 +55,11 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Long> {
     
 
     @Query("SELECT s FROM Schedule s " +
+            "JOIN FETCH s.todo " +
             "WHERE s.group = :group " +
             "AND s.date = :date " +
             "AND s.scheduleType = :scheduleType")
-    List<Schedule> findSchedulesByGroupAndDateAndScheduleType(
+    List<Schedule> findSchedulesWithTodoByGroupAndDateAndScheduleType(
             @Param("group") Group group,
             @Param("date") LocalDate date,
             @Param("scheduleType") ScheduleType scheduleType);
