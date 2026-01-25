@@ -23,8 +23,8 @@ import java.util.stream.Stream;
 @Service
 @RequiredArgsConstructor
 public class ScheduleQueryServiceImpl implements ScheduleQueryService {
-
     final MemberCategoryRepository memberCategoryRepository;
+
     final ScheduleRepository scheduleRepository;
     final TodoRepository todoRepository;
     final RoutineRepository routineRepository;
@@ -33,23 +33,12 @@ public class ScheduleQueryServiceImpl implements ScheduleQueryService {
     public ScheduleResponseDto.ScheduleDto getScheduleList(LocalDate date, Member member) {
         // 투두 찾기
         List<Schedule> todoScheduleList = scheduleRepository.findSchedulesByMemberAndDateAndScheduleType(member, date, ScheduleType.TO_DO);
-        List<ScheduleResponseDto.ScheduleTodoDto> scheduleTodoList = todoScheduleList.stream()
-                .map(todoSchedule -> ScheduleConverter.toScheduleTodoDto(todoSchedule, todoSchedule.getTodo()))
-                .collect(Collectors.toList());
+        List<ScheduleResponseDto.ScheduleTodoDto> scheduleTodoList = getTodoDtosByDate(todoScheduleList);
 
         // 루틴 찾기
         List<Routine> routineList = routineRepository.findRoutinesWithScheduleByMemberAndDate(member, date);
-
-        Map<Schedule, List<Routine>> scheduleToRoutines = routineList.stream()
-                .filter(r -> r.getSchedule().getScheduleType() == ScheduleType.ROUTINE)
-                .collect(Collectors.groupingBy(Routine::getSchedule));
-
-        List<ScheduleResponseDto.ScheduleWithRoutineListDto> scheduleRoutineList = scheduleToRoutines.entrySet().stream()
-                .map(entry -> ScheduleConverter.toScheduleWithRoutineListDto(entry.getKey(), entry.getValue()))
-                .collect(Collectors.toList());
-
+        List<ScheduleResponseDto.ScheduleWithRoutineListDto> scheduleRoutineList = getRoutineDtosByDate(routineList);
         return ScheduleConverter.toScheduleDto(scheduleTodoList, scheduleRoutineList);
-
     }
 
     @Override
@@ -57,7 +46,7 @@ public class ScheduleQueryServiceImpl implements ScheduleQueryService {
         // 투두 찾기
         List<Todo> todoList = todoRepository.findTodosWithScheduleByMemberAndDateAndStatus(member, date, true);
         List<ScheduleResponseDto.ScheduleTodoDto> scheduleTodoList = todoList.stream()
-                .map(todo -> ScheduleConverter.toScheduleTodoDto(todo.getSchedule(), todo))
+                .map(todo -> ScheduleConverter.toScheduleTodoDto(todo.getSchedule()))
                 .collect(Collectors.toList());
 
         if (scheduleTodoList.isEmpty()) {
@@ -69,46 +58,50 @@ public class ScheduleQueryServiceImpl implements ScheduleQueryService {
 
     @Override
     public List<ScheduleResponseDto.ScheduleByMonthDto> getScheduleListByMonth(String yearMonth, Member member) {
-        LocalDate firstDayOfMonth = YearMonth.parse(yearMonth).atDay(1);
-        LocalDate lastDayOfMonth = YearMonth.parse(yearMonth).atEndOfMonth();
+        YearMonth ym = YearMonth.parse(yearMonth);
+        LocalDate firstDayOfMonth = ym.atDay(1);
+        LocalDate lastDayOfMonth = ym.atEndOfMonth();
 
         // 투두 찾기
-        List<MemberCategory> todoMemberCategoryList = memberCategoryRepository.findByMemberAndScheduleType(member, ScheduleType.TO_DO);
+        List<Schedule> todos = getTodoSchedulesByMonth(member, firstDayOfMonth, lastDayOfMonth;
+        List<Routine> routines = routineRepository.findRoutinesByMemberAndDate(member, firstDayOfMonth, lastDayOfMonth);
 
-        if (todoMemberCategoryList.isEmpty()) {
-            throw new MemberCategoryHandler(ErrorStatus.MEMBER_CATEGORY_NOT_FOUND);
-        }
 
-        List<Schedule> scheduleList = todoMemberCategoryList.stream()
-                .map(memberCategory -> scheduleRepository.findByMemberCategoryAndMonth(memberCategory, firstDayOfMonth, lastDayOfMonth))
-                .flatMap(List::stream)  // List<Schedule>을 평탄화하여 하나의 스트림으로 변환
-                .collect(Collectors.toList());
-
-        Map<LocalDate, List<Schedule>> dateToSchedulesMap = scheduleList.stream()
+        Map<LocalDate, List<Schedule>> dateMap = todos.stream()
                 .collect(Collectors.groupingBy(Schedule::getDate));
 
-        // 루틴 찾기
-        List<Routine> routineList = routineRepository.findRoutinesByMemberAndDate(member, firstDayOfMonth, lastDayOfMonth);
-        routineList.forEach(routine -> {
-            LocalDate date = routine.getDate();
-            Schedule schedule = routine.getSchedule();
+        routines.forEach(r ->
+                dateMap.computeIfAbsent(r.getDate(), k -> new ArrayList<>()).add(r.getSchedule())
+        );
 
-            dateToSchedulesMap
-                    .computeIfAbsent(date, k -> new ArrayList<>())
-                    .add(schedule);
-        });
-
-        // 날짜순으로 정렬
-        List<LocalDate> sortedDates = dateToSchedulesMap.keySet().stream()
-                .sorted()
+        return dateMap.entrySet().stream()
+                .map(entry -> ScheduleConverter.toScheduleByMonthDto(entry.getValue(), entry.getKey()))
                 .collect(Collectors.toList());
+    }
 
-        return sortedDates.stream()
-                .map(date -> {
-                    List<Schedule> schedulesForDate = dateToSchedulesMap.get(date);
-                    return ScheduleConverter.toScheduleByMonthDto(schedulesForDate, date);
-                })
+    private List<Schedule> getTodoSchedulesByMonth(Member member, LocalDate start, LocalDate end) {
+        List<MemberCategory> categories = memberCategoryRepository.findByMemberAndScheduleType(member, ScheduleType.TO_DO);
+        if (categories.isEmpty()) throw new MemberCategoryHandler(ErrorStatus.MEMBER_CATEGORY_NOT_FOUND);
+
+        return categories.stream()
+                .flatMap(cat -> scheduleRepository.findByMemberCategoryAndMonth(cat, start, end).stream())
+                .toList();
+    }
+
+    private List<ScheduleResponseDto.ScheduleWithRoutineListDto> getRoutineDtosByDate(List<Routine> routineList) {
+        return routineList.stream()
+                .filter(r -> r.getSchedule().getScheduleType() == ScheduleType.ROUTINE)
+                .collect(Collectors.groupingBy(Routine::getSchedule))
+                .entrySet().stream()
+                .map(e -> ScheduleConverter.toScheduleWithRoutineListDto(e.getKey(), e.getValue()))
+                .toList();
+    }
+
+    private List<ScheduleResponseDto.ScheduleTodoDto> getTodoDtosByDate(List<Schedule> todoScheduleList) {
+        List<ScheduleResponseDto.ScheduleTodoDto> scheduleTodoList = todoScheduleList.stream()
+                .map(todoSchedule -> ScheduleConverter.toScheduleTodoDto(todoSchedule))
                 .collect(Collectors.toList());
+        return scheduleTodoList;
     }
 
     @Override
@@ -121,7 +114,7 @@ public class ScheduleQueryServiceImpl implements ScheduleQueryService {
 
         List<Schedule> scheduleList = memberCategoryList.stream()
                 .map(memberCategory -> scheduleRepository.findByMemberCategoryAndTitleContaining(memberCategory, keyword))
-                .flatMap(List::stream)  // List<Schedule>을 평탄화하여 하나의 스트림으로 변환
+                .flatMap(List::stream)
                 .sorted(Comparator.comparing(Schedule::getDate))
                 .collect(Collectors.toList());
 
@@ -130,9 +123,7 @@ public class ScheduleQueryServiceImpl implements ScheduleQueryService {
         }
 
         // 투두
-        List<ScheduleResponseDto.ScheduleTodoDto> scheduleTodoList = scheduleList.stream()
-                .map(schedule -> ScheduleConverter.toScheduleTodoDto(schedule, schedule.getTodo()))
-                .collect(Collectors.toList());
+        List<ScheduleResponseDto.ScheduleTodoDto> scheduleTodoList = getTodoDtosByDate(scheduleList);
 
         // 루틴
         List<ScheduleResponseDto.ScheduleWithRoutineListDto> scheduleRoutineList = scheduleList.stream()
@@ -166,19 +157,7 @@ public class ScheduleQueryServiceImpl implements ScheduleQueryService {
         LocalDate firstDayOfMonth = YearMonth.parse(yearMonth).atDay(1);
         LocalDate lastDayOfMonth = YearMonth.parse(yearMonth).atEndOfMonth();
 
-        // TO_DO 카테고리 가져오기
-        List<MemberCategory> todoMemberCategoryList = memberCategoryRepository.findByMemberAndScheduleType(member, ScheduleType.TO_DO);
-        if (todoMemberCategoryList.isEmpty()) {
-            throw new MemberCategoryHandler(ErrorStatus.MEMBER_CATEGORY_NOT_FOUND);
-        }
-
-        // 월별 Schedule (Todo용)
-        List<Schedule> scheduleList = todoMemberCategoryList.stream()
-                .map(cat -> scheduleRepository.findByMemberCategoryAndMonth(cat, firstDayOfMonth, lastDayOfMonth))
-                .flatMap(List::stream)
-                .collect(Collectors.toList());
-
-        // 월별 Routine
+        List<Schedule> scheduleList = getTodoSchedulesByMonth(member, firstDayOfMonth, lastDayOfMonth);
         List<Routine> routineList = routineRepository.findRoutinesByMemberAndDate(member, firstDayOfMonth, lastDayOfMonth);
 
         // 날짜별 Todo + Routine 모두 합치기
@@ -202,36 +181,29 @@ public class ScheduleQueryServiceImpl implements ScheduleQueryService {
             ((List<Routine>) dateToItemsMap.get(date).get("routineList")).add(routine);
         }
 
-        List<ScheduleResponseDto.ScheduleCompletionRateByMonthDto> result =
-                dateToItemsMap.entrySet().stream()
-                        .sorted(Map.Entry.comparingByKey())
-                        .map(entry -> {
-                            LocalDate date = entry.getKey();
-                            Map<String, List<?>> items = entry.getValue();
 
-                            List<Schedule> todos = (List<Schedule>) items.getOrDefault("todoList", Collections.emptyList());
-                            List<Routine> routines = (List<Routine>) items.getOrDefault("routineList", Collections.emptyList());
+        return dateToItemsMap.entrySet().stream()
+                .sorted(Map.Entry.comparingByKey())
+                .map(entry -> {
+                    LocalDate date = entry.getKey();
+                    Map<String, List<?>> items = entry.getValue();
 
-                            long totalCount = todos.size() + routines.size();
+                    List<Schedule> todos = (List<Schedule>) items.getOrDefault("todoList", Collections.emptyList());
+                    List<Routine> routines = (List<Routine>) items.getOrDefault("routineList", Collections.emptyList());
 
-                            if (totalCount == 0) {
-                                return ScheduleConverter.toScheduleCompletionRateByMonthDto(date, 0);
-                            }
+                    double completionRate = calculateCompletionRate(todos, routines);
+                    return ScheduleConverter.toScheduleCompletionRateByMonthDto(date, completionRate);
+                })
+                .collect(Collectors.toList());
+    }
 
-                            long completedCount = Stream.concat(
-                                    todos.stream()
-                                            .filter(schedule -> schedule.getTodo() != null && schedule.getTodo().isStatus()),
-                                    routines.stream()
-                                            .filter(Routine::isStatus)
-                            ).count();
+    private double calculateCompletionRate(List<Schedule> todos, List<Routine> routines) {
+        long total = todos.size() + routines.size();
+        if (total == 0) return 0;
 
-                            double completionRate = (double) completedCount / totalCount * 100;
+        long completed = todos.stream().filter(t -> t.getTodo() != null && t.getTodo().isStatus()).count()
+                + routines.stream().filter(Routine::isStatus).count();
 
-                            return ScheduleConverter.toScheduleCompletionRateByMonthDto(date, completionRate);
-                        })
-                        .collect(Collectors.toList());
-
-
-        return result;
+        return (double) completed / total * 100;
     }
 }
