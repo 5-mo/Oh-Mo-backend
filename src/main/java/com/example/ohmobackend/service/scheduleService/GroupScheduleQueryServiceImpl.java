@@ -35,11 +35,11 @@ public class GroupScheduleQueryServiceImpl implements GroupScheduleQueryService 
                 .orElseThrow(() -> new GroupHandler(ErrorStatus.GROUP_NOT_FOUND));
 
         // 투두 찾기
-        List<Schedule> todoSchedules = scheduleRepository.findSchedulesWithTodoByGroupAndDateAndScheduleType(group, date, ScheduleType.TO_DO);
+        List<Schedule> todoSchedules = scheduleRepository.findSchedulesWithTodoAndAssignees(group, date, ScheduleType.TO_DO);
         List<GroupScheduleResponseDto.GroupScheduleTodoDto> groupScheduleTodoDtos = getScheduleTodoDtos(todoSchedules);
 
         // 루틴 찾기
-        List<Routine> rotiunes = routineRepository.findRoutinesWithScheduleByGroupAndDate(group, date);
+        List<Routine> rotiunes = routineRepository.findRoutinesWithScheduleAndAssignees(group, date);
         List<GroupScheduleResponseDto.GroupScheduleRoutineDto> groupScheduleRoutineDtos = getScheduleRoutineDtos(rotiunes);
         return GroupScheduleConverter.toGroupSchedulesDto(groupScheduleTodoDtos, groupScheduleRoutineDtos);
     }
@@ -47,8 +47,8 @@ public class GroupScheduleQueryServiceImpl implements GroupScheduleQueryService 
     private List<GroupScheduleResponseDto.GroupScheduleTodoDto> getScheduleTodoDtos(List<Schedule> todoSchedules) {
         return todoSchedules.stream()
                 .map(s -> {
-                    List<ScheduleAssignee> scheduleAssignees = scheduleAssigneeRepository.findAllByTodo(s.getTodo());
-                    return GroupScheduleConverter.toGroupScheduleTodoDto(s, scheduleAssignees);
+                    List<ScheduleAssignee> assignees = s.getTodo().getScheduleAssigneeList();
+                    return GroupScheduleConverter.toGroupScheduleTodoDto(s, assignees);
                 })
                 .collect(Collectors.toList());
     }
@@ -56,8 +56,8 @@ public class GroupScheduleQueryServiceImpl implements GroupScheduleQueryService 
     private List<GroupScheduleResponseDto.GroupScheduleRoutineDto> getScheduleRoutineDtos(List<Routine> routines) {
         return routines.stream()
                 .map(r -> {
-                    List<ScheduleAssignee> scheduleAssignees = scheduleAssigneeRepository.findAllByRoutine(r);
-                    return GroupScheduleConverter.toGroupScheduleRoutineDto(r, r.getSchedule(), scheduleAssignees);
+                    List<ScheduleAssignee> assignees = r.getScheduleAssigneeList();
+                    return GroupScheduleConverter.toGroupScheduleRoutineDto(r, r.getSchedule(), assignees);
                 })
                 .collect(Collectors.toList());
     }
