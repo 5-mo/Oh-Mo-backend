@@ -18,4 +18,5 @@ public interface MemberCommandService {
 
     public MemberResponseDto.MemberInfoResponseDto updateMemberNickName(Member member, MemberRequestDto.UpdateNicknameRequestDto request);
     public MemberResponseDto.MemberInfoResponseDto updateMemberProfileImage(Member member, MultipartFile profileImage);
+    public void updatePassword(Member member, MemberRequestDto.UpdatePasswordDto request);
 }

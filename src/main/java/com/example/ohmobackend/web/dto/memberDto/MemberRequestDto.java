@@ -26,4 +26,10 @@ public class MemberRequestDto {
     public static class UpdateNicknameRequestDto {
         private String nickname;
     }
+
+    @Getter
+    public static class UpdatePasswordDto {
+        private String oldPassword;
+        private String newPassword;
+    }
 }
