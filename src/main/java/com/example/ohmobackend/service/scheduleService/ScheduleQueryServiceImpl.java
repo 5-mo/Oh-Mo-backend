@@ -63,7 +63,7 @@ public class ScheduleQueryServiceImpl implements ScheduleQueryService {
         LocalDate lastDayOfMonth = ym.atEndOfMonth();
 
         // 투두 찾기
-        List<Schedule> todos = getTodoSchedulesByMonth(member, firstDayOfMonth, lastDayOfMonth;
+        List<Schedule> todos = getTodoSchedulesByMonth(member, firstDayOfMonth, lastDayOfMonth);
         List<Routine> routines = routineRepository.findRoutinesByMemberAndDate(member, firstDayOfMonth, lastDayOfMonth);
 
 
