@@ -97,7 +97,7 @@ public class ScheduleCommandServiceImpl implements ScheduleCommandService {
 
     @Override
     public TodoResponseDto.TodoDto addTodo(ScheduleRequestDto.AddRequestDto requestDto, Member member) {
-        MemberCategory memberCategory = getMemberCategory(requestDto, member, ScheduleType.TO_DO);
+        MemberCategory memberCategory = getMemberCategory(requestDto.getCategoryId(), member, ScheduleType.TO_DO);
         validateMemberCategory(memberCategory, member, ScheduleType.TO_DO);
         Schedule schedule = scheduleRepository.save(ScheduleConverter.toEntity(requestDto, memberCategory));
         Todo todo = todoRepository.save(TodoConverter.toEntity(schedule));
