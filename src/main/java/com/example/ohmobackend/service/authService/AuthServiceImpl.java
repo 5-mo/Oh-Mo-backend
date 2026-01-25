@@ -36,7 +36,6 @@ public class AuthServiceImpl implements AuthService{
     private final PrincipalDetailsService principalDetailsService;
 
 
-
     public MemberResponseDto.MemberInfoResponseDto signup(MemberRequestDto.SignupRequestDto request, MultipartFile profileImage) {
         String email = request.getEmail();
         String password = request.getPassword();

@@ -5,7 +5,7 @@ import com.example.ohmobackend.apiPayload.code.status.SuccessStatus;
 import com.example.ohmobackend.converter.MemberConverter;
 import com.example.ohmobackend.domain.Member;
 import com.example.ohmobackend.security.handler.AuthUser;
-import com.example.ohmobackend.service.authService.AuthServiceImpl;
+import com.example.ohmobackend.service.authService.AuthService;
 import com.example.ohmobackend.service.memberService.MemberCommandService;
 import com.example.ohmobackend.web.dto.memberDto.MemberRequestDto;
 import com.example.ohmobackend.web.dto.memberDto.MemberResponseDto;
@@ -20,7 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class MemberController {
 
     private final MemberCommandService memberCommandService;
-    private final AuthServiceImpl authService;
+    private final AuthService authService;
 
     @PostMapping(value = "/signup", consumes = "multipart/form-data")
     @Operation(summary = "이메일 회원 가입 API", description = "이메일 회원 가입 API 입니다.")
