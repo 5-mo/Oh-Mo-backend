@@ -1,9 +1,6 @@
 package com.example.ohmobackend.repository;
 
-import com.example.ohmobackend.domain.Group;
-import com.example.ohmobackend.domain.Member;
-import com.example.ohmobackend.domain.MemberCategory;
-import com.example.ohmobackend.domain.Schedule;
+import com.example.ohmobackend.domain.*;
 import com.example.ohmobackend.domain.enums.ScheduleType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -42,36 +39,13 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Long> {
             @Param("endDate") LocalDate endDate
     );
 
-    @Query("SELECT s FROM Schedule s " +
-            "JOIN FETCH s.todo " +
-            "JOIN FETCH s.memberCategory mc " +
-            "WHERE mc.member = :member " +
-            "AND s.date = :date " +
-            "AND s.scheduleType = :scheduleType")
-    List<Schedule> findSchedulesByMemberAndDateAndScheduleType(
-            @Param("member") Member member,
-            @Param("date") LocalDate date,
-            @Param("scheduleType") ScheduleType scheduleType);
-    
-
-    @Query("SELECT s FROM Schedule s " +
-            "JOIN FETCH s.todo " +
-            "WHERE s.group = :group " +
-            "AND s.date = :date " +
-            "AND s.scheduleType = :scheduleType")
-    List<Schedule> findSchedulesWithTodoByGroupAndDateAndScheduleType(
-            @Param("group") Group group,
-            @Param("date") LocalDate date,
-            @Param("scheduleType") ScheduleType scheduleType);
-
-
-    @Query("SELECT s FROM Schedule s " +
-            "JOIN FETCH s.todo t " +
-            "LEFT JOIN FETCH t.scheduleAssigneeList a " +
-            "LEFT JOIN FETCH a.memberGroup mg " +
+    @Query("SELECT t FROM Todo t " +
+            "JOIN FETCH t.schedule s " +
+            "LEFT JOIN FETCH t.scheduleAssigneeList sa " +
+            "LEFT JOIN FETCH sa.memberGroup mg " +
             "LEFT JOIN FETCH mg.member " +
             "WHERE s.group = :group AND s.date = :date AND s.scheduleType = :scheduleType")
-    List<Schedule> findSchedulesWithTodoAndAssignees(
+    List<Todo> findTodoWithScheduleAndAssignees(
             @Param("group") Group group,
             @Param("date") LocalDate date,
             @Param("scheduleType") ScheduleType scheduleType);

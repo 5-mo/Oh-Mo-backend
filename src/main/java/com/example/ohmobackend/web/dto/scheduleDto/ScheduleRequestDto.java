@@ -33,7 +33,7 @@ public class ScheduleRequestDto {
 
     @Getter
     public static class UpdateTodoDateRequestDto {
-        private Long scheduleId;
+        private Long todoId;
         private LocalDate date;
     }
 

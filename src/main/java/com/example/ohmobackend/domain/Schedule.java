@@ -54,9 +54,6 @@ public class Schedule extends BaseEntity {
     @OneToMany(mappedBy = "schedule", cascade = CascadeType.ALL)
     private List<Routine> routineList = new ArrayList<>();
 
-    @OneToOne(mappedBy = "schedule", cascade = CascadeType.ALL)
-    private Todo todo;
-
     @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(
             name = "schedule_repeat_days",
