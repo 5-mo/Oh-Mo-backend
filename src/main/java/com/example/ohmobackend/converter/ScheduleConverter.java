@@ -101,7 +101,7 @@ public class ScheduleConverter {
     }
 
     static public ScheduleResponseDto.ScheduleTodoDto toScheduleTodoDto(
-            Schedule schedule) {
+            Schedule schedule, Todo todo) {
         return ScheduleResponseDto.ScheduleTodoDto.builder()
                 .scheduleId(schedule.getId())
                 .date(schedule.getDate())
@@ -112,7 +112,7 @@ public class ScheduleConverter {
                 .category(Optional.ofNullable(schedule.getMemberCategory())
                         .map(MemberCategoryConverter::toAddCategoryResponseDto)
                         .orElse(null))
-                .todo(TodoConverter.toTodoDto(schedule.getTodo()))
+                .todo(TodoConverter.toTodoDto(todo))
                 .build();
     }
 

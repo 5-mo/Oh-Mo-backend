@@ -2,17 +2,20 @@ package com.example.ohmobackend.service.assigneeService;
 
 import com.example.ohmobackend.apiPayload.code.status.ErrorStatus;
 import com.example.ohmobackend.apiPayload.exception.handler.ScheduleHandler;
+import com.example.ohmobackend.converter.GroupConverter;
 import com.example.ohmobackend.converter.GroupScheduleConverter;
 import com.example.ohmobackend.domain.*;
 import com.example.ohmobackend.repository.MemberGroupRepository;
 import com.example.ohmobackend.repository.RoutineRepository;
 import com.example.ohmobackend.repository.ScheduleAssigneeRepository;
 import com.example.ohmobackend.repository.TodoRepository;
+import com.example.ohmobackend.web.dto.MemberAssigneeDto.MemberAssigneeResponseDto;
 import com.example.ohmobackend.web.dto.groupScheduleDto.GroupScheduleResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -39,7 +42,9 @@ public class AssigneeQueryServiceImpl implements AssigneeQueryService {
                 .orElseThrow(() -> new ScheduleHandler(ErrorStatus.MEMBER_GROUP_NOT_FOUND));
 
         List<ScheduleAssignee> scheduleAssignees = scheduleAssigneeRepository.findAllByTodo(todo);
-        return GroupScheduleConverter.toGroupTodoWithAssigneeDto(todo, scheduleAssignees);
+        List<MemberAssigneeResponseDto.MemberAssigneeInfoResponseDto> memberGroupInfos = scheduleAssignees.stream().map(
+                scheduleAssignee -> GroupConverter.toAssigneeDto(scheduleAssignee, scheduleAssignee.getMemberGroup())).collect(Collectors.toList());
+        return GroupScheduleConverter.toGroupTodoWithAssigneeDto(todo, memberGroupInfos);
     }
 
     @Override
@@ -58,6 +63,8 @@ public class AssigneeQueryServiceImpl implements AssigneeQueryService {
                 .orElseThrow(() -> new ScheduleHandler(ErrorStatus.MEMBER_GROUP_NOT_FOUND));
 
         List<ScheduleAssignee> scheduleAssignees = scheduleAssigneeRepository.findAllByRoutine(routine);
-        return GroupScheduleConverter.toGroupRoutineWithAssigneeDto(routine, scheduleAssignees);
+        List<MemberAssigneeResponseDto.MemberAssigneeInfoResponseDto> memberGroupInfos = scheduleAssignees.stream().map(
+                scheduleAssignee -> GroupConverter.toAssigneeDto(scheduleAssignee, scheduleAssignee.getMemberGroup())).collect(Collectors.toList());
+        return GroupScheduleConverter.toGroupRoutineWithAssigneeDto(routine, memberGroupInfos);
     }
 }
