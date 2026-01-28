@@ -17,6 +17,4 @@ public interface ScheduleQueryService {
     public ScheduleResponseDto.ScheduleByKeyWordDto getScheduleListByKeyword(String keyword, Member member);
 
     public List<ScheduleResponseDto.ScheduleWithRoutineListDto> getRoutineStatusList(LocalDate startDate, LocalDate endDate, Member member);
-
-    public List<ScheduleResponseDto.ScheduleCompletionRateByMonthDto> getScheduleCompletionReteByMonth(String yearMonth,  Member member);
 }

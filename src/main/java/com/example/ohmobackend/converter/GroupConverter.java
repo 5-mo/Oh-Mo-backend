@@ -75,12 +75,11 @@ public class GroupConverter {
         return sb.toString();
     }
 
-    public static MemberAssigneeResponseDto.MemberAssigneeInfoResponseDto toAssigneeDto(ScheduleAssignee assignee) {
-
+    public static MemberAssigneeResponseDto.MemberAssigneeInfoResponseDto toAssigneeDto(ScheduleAssignee assignee, MemberGroup memberGroup) {
         return MemberAssigneeResponseDto.MemberAssigneeInfoResponseDto.builder()
                 .assigneeId(assignee.getId())
                 .status(assignee.isStatus())
-                .memberGroupInfo(MemberGroupConverter.toMemberGroupInfoDto(assignee.getMemberGroup()))
+                .memberGroupInfo(MemberGroupConverter.toMemberGroupInfoDto(memberGroup))
                 .build();
     }
 }

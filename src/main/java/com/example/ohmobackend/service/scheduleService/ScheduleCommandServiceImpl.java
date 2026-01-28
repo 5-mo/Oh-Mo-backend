@@ -130,12 +130,14 @@ public class ScheduleCommandServiceImpl implements ScheduleCommandService {
     @Override
     @Transactional
     public ScheduleResponseDto.ScheduleTodoDto updateScheduleDate(ScheduleRequestDto.UpdateTodoDateRequestDto requestDto, Member member) {
-        Schedule schedule = getSchedule(requestDto.getScheduleId());
+        Todo todo = todoRepository.findById(requestDto.getTodoId())
+                .orElseThrow(() -> new ScheduleHandler(ErrorStatus.SCHEDULE_NOT_FOUND));
+        Schedule schedule = todo.getSchedule();
         MemberCategory memberCategory = schedule.getMemberCategory();
         validateMemberCategory(memberCategory, member, ScheduleType.TO_DO);
         schedule.updateDate(requestDto.getDate());
 
-        return ScheduleConverter.toScheduleTodoDto(schedule);
+        return ScheduleConverter.toScheduleTodoDto(schedule, todo);
     }
 
     @Override

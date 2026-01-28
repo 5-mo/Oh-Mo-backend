@@ -2,30 +2,24 @@ package com.example.ohmobackend.converter;
 
 import com.example.ohmobackend.domain.Routine;
 import com.example.ohmobackend.domain.Schedule;
-import com.example.ohmobackend.domain.ScheduleAssignee;
 import com.example.ohmobackend.domain.Todo;
 import com.example.ohmobackend.web.dto.MemberAssigneeDto.MemberAssigneeResponseDto;
 import com.example.ohmobackend.web.dto.groupScheduleDto.GroupScheduleResponseDto;
 
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 public class GroupScheduleConverter {
 
-    public static GroupScheduleResponseDto.GroupTodoWithAssigneeDto toGroupTodoWithAssigneeDto(Todo todo, List<ScheduleAssignee> scheduleAssignees) {
-        List<MemberAssigneeResponseDto.MemberAssigneeInfoResponseDto> memberGroupInfos = scheduleAssignees.stream().map(
-                scheduleAssignee -> GroupConverter.toAssigneeDto(scheduleAssignee)).collect(Collectors.toList());
-
+    public static GroupScheduleResponseDto.GroupTodoWithAssigneeDto toGroupTodoWithAssigneeDto(Todo todo,
+                                                                                               List<MemberAssigneeResponseDto.MemberAssigneeInfoResponseDto> memberGroupInfos) {
         return GroupScheduleResponseDto.GroupTodoWithAssigneeDto.builder()
                 .todo(TodoConverter.toTodoDto(todo))
                 .memberGroupInfos(memberGroupInfos)
                 .build();
     }
 
-    public static GroupScheduleResponseDto.GroupRoutineWithAssigneeDto toGroupRoutineWithAssigneeDto(Routine routine, List<ScheduleAssignee> scheduleAssignees) {
-        List<MemberAssigneeResponseDto.MemberAssigneeInfoResponseDto> memberGroupInfos = scheduleAssignees.stream().map(
-                scheduleAssignee -> GroupConverter.toAssigneeDto(scheduleAssignee)).collect(Collectors.toList());
+    public static GroupScheduleResponseDto.GroupRoutineWithAssigneeDto toGroupRoutineWithAssigneeDto(Routine routine,
+                                                                                                     List<MemberAssigneeResponseDto.MemberAssigneeInfoResponseDto> memberGroupInfos) {
 
         return GroupScheduleResponseDto.GroupRoutineWithAssigneeDto.builder()
                 .routine(RoutineConverter.toRoutineDto(routine))
@@ -33,7 +27,8 @@ public class GroupScheduleConverter {
                 .build();
     }
 
-    public static GroupScheduleResponseDto.GroupScheduleTodoDto toGroupScheduleTodoDto(Schedule schedule, List<ScheduleAssignee> scheduleAssignees) {
+    public static GroupScheduleResponseDto.GroupScheduleTodoDto toGroupScheduleTodoDto(Schedule schedule,
+                                                                                       GroupScheduleResponseDto.GroupTodoWithAssigneeDto groupTodoWithAssigneeDto) {
         return GroupScheduleResponseDto.GroupScheduleTodoDto.builder()
                 .scheduleId(schedule.getId())
                 .date(schedule.getDate())
@@ -41,11 +36,12 @@ public class GroupScheduleConverter {
                 .alarmTime(schedule.getAlarmTime())
                 .content(schedule.getContent())
                 .scheduleType(schedule.getScheduleType())
-                .groupTodoWithAssignee(GroupScheduleConverter.toGroupTodoWithAssigneeDto(schedule.getTodo(), scheduleAssignees))
+                .groupTodoWithAssignee(groupTodoWithAssigneeDto)
                 .build();
     }
 
-    public static GroupScheduleResponseDto.GroupScheduleRoutineDto toGroupScheduleRoutineDto(Routine routine, Schedule schedule, List<ScheduleAssignee> scheduleAssignees) {
+    public static GroupScheduleResponseDto.GroupScheduleRoutineDto toGroupScheduleRoutineDto(Schedule schedule,
+                                                                                             GroupScheduleResponseDto.GroupRoutineWithAssigneeDto groupRoutineWithAssignee) {
         return GroupScheduleResponseDto.GroupScheduleRoutineDto.builder()
                 .scheduleId(schedule.getId())
                 .date(schedule.getDate())
@@ -53,7 +49,7 @@ public class GroupScheduleConverter {
                 .alarmTime(schedule.getAlarmTime())
                 .content(schedule.getContent())
                 .scheduleType(schedule.getScheduleType())
-                .groupRoutineWithAssignee(GroupScheduleConverter.toGroupRoutineWithAssigneeDto(routine, scheduleAssignees))
+                .groupRoutineWithAssignee(groupRoutineWithAssignee)
                 .build();
     }
 

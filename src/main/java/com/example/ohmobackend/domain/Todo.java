@@ -27,7 +27,7 @@ public class Todo extends BaseEntity implements AssignableTask {
     private boolean status;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "schedule_id")
+    @JoinColumn(name = "schedule_id", referencedColumnName = "schedule_id")
     private Schedule schedule;
 
     @OneToMany(mappedBy = "todo", cascade = CascadeType.ALL)
