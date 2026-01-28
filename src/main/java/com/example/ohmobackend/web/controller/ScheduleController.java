@@ -129,11 +129,4 @@ public class ScheduleController {
         List<ScheduleResponseDto.ScheduleWithRoutineListDto> routineStatusByContentList = scheduleQueryService.getRoutineStatusList(startDate, endDate, member);
         return ApiResponse.onSuccess(SuccessStatus.SCHEDULE_ROUTINE_STATUS_OK, routineStatusByContentList);
     }
-
-    @GetMapping("/completion-rate")
-    @Operation(summary = "Day Log 월변 completion-rate 조회 API", description = "Day Log 월변 completion-rate 조회 API")
-    public ApiResponse<List<ScheduleResponseDto.ScheduleCompletionRateByMonthDto>> getScheduleCompletionRateByMonth(@RequestParam(name = "year-month")String yearMonth, @AuthUser Member member) {
-        List<ScheduleResponseDto.ScheduleCompletionRateByMonthDto> routineStatusByContentList = scheduleQueryService.getScheduleCompletionReteByMonth(yearMonth, member);
-        return ApiResponse.onSuccess(SuccessStatus.SCHEDULE_COMPLETION_RATE_OK, routineStatusByContentList);
-    }
 }
