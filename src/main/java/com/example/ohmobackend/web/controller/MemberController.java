@@ -96,8 +96,7 @@ public class MemberController {
 
     @PatchMapping("/password")
     @Operation(summary = "비밀번호 바꾸기")
-    public ApiResponse<MemberResponseDto.MemberInfoResponseDto>
-    updatePassword(@AuthUser Member member, @RequestBody MemberRequestDto.UpdatePasswordDto request) {
+    public ApiResponse<Object> updatePassword(@AuthUser Member member, @RequestBody MemberRequestDto.UpdatePasswordDto request) {
         memberCommandService.updatePassword(member, request);
         return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, null);
     }
