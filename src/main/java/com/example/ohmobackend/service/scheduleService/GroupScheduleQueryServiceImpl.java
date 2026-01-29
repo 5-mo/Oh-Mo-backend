@@ -34,7 +34,7 @@ public class GroupScheduleQueryServiceImpl implements GroupScheduleQueryService 
                 .orElseThrow(() -> new GroupHandler(ErrorStatus.GROUP_NOT_FOUND));
 
         // 투두 찾기
-        List<Todo> todos = todoRepository.findTodoWithScheduleAndAssignees(group);
+        List<Todo> todos = todoRepository.findTodoWithScheduleAndAssignees(group, date);
         List<GroupScheduleResponseDto.GroupScheduleTodoDto> groupScheduleTodoDtos = getScheduleTodoDtos(todos);
 
         // 루틴 찾기

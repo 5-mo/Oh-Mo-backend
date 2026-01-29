@@ -30,9 +30,10 @@ public interface TodoRepository extends JpaRepository<Todo, Long> {
             "LEFT JOIN FETCH t.scheduleAssigneeList sa " +
             "LEFT JOIN FETCH sa.memberGroup mg " +
             "LEFT JOIN FETCH mg.member " +
-            "WHERE mg.group = :group AND t.id between 10 and 50")
+            "WHERE s.group = :group AND s.date = :date")
     List<Todo> findTodoWithScheduleAndAssignees(
-            @Param("group") Group group);
+            @Param("group") Group group,
+            @Param("date") LocalDate date);
 
     @Query("SELECT DISTINCT t FROM Todo t " +
             "JOIN FETCH t.schedule s " +
