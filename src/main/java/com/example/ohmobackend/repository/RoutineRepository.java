@@ -49,9 +49,6 @@ public interface RoutineRepository extends JpaRepository<Routine, Long> {
 
     @Query("SELECT r FROM Routine r " +
             "JOIN FETCH r.schedule s " +
-            "LEFT JOIN FETCH r.scheduleAssigneeList a " +
-            "LEFT JOIN FETCH a.memberGroup mg " +
-            "LEFT JOIN FETCH mg.member m " +
             "WHERE s.group = :group AND r.date = :date")
     List<Routine> findRoutinesWithScheduleAndAssignees(
             @Param("group") Group group,
