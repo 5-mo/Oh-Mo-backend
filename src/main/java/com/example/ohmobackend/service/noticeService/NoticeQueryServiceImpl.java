@@ -10,6 +10,7 @@ import com.example.ohmobackend.repository.GroupRepository;
 import com.example.ohmobackend.repository.NoticeRepository;
 import com.example.ohmobackend.web.dto.noticeDto.NoticeResponseDto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -39,7 +40,13 @@ public class NoticeQueryServiceImpl implements NoticeQueryService {
     }
 
     @Override
-    public List<NoticeResponseDto.NoticeByMonthDto> getNoticeByMonth(String yearMonth, Long groupId, Member member) {
+    @Cacheable(value = "noticesByMonth",
+            key = "#p1 + '_' + #p0", // 혹은 "#a1 + '_' + #a0"
+            cacheManager = "cacheManager",
+            unless = "#result == null")
+    public List<NoticeResponseDto.NoticeByMonthDto> getNoticeByMonth(String yearMonth,
+                                                                     Long groupId,
+                                                                     Member member) {
         LocalDate firstDayOfMonth = YearMonth.parse(yearMonth).atDay(1);
         LocalDate lastDayOfMonth = YearMonth.parse(yearMonth).atEndOfMonth();
 
