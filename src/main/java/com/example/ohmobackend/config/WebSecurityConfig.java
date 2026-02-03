@@ -34,6 +34,7 @@ class WebSecurityConfig {
                         .requestMatchers("/api/member/signup").permitAll()
                         .requestMatchers("/api/member/login").permitAll()
                         .requestMatchers("/api/member/reissue").permitAll()
+                        .requestMatchers("/api/group").permitAll()
                         .requestMatchers("/", "/api-docs/**", "/api-docs/swagger-config/*", "/swagger-ui/*", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
                         .requestMatchers("/api/member/test").permitAll()
                         .requestMatchers("/actuator/**").permitAll()

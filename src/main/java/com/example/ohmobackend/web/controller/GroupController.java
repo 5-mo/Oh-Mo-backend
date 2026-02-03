@@ -76,7 +76,7 @@ public class GroupController {
     @GetMapping(value = "/{groupId}/subscribe", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     @Operation(summary = "일정 구독 API", description = "해당 그룹의 일정 변경 사항을 실시간으로 수신합니다.")
     public SseEmitter subscribe(
-            @PathVariable Long groupId,
+            @PathVariable("groupId") Long groupId,
             @AuthUser Member member) {
 
         // 1. Emitter 생성 (유효 시간 설정: 예 60분)
