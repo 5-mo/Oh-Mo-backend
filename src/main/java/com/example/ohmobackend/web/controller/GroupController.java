@@ -4,6 +4,7 @@ import com.example.ohmobackend.apiPayload.ApiResponse;
 import com.example.ohmobackend.apiPayload.code.status.SuccessStatus;
 import com.example.ohmobackend.domain.Member;
 import com.example.ohmobackend.security.handler.AuthUser;
+import com.example.ohmobackend.service.SseService;
 import com.example.ohmobackend.service.groupService.GroupCommandService;
 import com.example.ohmobackend.service.groupService.GroupQueryService;
 import com.example.ohmobackend.web.dto.groupDto.GroupRequestDto;
@@ -11,7 +12,9 @@ import com.example.ohmobackend.web.dto.groupDto.GroupResponseDto;
 import com.example.ohmobackend.web.dto.memberGroupDto.MemberGroupResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.util.List;
 
@@ -22,6 +25,7 @@ public class GroupController {
 
     private final GroupCommandService groupCommandService;
     private final GroupQueryService groupQueryService;
+    private final SseService sseService;
 
     @PostMapping()
     @Operation(summary = "그룹 등록 API", description = "그룹 등록 API 입니다.")
@@ -67,5 +71,21 @@ public class GroupController {
     public ApiResponse<Object> deleteGroup(@AuthUser Member member, @RequestBody GroupRequestDto.DeleteGroupRequestDto request) {
         groupQueryService.deleteGroup(member, request);
         return ApiResponse.onSuccess(SuccessStatus.GROUP_DELETE_OK, null);
+    }
+
+    @GetMapping(value = "/{groupId}/subscribe", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    @Operation(summary = "일정 구독 API", description = "해당 그룹의 일정 변경 사항을 실시간으로 수신합니다.")
+    public SseEmitter subscribe(
+            @PathVariable Long groupId,
+            @AuthUser Member member) {
+
+        // 1. Emitter 생성 (유효 시간 설정: 예 60분)
+        SseEmitter emitter = new SseEmitter(60L * 1000 * 60);
+
+        // 2. 서비스 계층을 통해 Emitter 저장 및 초기 연결 메시지 전송
+        // (아래에서 설명할 서비스 메서드를 호출합니다)
+        sseService.subscribe(groupId, emitter, member);
+
+        return emitter;
     }
 }

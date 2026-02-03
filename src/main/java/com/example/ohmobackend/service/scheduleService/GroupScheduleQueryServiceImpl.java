@@ -3,6 +3,7 @@ package com.example.ohmobackend.service.scheduleService;
 
 import com.example.ohmobackend.apiPayload.code.status.ErrorStatus;
 import com.example.ohmobackend.apiPayload.exception.handler.GroupHandler;
+import com.example.ohmobackend.apiPayload.exception.handler.ScheduleHandler;
 import com.example.ohmobackend.converter.GroupConverter;
 import com.example.ohmobackend.converter.GroupScheduleConverter;
 import com.example.ohmobackend.domain.*;
@@ -65,5 +66,11 @@ public class GroupScheduleQueryServiceImpl implements GroupScheduleQueryService 
                     return GroupScheduleConverter.toGroupScheduleRoutineDto(r.getSchedule(), groupRoutineWithAssigneeDto);
                 })
                 .collect(Collectors.toList());
+    }
+
+    public Group getGroup(Long groupId) {
+        Group group = groupRepository.findById(groupId)
+                .orElseThrow(() -> new ScheduleHandler(ErrorStatus.GROUP_NOT_FOUND));
+        return group;
     }
 }

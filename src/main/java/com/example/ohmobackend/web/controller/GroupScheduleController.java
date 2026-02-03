@@ -69,7 +69,7 @@ public class GroupScheduleController {
 
     @GetMapping("/assignee-todo")
     @Operation(summary = "투두 일정 담당자 조회(완료 상태 조회) API")
-    public ApiResponse<GroupScheduleResponseDto.GroupTodoWithAssigneeDto > getTodoAssignees(@RequestParam(name = "todoId") Long todoId, @AuthUser Member member) {
+    public ApiResponse<GroupScheduleResponseDto.GroupTodoWithAssigneeDto> getTodoAssignees(@RequestParam(name = "todoId") Long todoId, @AuthUser Member member) {
         GroupScheduleResponseDto.GroupTodoWithAssigneeDto todoScheduleAssignee = assigneeQueryService.getTodoScheduleAssignee(todoId, member);
         return ApiResponse.onSuccess(SuccessStatus.ASSIGNEE_OK, todoScheduleAssignee);
     }
