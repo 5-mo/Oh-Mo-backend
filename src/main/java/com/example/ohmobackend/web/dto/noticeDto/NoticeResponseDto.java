@@ -1,5 +1,10 @@
 package com.example.ohmobackend.web.dto.noticeDto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import lombok.*;
 
 import java.time.LocalDate;
@@ -14,6 +19,10 @@ public class NoticeResponseDto {
     @AllArgsConstructor
     public static class NoticeDto {
         private String notice;
+
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+        @JsonSerialize(using = LocalDateSerializer.class)
+        @JsonDeserialize(using = LocalDateDeserializer.class)
         private LocalDate date;
         private Long groupId;
     }
@@ -24,6 +33,9 @@ public class NoticeResponseDto {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class NoticeByMonthDto {
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+        @JsonSerialize(using = LocalDateSerializer.class)
+        @JsonDeserialize(using = LocalDateDeserializer.class)
         private LocalDate date;
         private List<NoticeDto> notices;
     }

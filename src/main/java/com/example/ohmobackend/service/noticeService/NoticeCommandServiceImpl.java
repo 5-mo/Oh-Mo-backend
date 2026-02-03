@@ -12,6 +12,7 @@ import com.example.ohmobackend.repository.NoticeRepository;
 import com.example.ohmobackend.web.dto.noticeDto.NoticeRequestDto;
 import com.example.ohmobackend.web.dto.noticeDto.NoticeResponseDto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -40,6 +41,7 @@ public class NoticeCommandServiceImpl implements NoticeCommandService {
     }
 
     @Override
+    @CacheEvict(value = "noticesByMonth", key = "#groupId + '_' + #yearMonth")
     public NoticeResponseDto.NoticeDto pathNotice(Long noticeId, NoticeRequestDto.PatchNoticeDto requestDto, Member member) {
         Notice notice = noticeRepository.findById(noticeId)
                 .orElseThrow(() -> new GroupHandler(ErrorStatus.GROUP_NOT_FOUND));
@@ -61,6 +63,7 @@ public class NoticeCommandServiceImpl implements NoticeCommandService {
     }
 
     @Override
+    @CacheEvict(value = "noticesByMonth", key = "#groupId + '_' + #yearMonth")
     public void deleteNotice(Long noticeId, Member member) {
         Notice notice = noticeRepository.findById(noticeId)
                 .orElseThrow(() -> new GroupHandler(ErrorStatus.GROUP_NOT_FOUND));
