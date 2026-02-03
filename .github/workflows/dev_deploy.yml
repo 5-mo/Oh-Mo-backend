@@ -38,7 +38,7 @@ jobs:
 
             # 최신 이미지 가져오기
             sudo docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
-            sudo docke정r-compose pull 
+            sudo docke r-compose pull 
 
             # 기존 컨테이너 종료 및 필요시 볼륨 유지
             sudo docker-compose down

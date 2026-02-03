@@ -8,6 +8,7 @@ import com.example.ohmobackend.converter.TodoConverter;
 import com.example.ohmobackend.domain.*;
 import com.example.ohmobackend.domain.enums.ScheduleType;
 import com.example.ohmobackend.repository.*;
+import com.example.ohmobackend.service.GroupScheduleEventService;
 import com.example.ohmobackend.web.dto.groupScheduleDto.GroupScheduleRequestDto;
 import com.example.ohmobackend.web.dto.routineDto.RoutineResponseDto;
 import com.example.ohmobackend.web.dto.todoDto.TodoResponseDto;
@@ -24,14 +25,15 @@ import static com.example.ohmobackend.service.scheduleService.DateCalculator.get
 @RequiredArgsConstructor
 public class GroupScheduleCommandServiceImpl {
 
-    final private GroupRepository groupRepository;
+    final private GroupScheduleQueryService groupScheduleQueryService;
     final private RoutineRepository routineRepository;
     final private TodoRepository todoRepository;
     final private MemberGroupRepository memberGroupRepository;
     final private ScheduleRepository scheduleRepository;
+    final private GroupScheduleEventService groupScheduleEventService;
 
     public List<RoutineResponseDto.RoutineDto> addGroupRoutine(GroupScheduleRequestDto.GroupScheduleAddRequestDto request, Member member) {
-        Group group = getGroup(request.getGroupId());
+        Group group = groupScheduleQueryService.getGroup(request.getGroupId());
 
         // 루틴 추가할 권한 없음(해당 그룹의 멤버가 아님)
         MemberGroup memberGroup = validateMemberGroup(member, group);
@@ -55,14 +57,8 @@ public class GroupScheduleCommandServiceImpl {
                 .collect(Collectors.toList());
     }
 
-    private Group getGroup(Long groupId) {
-        Group group = groupRepository.findById(groupId)
-                .orElseThrow(() -> new ScheduleHandler(ErrorStatus.GROUP_NOT_FOUND));
-        return group;
-    }
-
     public TodoResponseDto.TodoDto addGroupTodo(GroupScheduleRequestDto.GroupScheduleAddRequestDto request, Member member) {
-        Group group = getGroup(request.getGroupId());
+        Group group = groupScheduleQueryService.getGroup(request.getGroupId());
 
         // 루틴 추가할 권한 없음(해당 그룹의 멤버가 아님)
         MemberGroup memberGroup = validateMemberGroup(member, group);
@@ -70,6 +66,7 @@ public class GroupScheduleCommandServiceImpl {
         Schedule schedule = ScheduleConverter.groupScheduleToEntity(request, group, ScheduleType.TO_DO, memberGroup);
         scheduleRepository.save(schedule);
         Todo todo = todoRepository.save(TodoConverter.toEntity(schedule));
+        groupScheduleEventService.notifyScheduleChange(group.getId(), request.getDate());
         return TodoConverter.toTodoDto(todo);
     }
 
