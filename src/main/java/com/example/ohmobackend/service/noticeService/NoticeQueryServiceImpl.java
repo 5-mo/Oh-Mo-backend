@@ -41,7 +41,7 @@ public class NoticeQueryServiceImpl implements NoticeQueryService {
 
     @Override
     @Cacheable(value = "noticesByMonth",
-            key = "#p1 + '_' + #p0", // 혹은 "#a1 + '_' + #a0"
+            key = "#p1 + '_' + #p0",
             cacheManager = "cacheManager",
             unless = "#result == null")
     public List<NoticeResponseDto.NoticeByMonthDto> getNoticeByMonth(String yearMonth,
