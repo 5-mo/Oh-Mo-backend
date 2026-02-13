@@ -16,6 +16,8 @@ public interface MemberGroupRepository extends JpaRepository<MemberGroup, Long> 
 
     public boolean existsByGroupAndNickname(Group group, String nickname);
 
+    public boolean existsByGroupAndMember(Group group, Member member);
+
     long countByGroup(Group group);
 
     public List<MemberGroup> findAllByGroup(Group group);
