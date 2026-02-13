@@ -79,11 +79,7 @@ public class GroupController {
             @PathVariable("groupId") Long groupId,
             @AuthUser Member member) {
 
-        // 1. Emitter 생성 (유효 시간 설정: 예 60분)
         SseEmitter emitter = new SseEmitter(60L * 1000 * 60);
-
-        // 2. 서비스 계층을 통해 Emitter 저장 및 초기 연결 메시지 전송
-        // (아래에서 설명할 서비스 메서드를 호출합니다)
         sseService.subscribe(groupId, emitter, member);
 
         return emitter;

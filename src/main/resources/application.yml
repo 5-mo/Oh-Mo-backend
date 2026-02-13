@@ -27,9 +27,6 @@ spring:
         max-file-size: 10MB
         max-request-size: 10MB
     show-sql: false
-  flyway:
-    enabled: true
-    baseline-on-migrate: true
 
 logging:
   level:
