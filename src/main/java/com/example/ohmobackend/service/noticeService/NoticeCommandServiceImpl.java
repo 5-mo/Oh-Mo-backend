@@ -71,7 +71,7 @@ public class NoticeCommandServiceImpl implements NoticeCommandService {
 
     private void validateExistMember(Member member, Group group) {
         if (!memberGroupRepository.findByGroupAndMember(group, member).isEmpty()) {
-            throw new GroupHandler(ErrorStatus.GROUP_EXISTS_MEMBER);
+            throw new GroupHandler(ErrorStatus.MEMBER_GROUP_NOT_FOUND);
         }
     }
 }
