@@ -15,7 +15,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -47,9 +49,19 @@ public class GroupScheduleQueryServiceImpl implements GroupScheduleQueryService 
     private List<GroupScheduleResponseDto.GroupScheduleTodoDto> getScheduleTodoDtos(List<Todo> todos) {
         return todos.stream()
                 .map(t -> {
-                    List<ScheduleAssignee> assignees = t.getScheduleAssigneeList();
-                    List<MemberAssigneeResponseDto.MemberAssigneeInfoResponseDto> memberGroupInfos = assignees.stream().map(
-                            scheduleAssignee -> GroupConverter.toAssigneeDto(scheduleAssignee, scheduleAssignee.getMemberGroup())).collect(Collectors.toList());
+                    List<MemberAssigneeResponseDto.MemberAssigneeInfoResponseDto> memberGroupInfos =
+                            Optional.ofNullable(t.getScheduleAssigneeList())
+                                    .orElse(Collections.emptyList())
+                                    .stream()
+                                    .map(scheduleAssignee ->
+                                            Optional.ofNullable(scheduleAssignee)
+                                                    .map(ScheduleAssignee::getMemberGroup)
+                                                    .map(memberGroup ->
+                                                            GroupConverter.toAssigneeDto(scheduleAssignee, memberGroup)
+                                                    )
+                                                    .orElse(null)
+                                    )
+                                    .collect(Collectors.toList());
                     GroupScheduleResponseDto.GroupTodoWithAssigneeDto groupTodoWithAssigneeDto = GroupScheduleConverter.toGroupTodoWithAssigneeDto(t, memberGroupInfos);
                     return GroupScheduleConverter.toGroupScheduleTodoDto(t.getSchedule(), groupTodoWithAssigneeDto);
                 })
@@ -59,9 +71,19 @@ public class GroupScheduleQueryServiceImpl implements GroupScheduleQueryService 
     private List<GroupScheduleResponseDto.GroupScheduleRoutineDto> getScheduleRoutineDtos(List<Routine> routines) {
         return routines.stream()
                 .map(r -> {
-                    List<ScheduleAssignee> assignees = r.getScheduleAssigneeList();
-                    List<MemberAssigneeResponseDto.MemberAssigneeInfoResponseDto> memberGroupInfos = assignees.stream().map(
-                            scheduleAssignee -> GroupConverter.toAssigneeDto(scheduleAssignee, scheduleAssignee.getMemberGroup())).collect(Collectors.toList());
+                    List<MemberAssigneeResponseDto.MemberAssigneeInfoResponseDto> memberGroupInfos =
+                            Optional.ofNullable(r.getScheduleAssigneeList())
+                                    .orElse(Collections.emptyList())
+                                    .stream()
+                                    .map(scheduleAssignee ->
+                                            Optional.ofNullable(scheduleAssignee)
+                                                    .map(ScheduleAssignee::getMemberGroup)
+                                                    .map(memberGroup ->
+                                                            GroupConverter.toAssigneeDto(scheduleAssignee, memberGroup)
+                                                    )
+                                                    .orElse(null)
+                                    )
+                                    .collect(Collectors.toList());
                     GroupScheduleResponseDto.GroupRoutineWithAssigneeDto groupRoutineWithAssigneeDto = GroupScheduleConverter.toGroupRoutineWithAssigneeDto(r, memberGroupInfos);
                     return GroupScheduleConverter.toGroupScheduleRoutineDto(r.getSchedule(), groupRoutineWithAssigneeDto);
                 })
