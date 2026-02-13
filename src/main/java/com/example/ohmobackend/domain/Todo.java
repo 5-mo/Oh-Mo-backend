@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.DynamicUpdate;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,5 +42,10 @@ public class Todo extends BaseEntity implements AssignableTask {
     @Override
     public List<ScheduleAssignee> getAssignees() {
         return scheduleAssigneeList;
+    }
+
+    @Override
+    public LocalDate getDate() {
+        return schedule.getDate();
     }
 }

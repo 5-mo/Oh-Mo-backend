@@ -1,15 +1,13 @@
 package com.example.ohmobackend.repository;
 
-import com.example.ohmobackend.domain.Group;
-import com.example.ohmobackend.domain.Member;
-import com.example.ohmobackend.domain.Routine;
-import com.example.ohmobackend.domain.Schedule;
+import com.example.ohmobackend.domain.*;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 public interface RoutineRepository extends JpaRepository<Routine, Long> {
 
@@ -55,4 +53,9 @@ public interface RoutineRepository extends JpaRepository<Routine, Long> {
             @Param("date") LocalDate date
     );
 
+    @Query("SELECT r FROM Routine r " +
+            "JOIN FETCH r.schedule s " +
+            "JOIN FETCH s.group g " +
+            "WHERE r.id = :id")
+    public Optional<Routine> findWithScheduleAndGroupById(Long id);
 }

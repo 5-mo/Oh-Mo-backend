@@ -52,6 +52,7 @@ public class GroupScheduleCommandServiceImpl {
                 .collect(Collectors.toList());
         routineRepository.saveAll(routineList);
 
+        groupScheduleEventService.notifyScheduleChange(group.getId(), request.getDate());
         return routineList.stream()
                 .map(RoutineConverter::toRoutineDto)
                 .collect(Collectors.toList());
