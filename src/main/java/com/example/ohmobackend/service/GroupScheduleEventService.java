@@ -1,5 +1,6 @@
 package com.example.ohmobackend.service;
 
+import com.example.ohmobackend.apiPayload.code.status.ScheduleEventType;
 import com.example.ohmobackend.repository.EmitterRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,7 +17,7 @@ import java.util.Map;
 public class GroupScheduleEventService {
     private final EmitterRepository emitterRepository;
 
-    public void notifyScheduleChange(Long groupId, LocalDate date) {
+    public void notifyScheduleChange(Long groupId, LocalDate date, ScheduleEventType eventType) {
         var emitters = emitterRepository.findAllByGroupId(groupId);
 
         emitters.forEach(emitter -> {
@@ -25,7 +26,8 @@ public class GroupScheduleEventService {
                         .name("scheduleUpdate")
                         .data(Map.of(
                                 "groupId", groupId,
-                                "date", date
+                                "date", date,
+                                "eventType", eventType
                         )));
             } catch (IOException e) {
                 log.error("Error sending SSE", e);
