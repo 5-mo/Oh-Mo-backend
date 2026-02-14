@@ -1,6 +1,7 @@
 package com.example.ohmobackend.service.assigneeService;
 
 import com.example.ohmobackend.apiPayload.code.status.ErrorStatus;
+import com.example.ohmobackend.apiPayload.code.status.ScheduleEventType;
 import com.example.ohmobackend.apiPayload.exception.handler.MemberHandler;
 import com.example.ohmobackend.apiPayload.exception.handler.ScheduleHandler;
 import com.example.ohmobackend.converter.ScheduleConverter;
@@ -43,7 +44,7 @@ public class AssigneeCommandServiceImpl implements AssigneeCommandService {
                 .orElseThrow(() -> new ScheduleHandler(ErrorStatus.MEMBER_NOT_FOUND));
         ScheduleAssignee scheduleAssignee = ScheduleConverter.todoScheduleAssigneeToEntity(memberGroup, todo);
         scheduleAssigneeRepository.save(scheduleAssignee);
-        groupScheduleEventService.notifyScheduleChange(group.getId(), todo.getDate());
+        groupScheduleEventService.notifyScheduleChange(group.getId(), todo.getDate(), ScheduleEventType.TODO_ASSIGNEE_UPDATED);
     }
 
     public void addRoutineScheduleAssignee(GroupScheduleRequestDto.RoutineScheduleAssigneeRequestDto requestDto, Member member) {
@@ -63,7 +64,7 @@ public class AssigneeCommandServiceImpl implements AssigneeCommandService {
                 .orElseThrow(() -> new ScheduleHandler(ErrorStatus.MEMBER_NOT_FOUND));
         ScheduleAssignee scheduleAssignee = ScheduleConverter.routineScheduleAssigneeToEntity(memberGroup, routine);
         scheduleAssigneeRepository.save(scheduleAssignee);
-        groupScheduleEventService.notifyScheduleChange(group.getId(), routine.getDate());
+        groupScheduleEventService.notifyScheduleChange(group.getId(), routine.getDate(), ScheduleEventType.ROUTINE_ASSIGNEE_UPDATED);
     }
 
     public void updateAssigneeStatus(Long assigneeId, Member member) {
@@ -81,7 +82,7 @@ public class AssigneeCommandServiceImpl implements AssigneeCommandService {
         boolean allCompleted = !scheduleAssigneeRepository.existsIncompleteByTask(task.getId());
         task.updateStatus(allCompleted);
 
-        groupScheduleEventService.notifyScheduleChange(scheduleAssignee.getMemberGroup().getGroup().getId(), task.getDate());
+        groupScheduleEventService.notifyScheduleChange(scheduleAssignee.getMemberGroup().getGroup().getId(), task.getDate(), ScheduleEventType.STATUS_UPDATED);
     }
 
     private static void validateScheduleHasGroup(Group group) {

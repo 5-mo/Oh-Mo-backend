@@ -1,6 +1,7 @@
 package com.example.ohmobackend.service.scheduleService;
 
 import com.example.ohmobackend.apiPayload.code.status.ErrorStatus;
+import com.example.ohmobackend.apiPayload.code.status.ScheduleEventType;
 import com.example.ohmobackend.apiPayload.exception.handler.ScheduleHandler;
 import com.example.ohmobackend.converter.RoutineConverter;
 import com.example.ohmobackend.converter.ScheduleConverter;
@@ -52,7 +53,7 @@ public class GroupScheduleCommandServiceImpl {
                 .collect(Collectors.toList());
         routineRepository.saveAll(routineList);
 
-        groupScheduleEventService.notifyScheduleChange(group.getId(), request.getDate());
+        groupScheduleEventService.notifyScheduleChange(group.getId(), request.getDate(), ScheduleEventType.ROUTINE_CREATED);
         return routineList.stream()
                 .map(RoutineConverter::toRoutineDto)
                 .collect(Collectors.toList());
@@ -67,7 +68,7 @@ public class GroupScheduleCommandServiceImpl {
         Schedule schedule = ScheduleConverter.groupScheduleToEntity(request, group, ScheduleType.TO_DO, memberGroup);
         scheduleRepository.save(schedule);
         Todo todo = todoRepository.save(TodoConverter.toEntity(schedule));
-        groupScheduleEventService.notifyScheduleChange(group.getId(), request.getDate());
+        groupScheduleEventService.notifyScheduleChange(group.getId(), request.getDate(), ScheduleEventType.TODO_CREATED);
         return TodoConverter.toTodoDto(todo);
     }
 
