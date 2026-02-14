@@ -15,6 +15,7 @@ import com.example.ohmobackend.web.dto.routineDto.RoutineResponseDto;
 import com.example.ohmobackend.web.dto.todoDto.TodoResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -24,6 +25,7 @@ import static com.example.ohmobackend.service.scheduleService.DateCalculator.get
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class GroupScheduleCommandServiceImpl {
 
     final private GroupScheduleQueryService groupScheduleQueryService;

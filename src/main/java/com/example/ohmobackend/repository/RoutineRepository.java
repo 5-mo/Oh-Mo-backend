@@ -57,5 +57,5 @@ public interface RoutineRepository extends JpaRepository<Routine, Long> {
             "JOIN FETCH r.schedule s " +
             "JOIN FETCH s.group g " +
             "WHERE r.id = :id")
-    public Optional<Routine> findWithScheduleAndGroupById(Long id);
+    public Optional<Routine> findWithScheduleAndGroupById(@Param("id") Long id);
 }

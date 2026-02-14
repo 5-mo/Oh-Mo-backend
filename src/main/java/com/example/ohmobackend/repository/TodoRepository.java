@@ -55,5 +55,5 @@ public interface TodoRepository extends JpaRepository<Todo, Long> {
             "JOIN FETCH t.schedule s " +
             "JOIN FETCH s.group g " +
             "WHERE t.id = :id")
-    public Optional<Todo> findWithScheduleAndGroupById(Long id);
+    public Optional<Todo> findWithScheduleAndGroupById(@Param("id") Long id);
 }

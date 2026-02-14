@@ -40,8 +40,13 @@ public class AssigneeCommandServiceImpl implements AssigneeCommandService {
         memberGroupRepository.findByGroupAndMember(group, member)
                 .orElseThrow(() -> new ScheduleHandler(ErrorStatus.MEMBER_GROUP_NOT_FOUND));
 
+        // 등록하려는 담당자가 그룹의 멤버가 아닌 경우
         MemberGroup memberGroup = memberGroupRepository.findById(requestDto.getMemberGroupId())
                 .orElseThrow(() -> new ScheduleHandler(ErrorStatus.MEMBER_NOT_FOUND));
+        if (!memberGroup.getGroup().getId().equals(group.getId())) {
+            throw new ScheduleHandler(ErrorStatus.MEMBER_GROUP_NOT_FOUND);
+        }
+
         ScheduleAssignee scheduleAssignee = ScheduleConverter.todoScheduleAssigneeToEntity(memberGroup, todo);
         scheduleAssigneeRepository.save(scheduleAssignee);
         groupScheduleEventService.notifyScheduleChange(group.getId(), todo.getDate(), ScheduleEventType.TODO_ASSIGNEE_UPDATED);
@@ -62,6 +67,10 @@ public class AssigneeCommandServiceImpl implements AssigneeCommandService {
 
         MemberGroup memberGroup = memberGroupRepository.findById(requestDto.getMemberGroupId())
                 .orElseThrow(() -> new ScheduleHandler(ErrorStatus.MEMBER_NOT_FOUND));
+        if (!memberGroup.getGroup().getId().equals(group.getId())) {
+            throw new ScheduleHandler(ErrorStatus.MEMBER_GROUP_NOT_FOUND);
+        }
+
         ScheduleAssignee scheduleAssignee = ScheduleConverter.routineScheduleAssigneeToEntity(memberGroup, routine);
         scheduleAssigneeRepository.save(scheduleAssignee);
         groupScheduleEventService.notifyScheduleChange(group.getId(), routine.getDate(), ScheduleEventType.ROUTINE_ASSIGNEE_UPDATED);
