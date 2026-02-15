@@ -8,6 +8,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 public interface TodoRepository extends JpaRepository<Todo, Long> {
 
@@ -49,4 +50,10 @@ public interface TodoRepository extends JpaRepository<Todo, Long> {
             @Param("memberCategory") MemberCategory memberCategory,
             @Param("keyword") String keyword
     );
+
+    @Query("SELECT t FROM Todo t " +
+            "JOIN FETCH t.schedule s " +
+            "JOIN FETCH s.group g " +
+            "WHERE t.id = :id")
+    public Optional<Todo> findWithScheduleAndGroupById(@Param("id") Long id);
 }

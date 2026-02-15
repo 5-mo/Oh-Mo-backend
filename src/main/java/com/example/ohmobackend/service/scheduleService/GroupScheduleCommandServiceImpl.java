@@ -1,6 +1,7 @@
 package com.example.ohmobackend.service.scheduleService;
 
 import com.example.ohmobackend.apiPayload.code.status.ErrorStatus;
+import com.example.ohmobackend.apiPayload.code.status.ScheduleEventType;
 import com.example.ohmobackend.apiPayload.exception.handler.ScheduleHandler;
 import com.example.ohmobackend.converter.RoutineConverter;
 import com.example.ohmobackend.converter.ScheduleConverter;
@@ -14,6 +15,7 @@ import com.example.ohmobackend.web.dto.routineDto.RoutineResponseDto;
 import com.example.ohmobackend.web.dto.todoDto.TodoResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -23,6 +25,7 @@ import static com.example.ohmobackend.service.scheduleService.DateCalculator.get
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class GroupScheduleCommandServiceImpl {
 
     final private GroupScheduleQueryService groupScheduleQueryService;
@@ -52,6 +55,7 @@ public class GroupScheduleCommandServiceImpl {
                 .collect(Collectors.toList());
         routineRepository.saveAll(routineList);
 
+        groupScheduleEventService.notifyScheduleChange(group.getId(), request.getDate(), ScheduleEventType.ROUTINE_CREATED);
         return routineList.stream()
                 .map(RoutineConverter::toRoutineDto)
                 .collect(Collectors.toList());
@@ -66,7 +70,7 @@ public class GroupScheduleCommandServiceImpl {
         Schedule schedule = ScheduleConverter.groupScheduleToEntity(request, group, ScheduleType.TO_DO, memberGroup);
         scheduleRepository.save(schedule);
         Todo todo = todoRepository.save(TodoConverter.toEntity(schedule));
-        groupScheduleEventService.notifyScheduleChange(group.getId(), request.getDate());
+        groupScheduleEventService.notifyScheduleChange(group.getId(), request.getDate(), ScheduleEventType.TODO_CREATED);
         return TodoConverter.toTodoDto(todo);
     }
 
