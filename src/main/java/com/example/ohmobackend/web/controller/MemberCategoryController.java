@@ -39,4 +39,23 @@ public class MemberCategoryController {
         return ApiResponse.onSuccess(SuccessStatus.MEMBER_CATEGORY_OK, response);
     }
 
+    @PatchMapping("/{categoryId}")
+    @Operation(summary = "카테고리 수정 API", description = "카테고리 이름과 색상을 수정합니다.")
+    public ApiResponse<MemberCategoryResponseDto.CategoryResponseDto> updateMemberCategory(
+            @PathVariable(name = "categoryId") Long categoryId,
+            @RequestBody MemberCategoryDtoRequest.UpdateCategoryRequest request,
+            @AuthUser Member member) {
+        MemberCategoryResponseDto.CategoryResponseDto response = memberCategoryCommandService.updateMemberCategory(categoryId, request, member);
+        return ApiResponse.onSuccess(SuccessStatus.MEMBER_CATEGORY_UPDATE_OK, response);
+    }
+
+    @DeleteMapping("/{categoryId}")
+    @Operation(summary = "카테고리 삭제 API", description = "카테고리를 삭제합니다. 해당 카테고리의 일정도 함께 삭제됩니다.")
+    public ApiResponse<Object> deleteMemberCategory(
+            @PathVariable(name = "categoryId") Long categoryId,
+            @AuthUser Member member) {
+        memberCategoryCommandService.deleteMemberCategory(categoryId, member);
+        return ApiResponse.onSuccess(SuccessStatus.MEMBER_CATEGORY_DELETE_OK, null);
+    }
+
 }

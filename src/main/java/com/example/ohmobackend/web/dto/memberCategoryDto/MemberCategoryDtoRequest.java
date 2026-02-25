@@ -17,4 +17,13 @@ public class MemberCategoryDtoRequest {
         private String color;
         private ScheduleType scheduleType;
     }
+
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    public static class UpdateCategoryRequest {
+        private String categoryName;
+        private String color;
+    }
 }

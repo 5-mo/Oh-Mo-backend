@@ -31,4 +31,9 @@ public class Question extends BaseEntity {
 
     @OneToMany(mappedBy = "question", cascade = CascadeType.ALL)
     private List<Answer> answerList = new ArrayList<>();
+
+    public void update(String questionContent, String emoji) {
+        this.questionContent = questionContent;
+        this.emoji = emoji;
+    }
 }

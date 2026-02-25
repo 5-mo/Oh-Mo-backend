@@ -9,4 +9,10 @@ public class QuestionRequestDto {
         private String questionContent;
         private String emoji;
     }
+
+    @Getter
+    public static class QuestionUpdateDto {
+        private String questionContent;
+        private String emoji;
+    }
 }
