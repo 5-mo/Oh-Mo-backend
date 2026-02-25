@@ -1,18 +1,24 @@
 package com.example.ohmobackend.web.dto.groupScheduleDto;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
+import
+        com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.List;
 import java.util.Set;
 
 public class GroupScheduleRequestDto {
 
     @Getter
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
     public static class GroupScheduleAddRequestDto {
         private Long groupId;
 

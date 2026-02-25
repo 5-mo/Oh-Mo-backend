@@ -41,7 +41,6 @@ class GroupCommandServiceImplTest {
 
         requestDto = GroupRequestDto.AddGroupRequestDto.builder()
                 .groupName("테스트 그룹")
-                .groupCode("테스트 그룹 코드")
                 .groupColor("테스트 그룹 컬러")
                 .numPeople(4)
                 .nickname("매니저닉네임")
@@ -53,7 +52,6 @@ class GroupCommandServiceImplTest {
         // given (테스트 준비)
         Group groupToSave = Group.builder()
                 .groupName(requestDto.getGroupName())
-                .groupCode(requestDto.getGroupCode())
                 .groupColor(requestDto.getGroupColor())
                 .numPeople(requestDto.getNumPeople())
                 .build();

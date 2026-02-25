@@ -10,9 +10,10 @@ import com.example.ohmobackend.repository.MemberGroupRepository;
 import com.example.ohmobackend.repository.RoutineRepository;
 import com.example.ohmobackend.repository.ScheduleAssigneeRepository;
 import com.example.ohmobackend.repository.TodoRepository;
-import com.example.ohmobackend.service.GroupScheduleEventService;
+import com.example.ohmobackend.service.ScheduleChangeEvent;
 import com.example.ohmobackend.web.dto.groupScheduleDto.GroupScheduleRequestDto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,7 +26,7 @@ public class AssigneeCommandServiceImpl implements AssigneeCommandService {
     private final RoutineRepository routineRepository;
     private final MemberGroupRepository memberGroupRepository;
     private final ScheduleAssigneeRepository scheduleAssigneeRepository;
-    private final GroupScheduleEventService groupScheduleEventService;
+    private final ApplicationEventPublisher eventPublisher;
 
     public void addTodoScheduleAssignee(GroupScheduleRequestDto.TodoScheduleAssigneeRequestDto requestDto, Member member) {
         Todo todo = todoRepository.findWithScheduleAndGroupById(requestDto.getTodoId())
@@ -49,7 +50,7 @@ public class AssigneeCommandServiceImpl implements AssigneeCommandService {
 
         ScheduleAssignee scheduleAssignee = ScheduleConverter.todoScheduleAssigneeToEntity(memberGroup, todo);
         scheduleAssigneeRepository.save(scheduleAssignee);
-        groupScheduleEventService.notifyScheduleChange(group.getId(), todo.getDate(), ScheduleEventType.TODO_ASSIGNEE_UPDATED);
+        eventPublisher.publishEvent(new ScheduleChangeEvent(group.getId(), todo.getDate(), ScheduleEventType.TODO_ASSIGNEE_UPDATED));
     }
 
     public void addRoutineScheduleAssignee(GroupScheduleRequestDto.RoutineScheduleAssigneeRequestDto requestDto, Member member) {
@@ -73,7 +74,7 @@ public class AssigneeCommandServiceImpl implements AssigneeCommandService {
 
         ScheduleAssignee scheduleAssignee = ScheduleConverter.routineScheduleAssigneeToEntity(memberGroup, routine);
         scheduleAssigneeRepository.save(scheduleAssignee);
-        groupScheduleEventService.notifyScheduleChange(group.getId(), routine.getDate(), ScheduleEventType.ROUTINE_ASSIGNEE_UPDATED);
+        eventPublisher.publishEvent(new ScheduleChangeEvent(group.getId(), routine.getDate(), ScheduleEventType.ROUTINE_ASSIGNEE_UPDATED));
     }
 
     public void updateAssigneeStatus(Long assigneeId, Member member) {
@@ -91,7 +92,7 @@ public class AssigneeCommandServiceImpl implements AssigneeCommandService {
         boolean allCompleted = !scheduleAssigneeRepository.existsIncompleteByTask(task.getId());
         task.updateStatus(allCompleted);
 
-        groupScheduleEventService.notifyScheduleChange(scheduleAssignee.getMemberGroup().getGroup().getId(), task.getDate(), ScheduleEventType.STATUS_UPDATED);
+        eventPublisher.publishEvent(new ScheduleChangeEvent(scheduleAssignee.getMemberGroup().getGroup().getId(), task.getDate(), ScheduleEventType.STATUS_UPDATED));
     }
 
     private static void validateScheduleHasGroup(Group group) {

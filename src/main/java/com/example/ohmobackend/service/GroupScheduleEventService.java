@@ -1,36 +1,38 @@
 package com.example.ohmobackend.service;
 
-import com.example.ohmobackend.apiPayload.code.status.ScheduleEventType;
 import com.example.ohmobackend.repository.EmitterRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.event.TransactionPhase;
+import org.springframework.transaction.event.TransactionalEventListener;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.io.IOException;
-import java.time.LocalDate;
 import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class GroupScheduleEventService {
+
     private final EmitterRepository emitterRepository;
 
-    public void notifyScheduleChange(Long groupId, LocalDate date, ScheduleEventType eventType) {
-        var emitters = emitterRepository.findAllByGroupId(groupId);
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+    public void notifyScheduleChange(ScheduleChangeEvent event) {
+        var emitters = emitterRepository.findAllByGroupId(event.getGroupId());
 
         emitters.forEach(emitter -> {
             try {
                 emitter.send(SseEmitter.event()
                         .name("scheduleUpdate")
                         .data(Map.of(
-                                "groupId", groupId,
-                                "date", date,
-                                "eventType", eventType
+                                "groupId", event.getGroupId(),
+                                "date", event.getDate(),
+                                "eventType", event.getEventType()
                         )));
             } catch (IOException e) {
-                log.error("Error sending SSE", e);
+                log.error("SSE 이벤트 전송 실패 groupId={}", event.getGroupId(), e);
             }
         });
     }
