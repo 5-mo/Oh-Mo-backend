@@ -6,7 +6,7 @@ import com.example.ohmobackend.domain.Member;
 import com.example.ohmobackend.security.handler.AuthUser;
 import com.example.ohmobackend.service.assigneeService.AssigneeCommandService;
 import com.example.ohmobackend.service.assigneeService.AssigneeQueryService;
-import com.example.ohmobackend.service.scheduleService.GroupScheduleCommandServiceImpl;
+import com.example.ohmobackend.service.scheduleService.GroupScheduleCommandService;
 import com.example.ohmobackend.service.scheduleService.GroupScheduleQueryService;
 import com.example.ohmobackend.web.dto.groupScheduleDto.GroupScheduleRequestDto;
 import com.example.ohmobackend.web.dto.groupScheduleDto.GroupScheduleResponseDto;
@@ -26,7 +26,7 @@ import java.util.List;
 @Slf4j
 public class GroupScheduleController {
 
-    private final GroupScheduleCommandServiceImpl groupScheduleCommandService;
+    private final GroupScheduleCommandService groupScheduleCommandService;
     private final GroupScheduleQueryService groupScheduleQueryService;
     private final AssigneeQueryService assigneeQueryService;
     private final AssigneeCommandService assigneeCommandService;

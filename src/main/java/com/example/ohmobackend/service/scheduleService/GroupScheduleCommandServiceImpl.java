@@ -9,11 +9,12 @@ import com.example.ohmobackend.converter.TodoConverter;
 import com.example.ohmobackend.domain.*;
 import com.example.ohmobackend.domain.enums.ScheduleType;
 import com.example.ohmobackend.repository.*;
-import com.example.ohmobackend.service.GroupScheduleEventService;
+import com.example.ohmobackend.service.ScheduleChangeEvent;
 import com.example.ohmobackend.web.dto.groupScheduleDto.GroupScheduleRequestDto;
 import com.example.ohmobackend.web.dto.routineDto.RoutineResponseDto;
 import com.example.ohmobackend.web.dto.todoDto.TodoResponseDto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,14 +27,14 @@ import static com.example.ohmobackend.service.scheduleService.DateCalculator.get
 @Service
 @RequiredArgsConstructor
 @Transactional
-public class GroupScheduleCommandServiceImpl {
+public class GroupScheduleCommandServiceImpl implements GroupScheduleCommandService{
 
     final private GroupScheduleQueryService groupScheduleQueryService;
     final private RoutineRepository routineRepository;
     final private TodoRepository todoRepository;
     final private MemberGroupRepository memberGroupRepository;
     final private ScheduleRepository scheduleRepository;
-    final private GroupScheduleEventService groupScheduleEventService;
+    final private ApplicationEventPublisher eventPublisher;
 
     public List<RoutineResponseDto.RoutineDto> addGroupRoutine(GroupScheduleRequestDto.GroupScheduleAddRequestDto request, Member member) {
         Group group = groupScheduleQueryService.getGroup(request.getGroupId());
@@ -55,7 +56,7 @@ public class GroupScheduleCommandServiceImpl {
                 .collect(Collectors.toList());
         routineRepository.saveAll(routineList);
 
-        groupScheduleEventService.notifyScheduleChange(group.getId(), request.getDate(), ScheduleEventType.ROUTINE_CREATED);
+        eventPublisher.publishEvent(new ScheduleChangeEvent(group.getId(), request.getDate(), ScheduleEventType.ROUTINE_CREATED));
         return routineList.stream()
                 .map(RoutineConverter::toRoutineDto)
                 .collect(Collectors.toList());
@@ -70,7 +71,7 @@ public class GroupScheduleCommandServiceImpl {
         Schedule schedule = ScheduleConverter.groupScheduleToEntity(request, group, ScheduleType.TO_DO, memberGroup);
         scheduleRepository.save(schedule);
         Todo todo = todoRepository.save(TodoConverter.toEntity(schedule));
-        groupScheduleEventService.notifyScheduleChange(group.getId(), request.getDate(), ScheduleEventType.TODO_CREATED);
+        eventPublisher.publishEvent(new ScheduleChangeEvent(group.getId(), request.getDate(), ScheduleEventType.TODO_CREATED));
         return TodoConverter.toTodoDto(todo);
     }
 
