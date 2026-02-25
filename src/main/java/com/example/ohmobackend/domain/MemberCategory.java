@@ -35,4 +35,9 @@ public class MemberCategory extends BaseEntity {
 
     @OneToMany(mappedBy = "memberCategory", cascade = CascadeType.ALL)
     private List<Schedule> scheduleList = new ArrayList<>();
+
+    public void update(String categoryName, String color) {
+        this.categoryName = categoryName;
+        this.color = color;
+    }
 }

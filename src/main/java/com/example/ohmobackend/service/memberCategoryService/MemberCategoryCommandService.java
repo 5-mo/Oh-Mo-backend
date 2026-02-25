@@ -7,4 +7,8 @@ import com.example.ohmobackend.web.dto.memberCategoryDto.MemberCategoryResponseD
 public interface MemberCategoryCommandService {
 
     public MemberCategoryResponseDto.CategoryResponseDto addMemberCategory(MemberCategoryDtoRequest.addCategoryRequest request, Member member);
+
+    public MemberCategoryResponseDto.CategoryResponseDto updateMemberCategory(Long categoryId, MemberCategoryDtoRequest.UpdateCategoryRequest request, Member member);
+
+    public void deleteMemberCategory(Long categoryId, Member member);
 }

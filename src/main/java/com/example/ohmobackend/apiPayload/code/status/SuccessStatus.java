@@ -21,6 +21,8 @@ public enum SuccessStatus implements BaseCode {
     // 카텍고리 관련 응답
     MEMBER_CATEGORY_REGISTER_OK(HttpStatus.OK, "CATEGORY2000", "카테고리 등록이 완료되었습니다."),
     MEMBER_CATEGORY_OK(HttpStatus.OK, "CATEGORY2001", "카테고리 조회가 완료되었습니다."),
+    MEMBER_CATEGORY_UPDATE_OK(HttpStatus.OK, "CATEGORY2002", "카테고리 수정이 완료되었습니다."),
+    MEMBER_CATEGORY_DELETE_OK(HttpStatus.OK, "CATEGORY2003", "카테고리 삭제가 완료되었습니다."),
 
     // 스케줄 관련 응답
     SCHEDULE_ROUTINE_OK(HttpStatus.OK, "SCHEDULE2000", "루틴 일정이 등록이 완료되었습니다"),
@@ -35,6 +37,8 @@ public enum SuccessStatus implements BaseCode {
     // 질문 관련 응답
     QUESTION_REGISTER_OK(HttpStatus.OK, "QUESTION2000", "질문 등록이 완료되었습니다."),
     QUESTION_OK(HttpStatus.OK, "QUESTION2001", "질문 조회가 완료되었습니다."),
+    QUESTION_UPDATE_OK(HttpStatus.OK, "QUESTION2002", "질문 수정이 완료되었습니다."),
+    QUESTION_DELETE_OK(HttpStatus.OK, "QUESTION2003", "질문 삭제가 완료되었습니다."),
 
     // 답 관련 응답
     ANSWER_REGISTER_OK(HttpStatus.OK, "ANSWER2000", "답 등록이 완료되었습니다."),

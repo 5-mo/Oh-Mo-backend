@@ -45,4 +45,23 @@ public class QuestionController {
         List<QuestionResponseDto.QuestionWithAnswerResponseDto> response = questionQueryService.getQuestionsWithAnswers(member, date);
         return ApiResponse.onSuccess(SuccessStatus.QUESTION_OK, response);
     }
+
+    @PatchMapping("/{questionId}")
+    @Operation(summary = "질문 수정 API", description = "질문 내용과 이모지를 수정합니다.")
+    public ApiResponse<QuestionResponseDto.QuestionDto> updateQuestion(
+            @PathVariable(name = "questionId") Long questionId,
+            @RequestBody QuestionRequestDto.QuestionUpdateDto request,
+            @AuthUser Member member) {
+        QuestionResponseDto.QuestionDto response = questionCommandService.updateQuestion(questionId, request, member);
+        return ApiResponse.onSuccess(SuccessStatus.QUESTION_UPDATE_OK, response);
+    }
+
+    @DeleteMapping("/{questionId}")
+    @Operation(summary = "질문 삭제 API", description = "질문을 삭제합니다. 해당 질문의 답변도 함께 삭제됩니다.")
+    public ApiResponse<Object> deleteQuestion(
+            @PathVariable(name = "questionId") Long questionId,
+            @AuthUser Member member) {
+        questionCommandService.deleteQuestion(questionId, member);
+        return ApiResponse.onSuccess(SuccessStatus.QUESTION_DELETE_OK, null);
+    }
 }
