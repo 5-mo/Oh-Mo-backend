@@ -11,6 +11,7 @@ import com.example.ohmobackend.security.JwtToken;
 import com.example.ohmobackend.security.principal.PrincipalDetailsService;
 import com.example.ohmobackend.security.provider.TokenProvider;
 import com.example.ohmobackend.service.memberService.MemberCommandServiceImpl;
+import com.example.ohmobackend.service.memberService.MemberQueryService;
 import com.example.ohmobackend.web.dto.memberDto.MemberRequestDto;
 import com.example.ohmobackend.web.dto.memberDto.MemberResponseDto;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +31,7 @@ public class AuthServiceImpl implements AuthService{
 
     private final MemberRepository memberRepository;
     private final MemberCommandServiceImpl memberCommandService;
+    private final MemberQueryService memberQueryService;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final TokenProvider tokenProvider;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
@@ -71,7 +73,7 @@ public class AuthServiceImpl implements AuthService{
         // 3. 인증 정보를 기반으로 JWT 토큰 생성
         JwtToken jwtToken = tokenProvider.generateTokenDto(authentication);
 
-        Member member = memberCommandService.findMemberByEmail(email);
+        Member member = memberQueryService.findMemberByEmail(email);
         member.updateRefreshToken(jwtToken.getRefreshToken());
 
         return MemberConverter.toLoginResponseDto(member, jwtToken);
@@ -80,7 +82,7 @@ public class AuthServiceImpl implements AuthService{
     public MemberResponseDto.LoginResponseDto reissue(String refreshToken) {
         tokenProvider.validateToken(refreshToken);
         String email = tokenProvider.getEmail(refreshToken);
-        Member member = memberCommandService.findMemberByEmail(email);
+        Member member = memberQueryService.findMemberByEmail(email);
 
         // DB에 저장된 Refresh Token과 비교
         if (member.getRefreshToken() == null ||
@@ -108,7 +110,7 @@ public class AuthServiceImpl implements AuthService{
 
     public void logout(String accessToken) {
         String email = tokenProvider.getEmail(accessToken);
-        Member member = memberCommandService.findMemberByEmail(email);
+        Member member = memberQueryService.findMemberByEmail(email);
         // Refresh Token 제거
         member.updateRefreshToken(null);
     }

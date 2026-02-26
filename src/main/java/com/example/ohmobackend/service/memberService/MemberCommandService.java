@@ -7,7 +7,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 public interface MemberCommandService {
 
-    public Member findMemberByEmail(String email);
     public MemberResponseDto.MemberInfoResponseDto updateMemberNickName(Member member, MemberRequestDto.UpdateNicknameRequestDto request);
     public MemberResponseDto.MemberInfoResponseDto updateMemberProfileImage(Member member, MultipartFile profileImage);
     public void updatePassword(Member member, MemberRequestDto.UpdatePasswordDto request);

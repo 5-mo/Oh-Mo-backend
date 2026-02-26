@@ -13,12 +13,14 @@ import com.example.ohmobackend.web.dto.MemberAssigneeDto.MemberAssigneeResponseD
 import com.example.ohmobackend.web.dto.groupScheduleDto.GroupScheduleResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class AssigneeQueryServiceImpl implements AssigneeQueryService {
 
     private final TodoRepository todoRepository;
