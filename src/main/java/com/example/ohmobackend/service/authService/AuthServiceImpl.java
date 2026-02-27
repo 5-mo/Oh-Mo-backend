@@ -10,11 +10,13 @@ import com.example.ohmobackend.repository.MemberRepository;
 import com.example.ohmobackend.security.JwtToken;
 import com.example.ohmobackend.security.principal.PrincipalDetailsService;
 import com.example.ohmobackend.security.provider.TokenProvider;
+import com.example.ohmobackend.service.emailService.EmailService;
 import com.example.ohmobackend.service.memberService.MemberCommandServiceImpl;
 import com.example.ohmobackend.service.memberService.MemberQueryService;
 import com.example.ohmobackend.web.dto.memberDto.MemberRequestDto;
 import com.example.ohmobackend.web.dto.memberDto.MemberResponseDto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
@@ -23,6 +25,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.security.SecureRandom;
+import java.time.Duration;
 
 @Transactional
 @Service
@@ -36,6 +41,12 @@ public class AuthServiceImpl implements AuthService{
     private final TokenProvider tokenProvider;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final PrincipalDetailsService principalDetailsService;
+    private final EmailService emailService;
+    private final RedisTemplate<String, String> redisTemplate;
+
+    private static final String PASSWORD_RESET_PREFIX = "password-reset:";
+    private static final int CODE_LENGTH = 6;
+    private static final long CODE_EXPIRY_MINUTES = 5;
 
 
     public MemberResponseDto.MemberInfoResponseDto signup(MemberRequestDto.SignupRequestDto request, MultipartFile profileImage) {
@@ -118,5 +129,40 @@ public class AuthServiceImpl implements AuthService{
     public void withdraw(Member member) {
         memberCommandService.deleteMemberProfileImageFromS3(member);
         memberRepository.delete(member);
+    }
+
+    public void sendPasswordResetCode(MemberRequestDto.FindPasswordRequestDto request) {
+        String email = request.getEmail();
+        memberQueryService.findMemberByEmail(email); // 존재하지 않으면 예외
+
+        String code = generateVerificationCode();
+        redisTemplate.opsForValue().set(
+                PASSWORD_RESET_PREFIX + email,
+                code,
+                Duration.ofMinutes(CODE_EXPIRY_MINUTES)
+        );
+        emailService.sendVerificationCode(email, code);
+    }
+
+    public void resetPassword(MemberRequestDto.ResetPasswordRequestDto request) {
+        String email = request.getEmail();
+        String key = PASSWORD_RESET_PREFIX + email;
+        String savedCode = redisTemplate.opsForValue().get(key);
+
+        if (savedCode == null || !savedCode.equals(request.getCode())) {
+            throw new AuthHandler(ErrorStatus.INVALID_VERIFICATION_CODE);
+        }
+
+        Member member = memberQueryService.findMemberByEmail(email);
+        String encodedPassword = bCryptPasswordEncoder.encode(request.getNewPassword());
+        member.updatePassword(encodedPassword);
+
+        redisTemplate.delete(key);
+    }
+
+    private String generateVerificationCode() {
+        SecureRandom random = new SecureRandom();
+        int code = random.nextInt(900000) + 100000; // 100000 ~ 999999
+        return String.valueOf(code);
     }
 }

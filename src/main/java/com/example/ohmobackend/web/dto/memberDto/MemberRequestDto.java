@@ -32,4 +32,16 @@ public class MemberRequestDto {
         private String oldPassword;
         private String newPassword;
     }
+
+    @Getter
+    public static class FindPasswordRequestDto {
+        private String email;
+    }
+
+    @Getter
+    public static class ResetPasswordRequestDto {
+        private String email;
+        private String code;
+        private String newPassword;
+    }
 }

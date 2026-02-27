@@ -25,6 +25,8 @@ public enum ErrorStatus implements BaseErrorCode {
     // 인증 관련
     INVALID_TOKEN(HttpStatus.BAD_REQUEST, "AUTH4001", "유효하지 않은 토큰입니다"),
     EXPIRED_TOKEN(HttpStatus.BAD_REQUEST, "AUTH4002", "만료된 토큰입니다."),
+    INVALID_VERIFICATION_CODE(HttpStatus.BAD_REQUEST, "AUTH4003", "인증 코드가 올바르지 않습니다."),
+    EMAIL_SEND_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "AUTH5001", "이메일 발송에 실패했습니다."),
 
     // 카테고리 관련
     MEMBER_CATEGORY_NOT_FOUND(HttpStatus.BAD_REQUEST, "MEMBER_CATEGORY4001", "카레고리를 찾을 수 없습니다."),
