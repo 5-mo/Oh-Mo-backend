@@ -16,4 +16,8 @@ public interface AuthService {
     public void logout(String accessToken);
 
     public void withdraw(Member member);
+
+    public void sendPasswordResetCode(MemberRequestDto.FindPasswordRequestDto request);
+
+    public void resetPassword(MemberRequestDto.ResetPasswordRequestDto request);
 }

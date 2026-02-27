@@ -12,12 +12,14 @@ import com.example.ohmobackend.web.dto.groupDto.GroupRequestDto;
 import com.example.ohmobackend.web.dto.groupDto.GroupResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class GroupQueryServiceImpl implements GroupQueryService {
 
     private final GroupRepository groupRepository;
@@ -45,6 +47,7 @@ public class GroupQueryServiceImpl implements GroupQueryService {
     }
 
     @Override
+    @Transactional
     public void deleteGroup(Member member, GroupRequestDto.DeleteGroupRequestDto request) {
         Group group = groupRepository.findById(request.getGroupId())
                 .orElseThrow(() -> new GroupHandler(ErrorStatus.GROUP_NOT_FOUND));

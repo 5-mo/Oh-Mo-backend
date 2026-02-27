@@ -54,12 +54,6 @@ public class MemberCommandServiceImpl implements MemberCommandService {
     }
 
     @Override
-    public Member findMemberByEmail(String email) {
-        return memberRepository.findByEmail(email)
-                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
-    }
-
-    @Override
     public MemberResponseDto.MemberInfoResponseDto updateMemberNickName(Member member, MemberRequestDto.UpdateNicknameRequestDto request) {
         member.updateNickname(request.getNickname());
         return MemberConverter.toMemberInfoResponseDto(member);

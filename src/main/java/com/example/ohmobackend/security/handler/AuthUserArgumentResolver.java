@@ -4,7 +4,7 @@ import com.example.ohmobackend.apiPayload.code.status.ErrorStatus;
 import com.example.ohmobackend.apiPayload.exception.handler.AuthHandler;
 import com.example.ohmobackend.domain.Member;
 import com.example.ohmobackend.security.provider.TokenProvider;
-import com.example.ohmobackend.service.memberService.MemberCommandService;
+import com.example.ohmobackend.service.memberService.MemberQueryService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.MethodParameter;
@@ -20,7 +20,7 @@ import org.springframework.web.method.support.ModelAndViewContainer;
 public class AuthUserArgumentResolver implements HandlerMethodArgumentResolver {
 
     private final TokenProvider tokenProvider;
-    private final MemberCommandService memberService;
+    private final MemberQueryService memberService;
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
         // 메서드 파라미터의 타입이 Member인지 확인

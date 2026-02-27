@@ -100,4 +100,18 @@ public class MemberController {
         memberCommandService.updatePassword(member, request);
         return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, null);
     }
+
+    @PostMapping("/password/find")
+    @Operation(summary = "비밀번호 찾기 - 인증 코드 발송 API", description = "이메일로 6자리 인증 코드를 발송합니다. 코드는 5분간 유효합니다.")
+    public ApiResponse<Void> sendPasswordResetCode(@RequestBody MemberRequestDto.FindPasswordRequestDto request) {
+        authService.sendPasswordResetCode(request);
+        return ApiResponse.onSuccess(SuccessStatus.PASSWORD_FIND_CODE_SENT, null);
+    }
+
+    @PostMapping("/password/reset")
+    @Operation(summary = "비밀번호 찾기 - 비밀번호 재설정 API", description = "인증 코드 검증 후 새 비밀번호로 변경합니다.")
+    public ApiResponse<Void> resetPassword(@RequestBody MemberRequestDto.ResetPasswordRequestDto request) {
+        authService.resetPassword(request);
+        return ApiResponse.onSuccess(SuccessStatus.PASSWORD_RESET_OK, null);
+    }
 }
