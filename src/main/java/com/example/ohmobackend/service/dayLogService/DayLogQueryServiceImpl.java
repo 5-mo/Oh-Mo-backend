@@ -22,6 +22,10 @@ public class DayLogQueryServiceImpl implements DayLogQueryService{
     public DayLogResponseDto.AddDayLogResponseDto getDayLogEmoji(Member member, LocalDate date) {
         Daylog byDateAndMember = dayLogRepository.findByDateAndMember(date, member);
 
+        if (byDateAndMember == null) {
+            return null;
+        }
+
         return DayLogConverter.toAddDayLogResponseDto(byDateAndMember);
     }
 
