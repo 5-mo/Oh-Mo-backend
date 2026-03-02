@@ -18,6 +18,7 @@ public class NoticeResponseDto {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class NoticeDto {
+        private Long id;
         private String notice;
 
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")

@@ -20,6 +20,7 @@ public class NoticeConverter {
 
     public static NoticeResponseDto.NoticeDto toNoticeDto(Notice notice) {
         return NoticeResponseDto.NoticeDto.builder()
+                .id(notice.getId())
                 .notice(notice.getNotice())
                 .date(notice.getDate())
                 .groupId(notice.getGroup().getId())
