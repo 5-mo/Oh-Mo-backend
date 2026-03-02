@@ -53,7 +53,6 @@ public class GroupQueryServiceImpl implements GroupQueryService {
                 .orElseThrow(() -> new GroupHandler(ErrorStatus.GROUP_NOT_FOUND));
 
         groupValidator.validateMemberGroup(member, group);
-        groupValidator.validateGroupPassword(request.getGroupPassword(), group);
         groupRepository.delete(group);
     }
 }

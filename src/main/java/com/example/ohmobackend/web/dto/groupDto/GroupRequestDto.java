@@ -44,7 +44,6 @@ public class GroupRequestDto {
     @AllArgsConstructor
     public static class DeleteGroupRequestDto {
         private Long groupId;
-        private String groupPassword;
     }
 
 }
