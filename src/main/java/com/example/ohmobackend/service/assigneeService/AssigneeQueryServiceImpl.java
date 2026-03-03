@@ -30,7 +30,7 @@ public class AssigneeQueryServiceImpl implements AssigneeQueryService {
 
     @Override
     public GroupScheduleResponseDto.GroupTodoWithAssigneeDto getTodoScheduleAssignee(Long todoId, Member member) {
-        Todo todo = todoRepository.findById(todoId)
+        Todo todo = todoRepository.findWithScheduleAndGroupById(todoId)
                 .orElseThrow(() -> new ScheduleHandler(ErrorStatus.SCHEDULE_NOT_FOUND));
         Group group = todo.getSchedule().getGroup();
 
@@ -51,7 +51,7 @@ public class AssigneeQueryServiceImpl implements AssigneeQueryService {
 
     @Override
     public GroupScheduleResponseDto.GroupRoutineWithAssigneeDto getRoutineScheduleAssignee(Long routineId, Member member) {
-        Routine routine = routineRepository.findById(routineId)
+        Routine routine = routineRepository.findWithScheduleAndGroupById(routineId)
                 .orElseThrow(() -> new ScheduleHandler(ErrorStatus.SCHEDULE_NOT_FOUND));
         Group group = routine.getSchedule().getGroup();
 

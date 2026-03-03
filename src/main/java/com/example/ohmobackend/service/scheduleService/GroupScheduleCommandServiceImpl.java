@@ -133,12 +133,13 @@ public class GroupScheduleCommandServiceImpl implements GroupScheduleCommandServ
     }
 
     private void updateRoutinesIncrementally(Schedule schedule) {
-        Set<LocalDate> existingDates = routineRepository.findAllBySchedule(schedule).stream()
+        List<Routine> existingRoutines = routineRepository.findAllBySchedule(schedule);
+        Set<LocalDate> existingDates = existingRoutines.stream()
                 .map(Routine::getDate)
                 .collect(Collectors.toSet());
         Set<LocalDate> newDates = new HashSet<>(getDatesFromRepeatWeeks(LocalDate.now(), schedule.getDate(), schedule.getRepeatWeek()));
 
-        List<Routine> toDelete = routineRepository.findAllBySchedule(schedule).stream()
+        List<Routine> toDelete = existingRoutines.stream()
                 .filter(r -> !newDates.contains(r.getDate()))
                 .toList();
         routineRepository.deleteAll(toDelete);
