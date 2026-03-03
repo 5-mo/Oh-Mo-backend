@@ -49,7 +49,6 @@ public class GroupScheduleCommandServiceImpl implements GroupScheduleCommandServ
         if (request.getRoutineWeek() != null && !request.getRoutineWeek().isEmpty()) {
             schedule.getRepeatWeek().addAll(request.getRoutineWeek());
         }
-        schedule.getRepeatWeek().addAll(request.getRoutineWeek());
         scheduleRepository.save(schedule);
 
         List<LocalDate> dates = getDatesFromRepeatWeeks(LocalDate.now(), request.getDate(), request.getRoutineWeek()); // 반복 요일에 해당하는 날짜 리스트

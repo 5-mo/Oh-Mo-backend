@@ -36,7 +36,7 @@ public class AssigneeQueryServiceImpl implements AssigneeQueryService {
 
         // 그룹의 일정이 아닌 경우
         if (group == null) {
-            new ScheduleHandler(ErrorStatus.SCHEDULE_NOT_GROUP_TYPE);
+            throw new ScheduleHandler(ErrorStatus.SCHEDULE_NOT_GROUP_TYPE);
         }
 
         // 해당 그룹의 멤버가 아님
@@ -57,7 +57,7 @@ public class AssigneeQueryServiceImpl implements AssigneeQueryService {
 
         // 그룹의 일정이 아닌 경우
         if (group == null) {
-            new ScheduleHandler(ErrorStatus.SCHEDULE_NOT_GROUP_TYPE);
+            throw new ScheduleHandler(ErrorStatus.SCHEDULE_NOT_GROUP_TYPE);
         }
 
         // 해당 그룹의 멤버가 아님
