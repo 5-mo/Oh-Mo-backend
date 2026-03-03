@@ -1,7 +1,6 @@
 package com.example.ohmobackend.web.dto.groupScheduleDto;
 
-import
-        com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -45,5 +44,42 @@ public class GroupScheduleRequestDto {
     public static class RoutineScheduleAssigneeRequestDto {
         private Long routineId;
         private Long memberGroupId;
+    }
+
+    @Getter
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class GroupTodoUpdateRequestDto {
+        private String content;
+        private LocalDate date;
+
+        @Schema(type = "string")
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:MM", timezone = "Asia/Seoul")
+        private LocalTime time;
+
+        @Schema(type = "string")
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:MM", timezone = "Asia/Seoul")
+        private LocalTime alarmTime;
+    }
+
+    @Getter
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class GroupRoutineUpdateRequestDto {
+        private String content;
+        private LocalDate date;
+
+        @Schema(type = "string")
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:MM", timezone = "Asia/Seoul")
+        private LocalTime time;
+
+        @Schema(type = "string")
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:MM", timezone = "Asia/Seoul")
+        private LocalTime alarmTime;
+
+        @JsonFormat(with = JsonFormat.Feature.ACCEPT_CASE_INSENSITIVE_PROPERTIES)
+        private Set<DayOfWeek> routineWeek;
     }
 }

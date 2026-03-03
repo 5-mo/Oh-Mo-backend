@@ -19,7 +19,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static com.example.ohmobackend.service.scheduleService.DateCalculator.getDatesFromRepeatWeeks;
@@ -73,6 +75,80 @@ public class GroupScheduleCommandServiceImpl implements GroupScheduleCommandServ
         Todo todo = todoRepository.save(TodoConverter.toEntity(schedule));
         eventPublisher.publishEvent(new ScheduleChangeEvent(group.getId(), request.getDate(), ScheduleEventType.TODO_CREATED));
         return TodoConverter.toTodoDto(todo);
+    }
+
+    public TodoResponseDto.TodoDto updateGroupTodo(Long todoId, GroupScheduleRequestDto.GroupTodoUpdateRequestDto request, Member member) {
+        Todo todo = todoRepository.findById(todoId)
+                .orElseThrow(() -> new ScheduleHandler(ErrorStatus.SCHEDULE_NOT_FOUND));
+        Schedule schedule = todo.getSchedule();
+        validateMemberGroup(member, schedule.getGroup());
+
+        if (request.getContent() != null) schedule.updateContent(request.getContent());
+        if (request.getDate() != null) schedule.updateDate(request.getDate());
+        if (request.getTime() != null) schedule.updateTime(request.getTime());
+        if (request.getAlarmTime() != null) schedule.updateAlarmTime(request.getAlarmTime());
+
+        eventPublisher.publishEvent(new ScheduleChangeEvent(schedule.getGroup().getId(), schedule.getDate(), ScheduleEventType.TODO_UPDATED));
+        return TodoConverter.toTodoDto(todo);
+    }
+
+    public void deleteGroupTodo(Long todoId, Member member) {
+        Todo todo = todoRepository.findById(todoId)
+                .orElseThrow(() -> new ScheduleHandler(ErrorStatus.SCHEDULE_NOT_FOUND));
+        Schedule schedule = todo.getSchedule();
+        validateMemberGroup(member, schedule.getGroup());
+
+        eventPublisher.publishEvent(new ScheduleChangeEvent(schedule.getGroup().getId(), schedule.getDate(), ScheduleEventType.TODO_DELETED));
+        scheduleRepository.delete(schedule);
+    }
+
+    public List<RoutineResponseDto.RoutineDto> updateGroupRoutine(Long scheduleId, GroupScheduleRequestDto.GroupRoutineUpdateRequestDto request, Member member) {
+        Schedule schedule = scheduleRepository.findById(scheduleId)
+                .orElseThrow(() -> new ScheduleHandler(ErrorStatus.SCHEDULE_NOT_FOUND));
+        validateMemberGroup(member, schedule.getGroup());
+
+        boolean routineChanged = false;
+        if (request.getContent() != null) schedule.updateContent(request.getContent());
+        if (request.getTime() != null) schedule.updateTime(request.getTime());
+        if (request.getAlarmTime() != null) schedule.updateAlarmTime(request.getAlarmTime());
+        if (request.getDate() != null) { schedule.updateDate(request.getDate()); routineChanged = true; }
+        if (request.getRoutineWeek() != null) { schedule.updateRepeatWeek(request.getRoutineWeek()); routineChanged = true; }
+
+        if (routineChanged) {
+            updateRoutinesIncrementally(schedule);
+        }
+
+        eventPublisher.publishEvent(new ScheduleChangeEvent(schedule.getGroup().getId(), schedule.getDate(), ScheduleEventType.ROUTINE_UPDATED));
+        return routineRepository.findAllBySchedule(schedule).stream()
+                .map(RoutineConverter::toRoutineDto)
+                .collect(Collectors.toList());
+    }
+
+    public void deleteGroupRoutine(Long routineId, Member member) {
+        Routine routine = routineRepository.findWithScheduleAndGroupById(routineId)
+                .orElseThrow(() -> new ScheduleHandler(ErrorStatus.SCHEDULE_NOT_FOUND));
+        validateMemberGroup(member, routine.getSchedule().getGroup());
+
+        eventPublisher.publishEvent(new ScheduleChangeEvent(routine.getSchedule().getGroup().getId(), routine.getDate(), ScheduleEventType.ROUTINE_DELETED));
+        routineRepository.delete(routine);
+    }
+
+    private void updateRoutinesIncrementally(Schedule schedule) {
+        Set<LocalDate> existingDates = routineRepository.findAllBySchedule(schedule).stream()
+                .map(Routine::getDate)
+                .collect(Collectors.toSet());
+        Set<LocalDate> newDates = new HashSet<>(getDatesFromRepeatWeeks(LocalDate.now(), schedule.getDate(), schedule.getRepeatWeek()));
+
+        List<Routine> toDelete = routineRepository.findAllBySchedule(schedule).stream()
+                .filter(r -> !newDates.contains(r.getDate()))
+                .toList();
+        routineRepository.deleteAll(toDelete);
+
+        List<Routine> toAdd = newDates.stream()
+                .filter(date -> !existingDates.contains(date))
+                .map(date -> RoutineConverter.toEntity(schedule, date))
+                .toList();
+        routineRepository.saveAll(toAdd);
     }
 
     private MemberGroup validateMemberGroup(Member member, Group group) {

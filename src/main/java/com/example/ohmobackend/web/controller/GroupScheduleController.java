@@ -88,4 +88,32 @@ public class GroupScheduleController {
         assigneeCommandService.updateAssigneeStatus(assigneeId, member);
         return ApiResponse.onSuccess(SuccessStatus.ASSIGNEE_STATUS_UPDATE_OK, null);
     }
+
+    @PatchMapping("/todo/{todoId}")
+    @Operation(summary = "그룹 투두 수정 API", description = "그룹 투두 수정 API 입니다.")
+    public ApiResponse<TodoResponseDto.TodoDto> updateGroupTodo(@PathVariable(name = "todoId") Long todoId, @RequestBody GroupScheduleRequestDto.GroupTodoUpdateRequestDto request, @AuthUser Member member) {
+        TodoResponseDto.TodoDto todoDto = groupScheduleCommandService.updateGroupTodo(todoId, request, member);
+        return ApiResponse.onSuccess(SuccessStatus.TODO_UPDATE_OK, todoDto);
+    }
+
+    @DeleteMapping("/todo/{todoId}")
+    @Operation(summary = "그룹 투두 삭제 API", description = "그룹 투두 삭제 API 입니다.")
+    public ApiResponse<Object> deleteGroupTodo(@PathVariable(name = "todoId") Long todoId, @AuthUser Member member) {
+        groupScheduleCommandService.deleteGroupTodo(todoId, member);
+        return ApiResponse.onSuccess(SuccessStatus.TODO_DELETE_OK, null);
+    }
+
+    @PatchMapping("/routine/{scheduleId}")
+    @Operation(summary = "그룹 루틴 수정 API", description = "그룹 루틴 수정 API 입니다.")
+    public ApiResponse<List<RoutineResponseDto.RoutineDto>> updateGroupRoutine(@PathVariable(name = "scheduleId") Long scheduleId, @RequestBody GroupScheduleRequestDto.GroupRoutineUpdateRequestDto request, @AuthUser Member member) {
+        List<RoutineResponseDto.RoutineDto> routineDtos = groupScheduleCommandService.updateGroupRoutine(scheduleId, request, member);
+        return ApiResponse.onSuccess(SuccessStatus.ROUTINE_UPDATE_OK, routineDtos);
+    }
+
+    @DeleteMapping("/routine/{routineId}")
+    @Operation(summary = "그룹 루틴 삭제 API", description = "그룹 루틴 삭제 API 입니다.")
+    public ApiResponse<Object> deleteGroupRoutine(@PathVariable(name = "routineId") Long routineId, @AuthUser Member member) {
+        groupScheduleCommandService.deleteGroupRoutine(routineId, member);
+        return ApiResponse.onSuccess(SuccessStatus.ROUTINE_DELETE_OK, null);
+    }
 }

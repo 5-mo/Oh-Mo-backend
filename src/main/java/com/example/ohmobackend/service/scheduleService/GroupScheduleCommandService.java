@@ -8,8 +8,15 @@ import com.example.ohmobackend.web.dto.todoDto.TodoResponseDto;
 import java.util.List;
 
 public interface GroupScheduleCommandService {
-    public List<RoutineResponseDto.RoutineDto> addGroupRoutine(GroupScheduleRequestDto.GroupScheduleAddRequestDto request, Member member);
+    List<RoutineResponseDto.RoutineDto> addGroupRoutine(GroupScheduleRequestDto.GroupScheduleAddRequestDto request, Member member);
 
-    public TodoResponseDto.TodoDto addGroupTodo(GroupScheduleRequestDto.GroupScheduleAddRequestDto request, Member member);
+    TodoResponseDto.TodoDto addGroupTodo(GroupScheduleRequestDto.GroupScheduleAddRequestDto request, Member member);
 
+    TodoResponseDto.TodoDto updateGroupTodo(Long todoId, GroupScheduleRequestDto.GroupTodoUpdateRequestDto request, Member member);
+
+    void deleteGroupTodo(Long todoId, Member member);
+
+    List<RoutineResponseDto.RoutineDto> updateGroupRoutine(Long scheduleId, GroupScheduleRequestDto.GroupRoutineUpdateRequestDto request, Member member);
+
+    void deleteGroupRoutine(Long routineId, Member member);
 }
