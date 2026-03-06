@@ -29,7 +29,7 @@ spring:
     show-sql: false
   data:
     redis:
-      host: redis
+      host: localhost
       port: 6379
   mail:
     host: smtp.gmail.com
@@ -52,6 +52,20 @@ jwt:
 
 nlp:
   api-url: "http://localhost:8000"
+  connect-timeout: 3000
+  read-timeout: 10000
+
+resilience4j:
+  circuitbreaker:
+    instances:
+      nlpApi:
+        registerHealthIndicator: true
+        slidingWindowSize: 10
+        failureRateThreshold: 50
+        waitDurationInOpenState: 30s
+        permittedNumberOfCallsInHalfOpenState: 3
+        recordExceptions:
+          - org.springframework.web.client.ResourceAccessException
 
 management:
   endpoints:

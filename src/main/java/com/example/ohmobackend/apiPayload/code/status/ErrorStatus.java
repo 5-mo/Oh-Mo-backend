@@ -45,6 +45,8 @@ public enum ErrorStatus implements BaseErrorCode {
     SCHEDULE_INVALID_ALARM_TIME(HttpStatus.BAD_REQUEST, "SCHEDULE4005", "알람 시간 등록이 불가능한 일정입니다."),
     SCHEDULE_NOT_GROUP_TYPE(HttpStatus.BAD_REQUEST, "SCHEDULE4006", "그룹 일정이 아닙니다."),
     NLP_PARSE_FAILED(HttpStatus.BAD_REQUEST, "SCHEDULE4007", "텍스트 파싱 실패"),
+    NLP_SERVER_TIMEOUT(HttpStatus.REQUEST_TIMEOUT, "SCHEDULE5001", "AI 서버 응답 시간이 초과되었습니다. 잠시 후 다시 시도해주세요."),
+    NLP_SERVER_UNAVAILABLE(HttpStatus.SERVICE_UNAVAILABLE, "SCHEDULE5002", "AI 서버를 현재 사용할 수 없습니다. 잠시 후 다시 시도해주세요."),
 
     // 질문 관련
     QUESTION_NOT_FOUND(HttpStatus.BAD_REQUEST, "QUESTION4001", "등록된 질문이 없습니다."),
