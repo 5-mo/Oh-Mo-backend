@@ -30,9 +30,10 @@ public class SseService {
 
         emitterRepository.save(groupId, emitter);
 
-        // 연결 종료/타임아웃 시 정리 로직
+        // 연결 종료/타임아웃/에러 시 정리 로직
         emitter.onCompletion(() -> emitterRepository.delete(groupId, emitter));
         emitter.onTimeout(() -> emitterRepository.delete(groupId, emitter));
+        emitter.onError(e -> emitterRepository.delete(groupId, emitter));
 
         // 503 에러 방지를 위한 첫 더미 데이터 전송
         try {

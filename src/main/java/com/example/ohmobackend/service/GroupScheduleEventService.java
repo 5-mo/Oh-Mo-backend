@@ -32,7 +32,8 @@ public class GroupScheduleEventService {
                                 "eventType", event.getEventType()
                         )));
             } catch (IOException e) {
-                log.error("SSE 이벤트 전송 실패 groupId={}", event.getGroupId(), e);
+                log.error("SSE 이벤트 전송 실패 groupId={}, emitter 제거", event.getGroupId(), e);
+                emitterRepository.delete(event.getGroupId(), emitter);
             }
         });
     }

@@ -15,9 +15,6 @@ public class EmitterRepository {
 
     public void save(Long groupId, SseEmitter emitter) {
         emitters.computeIfAbsent(groupId, k -> new CopyOnWriteArrayList<>()).add(emitter);
-
-        emitter.onCompletion(() -> delete(groupId, emitter));
-        emitter.onTimeout(() -> delete(groupId, emitter));
     }
 
     public List<SseEmitter> findAllByGroupId(Long groupId) {

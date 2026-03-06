@@ -24,6 +24,7 @@ public class NoticeCommandServiceImpl implements NoticeCommandService {
     private final NoticeRepository noticeRepository;
     private final MemberGroupRepository memberGroupRepository;
 
+    @CacheEvict(value = "noticesByMonth", allEntries = true)
     public NoticeResponseDto.NoticeDto addNotice(NoticeRequestDto.AddNoticeDto requestDto, Member member) {
         Group group = groupRepository.findById(requestDto.getGroupId())
                 .orElseThrow(() -> new GroupHandler(ErrorStatus.GROUP_NOT_FOUND));
@@ -38,7 +39,7 @@ public class NoticeCommandServiceImpl implements NoticeCommandService {
     }
 
     @Override
-    @CacheEvict(value = "noticesByMonth", key = "#groupId + '_' + #yearMonth")
+    @CacheEvict(value = "noticesByMonth", allEntries = true)
     public NoticeResponseDto.NoticeDto pathNotice(Long noticeId, NoticeRequestDto.PatchNoticeDto requestDto, Member member) {
         Notice notice = noticeRepository.findById(noticeId)
                 .orElseThrow(() -> new GroupHandler(ErrorStatus.GROUP_NOT_FOUND));
@@ -60,7 +61,7 @@ public class NoticeCommandServiceImpl implements NoticeCommandService {
     }
 
     @Override
-    @CacheEvict(value = "noticesByMonth", key = "#groupId + '_' + #yearMonth")
+    @CacheEvict(value = "noticesByMonth", allEntries = true)
     public void deleteNotice(Long noticeId, Member member) {
         Notice notice = noticeRepository.findById(noticeId)
                 .orElseThrow(() -> new GroupHandler(ErrorStatus.GROUP_NOT_FOUND));
