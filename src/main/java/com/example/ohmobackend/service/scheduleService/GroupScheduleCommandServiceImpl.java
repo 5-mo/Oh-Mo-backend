@@ -98,6 +98,7 @@ public class GroupScheduleCommandServiceImpl implements GroupScheduleCommandServ
         validateMemberGroup(member, schedule.getGroup());
 
         eventPublisher.publishEvent(new ScheduleChangeEvent(schedule.getGroup().getId(), schedule.getDate(), ScheduleEventType.TODO_DELETED));
+        todoRepository.delete(todo);
         scheduleRepository.delete(schedule);
     }
 

@@ -49,6 +49,7 @@ public class TodoCommandServiceImpl implements TodoCommandService{
             throw new MemberHandler(ErrorStatus.INVALID_MEMBER);
         }
 
+        todoRepository.delete(todo);
         scheduleRepository.delete(todo.getSchedule());
     }
 }
