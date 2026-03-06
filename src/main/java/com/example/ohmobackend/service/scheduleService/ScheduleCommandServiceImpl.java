@@ -16,13 +16,8 @@ import com.example.ohmobackend.web.dto.scheduleDto.ScheduleResponseDto;
 import com.example.ohmobackend.web.dto.todoDto.TodoResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDate;
 import java.util.HashSet;
@@ -40,8 +35,7 @@ import static com.example.ohmobackend.service.scheduleService.DateCalculator.get
 @Transactional
 public class ScheduleCommandServiceImpl implements ScheduleCommandService {
 
-    @Value("${nlp.api-url}")
-    private String nlpApiUrl;
+    final private NlpApiClient nlpApiClient;
     final private MemberCategoryRepository memberCategoryRepository;
     final private ScheduleRepository scheduleRepository;
     final private TodoRepository todoRepository;
@@ -106,7 +100,7 @@ public class ScheduleCommandServiceImpl implements ScheduleCommandService {
 
     @Override
     public TodoResponseDto.TodoDto nlpAddTodo(ScheduleRequestDto.NlpAddRequestDto requestDto, Member member) {
-        Map<String, Object> parsedResult = callNlpApi(requestDto.getText());
+        Map<String, Object> parsedResult = nlpApiClient.extractSchedule(requestDto.getText());
         MemberCategory memberCategory = memberCategoryRepository.findByMemberAndCategoryNameAndScheduleType(
                         member, "default", ScheduleType.TO_DO)
                 .orElseThrow(() -> new MemberCategoryHandler(ErrorStatus.MEMBER_CATEGORY_NOT_FOUND));
@@ -274,18 +268,5 @@ public class ScheduleCommandServiceImpl implements ScheduleCommandService {
                 .toList();
     }
 
-    private Map<String, Object> callNlpApi(String text) {
-        RestTemplate restTemplate = new RestTemplate();
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.TEXT_PLAIN);
-        HttpEntity<String> entity = new HttpEntity<>(text, headers);
 
-        ResponseEntity<Map> response = restTemplate.postForEntity(nlpApiUrl + "/nlp/extract-text", entity, Map.class);
-
-        if (!response.getStatusCode().is2xxSuccessful() || response.getBody() == null) {
-            throw new ScheduleHandler(ErrorStatus.NLP_PARSE_FAILED);
-        }
-
-        return (Map<String, Object>) response.getBody().get("result");
-    }
 }
