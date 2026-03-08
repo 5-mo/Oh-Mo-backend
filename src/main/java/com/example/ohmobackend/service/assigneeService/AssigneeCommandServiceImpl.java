@@ -86,7 +86,6 @@ public class AssigneeCommandServiceImpl implements AssigneeCommandService {
         }
 
         scheduleAssignee.updateStatus();
-        scheduleAssigneeRepository.save(scheduleAssignee);
 
         AssignableTask task = scheduleAssignee.getTask();
         boolean allCompleted = !scheduleAssigneeRepository.existsIncompleteByTask(task.getId());
