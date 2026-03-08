@@ -3,8 +3,11 @@ package com.example.ohmobackend.repository;
 import com.example.ohmobackend.domain.*;
 import com.example.ohmobackend.domain.enums.ScheduleType;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+
+import jakarta.persistence.LockModeType;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -56,4 +59,8 @@ public interface TodoRepository extends JpaRepository<Todo, Long> {
             "JOIN FETCH s.group g " +
             "WHERE t.id = :id")
     public Optional<Todo> findWithScheduleAndGroupById(@Param("id") Long id);
+
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Query("SELECT t FROM Todo t WHERE t.id = :id")
+    Optional<Todo> findByIdWithLock(@Param("id") Long id);
 }

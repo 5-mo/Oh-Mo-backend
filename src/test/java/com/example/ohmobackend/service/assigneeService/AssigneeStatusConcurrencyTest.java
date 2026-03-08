@@ -199,8 +199,7 @@ class AssigneeStatusConcurrencyTest {
         // 락 없는 현재 코드에서는 race condition으로 false가 될 수 있음
         Todo result = todoRepository.findById(todo.getId()).orElseThrow();
         assertThat(result.isStatus())
-                .as("두 담당자 모두 완료 처리했으므로 투두 status도 true여야 한다 " +
-                    "(실패 시 → race condition 버그 확인됨, Pessimistic Lock 적용 필요)")
+                .as("두 담당자 모두 완료 처리했으므로 투두 status도 true여야 한다 ")
                 .isTrue();
     }
 }
