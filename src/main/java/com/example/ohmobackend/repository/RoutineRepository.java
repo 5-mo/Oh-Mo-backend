@@ -2,8 +2,11 @@ package com.example.ohmobackend.repository;
 
 import com.example.ohmobackend.domain.*;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+
+import jakarta.persistence.LockModeType;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -11,9 +14,9 @@ import java.util.Optional;
 
 public interface RoutineRepository extends JpaRepository<Routine, Long> {
 
-    @Query("SELECT r FROM MemberCategory mc " +
-            "JOIN mc.scheduleList s " +
-            "JOIN s.routineList r " +
+    @Query("SELECT r FROM Routine r " +
+            "JOIN FETCH r.schedule s " +
+            "JOIN FETCH s.memberCategory mc " +
             "WHERE mc.member = :member " +
             "AND r.date = :date")
     List<Routine> findRoutinesWithScheduleByMemberAndDate(
@@ -58,4 +61,8 @@ public interface RoutineRepository extends JpaRepository<Routine, Long> {
             "JOIN FETCH s.group g " +
             "WHERE r.id = :id")
     public Optional<Routine> findWithScheduleAndGroupById(@Param("id") Long id);
+
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Query("SELECT r FROM Routine r WHERE r.id = :id")
+    Optional<Routine> findByIdWithLock(@Param("id") Long id);
 }

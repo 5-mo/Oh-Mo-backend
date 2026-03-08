@@ -85,10 +85,19 @@ public class AssigneeCommandServiceImpl implements AssigneeCommandService {
             throw new MemberHandler(ErrorStatus.INVALID_MEMBER);
         }
 
-        scheduleAssignee.updateStatus();
-        scheduleAssigneeRepository.save(scheduleAssignee);
+        // 부모 Task row에 Pessimistic Lock 획득 (race condition 방지)
+        // 동일 Todo/Routine에 대한 다른 트랜잭션은 이 락이 풀릴 때까지 대기
+        AssignableTask task;
+        if (scheduleAssignee.getTodo() != null) {
+            task = todoRepository.findByIdWithLock(scheduleAssignee.getTodo().getId())
+                    .orElseThrow(() -> new ScheduleHandler(ErrorStatus.SCHEDULE_NOT_FOUND));
+        } else {
+            task = routineRepository.findByIdWithLock(scheduleAssignee.getRoutine().getId())
+                    .orElseThrow(() -> new ScheduleHandler(ErrorStatus.SCHEDULE_NOT_FOUND));
+        }
 
-        AssignableTask task = scheduleAssignee.getTask();
+        scheduleAssignee.updateStatus();
+
         boolean allCompleted = !scheduleAssigneeRepository.existsIncompleteByTask(task.getId());
         task.updateStatus(allCompleted);
 
