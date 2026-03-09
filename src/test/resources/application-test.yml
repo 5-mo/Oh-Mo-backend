@@ -15,6 +15,9 @@ spring:
         hbm2ddl:
           halt_on_error: false
 
+  cache:
+    type: none
+
 jwt:
   secret: dGVzdC1qd3Qtc2VjcmV0LWtleS1mb3ItdGVzdGluZy1wdXJwb3NlLW9ubHk=
 
