@@ -80,6 +80,13 @@ public class GroupController {
         return ApiResponse.onSuccess(SuccessStatus.GROUP_LEAVE_OK, null);
     }
 
+    @PatchMapping("/manager")
+    @Operation(summary = "방장 넘기기 API", description = "현재 방장이 다른 멤버에게 방장을 넘깁니다.")
+    public ApiResponse<Object> transferManager(@AuthUser Member member, @RequestBody GroupRequestDto.TransferManagerRequestDto request) {
+        groupCommandService.transferManager(member, request);
+        return ApiResponse.onSuccess(SuccessStatus.GROUP_TRANSFER_MANAGER_OK, null);
+    }
+
     @GetMapping(value = "/{groupId}/subscribe", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     @Operation(summary = "일정 구독 API", description = "해당 그룹의 일정 변경 사항을 실시간으로 수신합니다.")
     public SseEmitter subscribe(

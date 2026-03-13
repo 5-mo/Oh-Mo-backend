@@ -45,4 +45,8 @@ public class MemberGroup extends BaseEntity {
         this.nickname = nickname;
     }
 
+    public void updateRole(GroupRole role) {
+        this.role = role;
+    }
+
 }

@@ -55,4 +55,14 @@ public class GroupRequestDto {
         private Long groupId;
     }
 
+    @Getter
+    @Setter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class TransferManagerRequestDto {
+        private Long groupId;
+        private Long targetMemberGroupId;
+    }
+
 }
