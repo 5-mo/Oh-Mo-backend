@@ -61,6 +61,7 @@ public enum ErrorStatus implements BaseErrorCode {
     GROUP_EXISTS_MEMBER(HttpStatus.BAD_REQUEST, "GROUP4002", "그룹에 가입되어 있습니다."),
     GROUP_NICKNAME_DUPLICATED(HttpStatus.BAD_REQUEST, "GROUP4003", "이미 사용중인 닉네임입니다."),
     GROUP_MEMBER_LIMIT_EXCEEDED(HttpStatus.BAD_REQUEST, "GROUP4004", "그룹 최대 인원을 초과했습니다."),
+    GROUP_MANAGER_CANNOT_LEAVE(HttpStatus.BAD_REQUEST, "GROUP4005", "그룹 매니저는 다른 멤버가 있을 경우 그룹을 나갈 수 없습니다."),
 
     // 루틴
     ROUTINE_NOT_FOUND(HttpStatus.BAD_REQUEST, "ROUTINE4001", "루틴을 찾을 수 없습니다."),
