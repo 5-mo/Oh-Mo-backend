@@ -10,4 +10,5 @@ public interface GroupCommandService {
     public GroupResponseDto.GroupDto addGroup(Member member, GroupRequestDto.AddGroupRequestDto requestDto);
     public GroupResponseDto.GroupDto enterGroup(Member member, GroupRequestDto.EnterGroupRequestDto requestDto);
     public MemberGroupResponseDto.MemberGroupInfoDto updateNickname(Member member, GroupRequestDto.AddGroupNicknameDto requestDto);
+    public void leaveGroup(Member member, GroupRequestDto.LeaveGroupRequestDto requestDto);
 }

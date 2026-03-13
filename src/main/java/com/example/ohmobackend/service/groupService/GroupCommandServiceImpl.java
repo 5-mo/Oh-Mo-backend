@@ -62,4 +62,23 @@ public class GroupCommandServiceImpl implements GroupCommandService {
         memberGroup.updateNickname(requestDto.getNickname());
         return MemberGroupConverter.toMemberGroupInfoDto(memberGroup);
     }
+
+    @Override
+    @Transactional
+    public void leaveGroup(Member member, GroupRequestDto.LeaveGroupRequestDto requestDto) {
+        Group group = groupRepository.findById(requestDto.getGroupId())
+                .orElseThrow(() -> new GroupHandler(ErrorStatus.GROUP_NOT_FOUND));
+
+        MemberGroup memberGroup = groupValidator.validateMemberGroup(member, group);
+
+        if (memberGroup.getRole() == GroupRole.MANAGER) {
+            long memberCount = memberGroupRepository.countByGroup(group);
+            if (memberCount > 1) {
+                throw new GroupHandler(ErrorStatus.GROUP_MANAGER_CANNOT_LEAVE);
+            }
+            groupRepository.delete(group);
+        } else {
+            memberGroupRepository.delete(memberGroup);
+        }
+    }
 }

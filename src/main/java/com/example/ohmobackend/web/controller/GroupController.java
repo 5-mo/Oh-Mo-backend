@@ -73,6 +73,13 @@ public class GroupController {
         return ApiResponse.onSuccess(SuccessStatus.GROUP_DELETE_OK, null);
     }
 
+    @DeleteMapping("/leave")
+    @Operation(summary = "그룹 나가기 API", description = "그룹 나가기 API 입니다. 매니저는 다른 멤버가 있을 경우 나갈 수 없습니다.")
+    public ApiResponse<Object> leaveGroup(@AuthUser Member member, @RequestBody GroupRequestDto.LeaveGroupRequestDto request) {
+        groupCommandService.leaveGroup(member, request);
+        return ApiResponse.onSuccess(SuccessStatus.GROUP_LEAVE_OK, null);
+    }
+
     @GetMapping(value = "/{groupId}/subscribe", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     @Operation(summary = "일정 구독 API", description = "해당 그룹의 일정 변경 사항을 실시간으로 수신합니다.")
     public SseEmitter subscribe(
