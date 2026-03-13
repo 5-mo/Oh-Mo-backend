@@ -24,8 +24,12 @@ EXPOSE 8080
 USER nobody
 ENTRYPOINT [                                                \
     "java",                                                 \
-    "-jar",                                                 \
+    "-XX:MetaspaceSize=128m",                               \
+    "-XX:MaxMetaspaceSize=192m",                            \
+    "-Xms256m",                                             \
+    "-Xmx384m",                                             \
     "-Djava.security.egd=file:/dev/./urandom",              \
     "-Dsun.net.inetaddr.ttl=0",                             \
+    "-jar",                                                 \
     "app.jar"              \
 ]
