@@ -46,6 +46,16 @@ public class GroupScheduleController {
         return ApiResponse.onSuccess(SuccessStatus.SCHEDULE_TO_DO_OK, todoDto);
     }
 
+    @PostMapping("/nlp/todo")
+    @Operation(summary = "그룹 투두 AI 일정 등록 API",
+            description = "그룹 투두 AI 일정 등록 API입니다. 입력 필수 요소: groupId, text")
+    public ApiResponse<TodoResponseDto.TodoDto> nlpAddGroupTodo(
+            @RequestBody GroupScheduleRequestDto.GroupNlpAddRequestDto request,
+            @AuthUser Member member) {
+        TodoResponseDto.TodoDto todoDto = groupScheduleCommandService.nlpAddGroupTodo(request, member);
+        return ApiResponse.onSuccess(SuccessStatus.SCHEDULE_TO_DO_OK, todoDto);
+    }
+
     @PostMapping("/assignee-todo")
     @Operation(summary = "그룹 투두 일정 담당자 등록 API", description = "그룹 투두 일정 담당자 등록 API 입니다.")
     public ApiResponse<Object> addTodoScheduleAssignee(@RequestBody GroupScheduleRequestDto.TodoScheduleAssigneeRequestDto request, @AuthUser Member member) {

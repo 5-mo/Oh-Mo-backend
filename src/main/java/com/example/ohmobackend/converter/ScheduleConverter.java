@@ -68,6 +68,27 @@ public class ScheduleConverter {
         return null;
     }
 
+    static public Schedule parsedResultToGroupScheduleEntity(
+            Map<String, Object> parsedResult,
+            Group group,
+            MemberGroup memberGroup) {
+
+        LocalDate date = parseDate(parsedResult.get("date"));
+        LocalTime time = parseTime(parsedResult.get("time"));
+        LocalTime alarmTime = parseTime(parsedResult.get("alarm_time"));
+
+        return Schedule.builder()
+                .date(date)
+                .time(time)
+                .alarmTime(alarmTime)
+                .content((String) parsedResult.get("content"))
+                .scheduleType(ScheduleType.TO_DO)
+                .group(group)
+                .repeatWeek(new HashSet<>())
+                .createdBy(memberGroup)
+                .build();
+    }
+
     static public Schedule groupScheduleToEntity(
             GroupScheduleRequestDto.GroupScheduleAddRequestDto requestDto,
             Group group, ScheduleType scheduleType, MemberGroup memberGroup) {

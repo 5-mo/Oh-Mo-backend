@@ -21,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -37,6 +38,7 @@ public class GroupScheduleCommandServiceImpl implements GroupScheduleCommandServ
     final private MemberGroupRepository memberGroupRepository;
     final private ScheduleRepository scheduleRepository;
     final private ApplicationEventPublisher eventPublisher;
+    final private NlpApiClient nlpApiClient;
 
     public List<RoutineResponseDto.RoutineDto> addGroupRoutine(GroupScheduleRequestDto.GroupScheduleAddRequestDto request, Member member) {
         Group group = groupScheduleQueryService.getGroup(request.getGroupId());
@@ -61,6 +63,19 @@ public class GroupScheduleCommandServiceImpl implements GroupScheduleCommandServ
         return routineList.stream()
                 .map(RoutineConverter::toRoutineDto)
                 .collect(Collectors.toList());
+    }
+
+    public TodoResponseDto.TodoDto nlpAddGroupTodo(GroupScheduleRequestDto.GroupNlpAddRequestDto request, Member member) {
+        Group group = groupScheduleQueryService.getGroup(request.getGroupId());
+        MemberGroup memberGroup = validateMemberGroup(member, group);
+
+        Map<String, Object> parsedResult = nlpApiClient.extractSchedule(request.getText());
+        Schedule schedule = ScheduleConverter.parsedResultToGroupScheduleEntity(parsedResult, group, memberGroup);
+        scheduleRepository.save(schedule);
+        Todo todo = todoRepository.save(TodoConverter.toEntity(schedule));
+
+        eventPublisher.publishEvent(new ScheduleChangeEvent(group.getId(), schedule.getDate(), ScheduleEventType.TODO_CREATED));
+        return TodoConverter.toTodoDto(todo);
     }
 
     public TodoResponseDto.TodoDto addGroupTodo(GroupScheduleRequestDto.GroupScheduleAddRequestDto request, Member member) {
