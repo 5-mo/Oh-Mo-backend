@@ -12,6 +12,8 @@ public interface GroupScheduleCommandService {
 
     TodoResponseDto.TodoDto addGroupTodo(GroupScheduleRequestDto.GroupScheduleAddRequestDto request, Member member);
 
+    TodoResponseDto.TodoDto nlpAddGroupTodo(GroupScheduleRequestDto.GroupNlpAddRequestDto request, Member member);
+
     TodoResponseDto.TodoDto updateGroupTodo(Long todoId, GroupScheduleRequestDto.GroupTodoUpdateRequestDto request, Member member);
 
     void deleteGroupTodo(Long todoId, Member member);

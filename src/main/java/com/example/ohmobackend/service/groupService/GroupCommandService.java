@@ -12,4 +12,5 @@ public interface GroupCommandService {
     public MemberGroupResponseDto.MemberGroupInfoDto updateNickname(Member member, GroupRequestDto.AddGroupNicknameDto requestDto);
     public void leaveGroup(Member member, GroupRequestDto.LeaveGroupRequestDto requestDto);
     public void transferManager(Member member, GroupRequestDto.TransferManagerRequestDto requestDto);
+    public void kickMember(Member member, GroupRequestDto.KickMemberRequestDto requestDto);
 }

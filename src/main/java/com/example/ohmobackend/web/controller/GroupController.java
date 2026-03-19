@@ -80,6 +80,13 @@ public class GroupController {
         return ApiResponse.onSuccess(SuccessStatus.GROUP_LEAVE_OK, null);
     }
 
+    @DeleteMapping("/kick")
+    @Operation(summary = "그룹 멤버 강퇴 API", description = "방장이 특정 멤버를 그룹에서 강퇴합니다.")
+    public ApiResponse<Object> kickMember(@AuthUser Member member, @RequestBody GroupRequestDto.KickMemberRequestDto request) {
+        groupCommandService.kickMember(member, request);
+        return ApiResponse.onSuccess(SuccessStatus.GROUP_KICK_MEMBER_OK, null);
+    }
+
     @PatchMapping("/manager")
     @Operation(summary = "방장 넘기기 API", description = "현재 방장이 다른 멤버에게 방장을 넘깁니다.")
     public ApiResponse<Object> transferManager(@AuthUser Member member, @RequestBody GroupRequestDto.TransferManagerRequestDto request) {

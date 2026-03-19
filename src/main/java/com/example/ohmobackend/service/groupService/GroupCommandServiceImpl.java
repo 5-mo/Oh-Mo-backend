@@ -84,6 +84,27 @@ public class GroupCommandServiceImpl implements GroupCommandService {
 
     @Override
     @Transactional
+    public void kickMember(Member member, GroupRequestDto.KickMemberRequestDto requestDto) {
+        Group group = groupRepository.findById(requestDto.getGroupId())
+                .orElseThrow(() -> new GroupHandler(ErrorStatus.GROUP_NOT_FOUND));
+
+        MemberGroup requester = groupValidator.validateMemberGroup(member, group);
+        if (requester.getRole() != GroupRole.MANAGER) {
+            throw new GroupHandler(ErrorStatus.GROUP_NOT_MANAGER);
+        }
+
+        MemberGroup targetMemberGroup = memberGroupRepository.findById(requestDto.getTargetMemberGroupId())
+                .orElseThrow(() -> new GroupHandler(ErrorStatus.MEMBER_GROUP_NOT_FOUND));
+
+        if (targetMemberGroup.getRole() == GroupRole.MANAGER) {
+            throw new GroupHandler(ErrorStatus.GROUP_CANNOT_KICK_MANAGER);
+        }
+
+        memberGroupRepository.delete(targetMemberGroup);
+    }
+
+    @Override
+    @Transactional
     public void transferManager(Member member, GroupRequestDto.TransferManagerRequestDto requestDto) {
         Group group = groupRepository.findById(requestDto.getGroupId())
                 .orElseThrow(() -> new GroupHandler(ErrorStatus.GROUP_NOT_FOUND));

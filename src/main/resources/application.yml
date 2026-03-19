@@ -60,12 +60,16 @@ resilience4j:
     instances:
       nlpApi:
         registerHealthIndicator: true
+        slidingWindowType: COUNT_BASED
         slidingWindowSize: 10
-        failureRateThreshold: 50
-        waitDurationInOpenState: 30s
-        permittedNumberOfCallsInHalfOpenState: 3
+        failureRateThreshold: 40            # 일정 생성 쓰기 연산으로 사용자 임팩트가 크므로 기본값(50%)보다 엄격하게 설정
+        slowCallDurationThreshold: 5s       # OpenAI 응답 지연 감지 기준, read-timeout(10s)의 절반 초과 시 비정상으로 판단
+        slowCallRateThreshold: 50           # 지연 호출이 50% 이상이면 OpenAI 서버 과부하 상태로 판단
+        waitDurationInOpenState: 30s        # OpenAI 장애 시 불필요한 재시도 방지, 통상 수분 내 복구되므로 30초 간격으로 재시도
+        permittedNumberOfCallsInHalfOpenState: 2
         recordExceptions:
-          - org.springframework.web.client.ResourceAccessException
+          - org.springframework.web.client.ResourceAccessException  # 타임아웃/네트워크 오류
+          - org.springframework.web.client.HttpServerErrorException # OpenAI 5xx 오류
 
 management:
   endpoints:

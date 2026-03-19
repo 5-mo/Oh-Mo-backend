@@ -35,6 +35,12 @@ public class GroupScheduleRequestDto {
     }
 
     @Getter
+    public static class GroupNlpAddRequestDto {
+        private Long groupId;
+        private String text;
+    }
+
+    @Getter
     public static class TodoScheduleAssigneeRequestDto {
         private Long todoId;
         private Long memberGroupId;

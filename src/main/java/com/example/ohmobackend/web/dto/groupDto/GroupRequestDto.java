@@ -65,4 +65,14 @@ public class GroupRequestDto {
         private Long targetMemberGroupId;
     }
 
+    @Getter
+    @Setter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class KickMemberRequestDto {
+        private Long groupId;
+        private Long targetMemberGroupId;
+    }
+
 }
