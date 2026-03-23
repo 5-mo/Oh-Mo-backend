@@ -2,6 +2,7 @@ package com.example.ohmobackend.service.groupService;
 
 import com.example.ohmobackend.apiPayload.code.status.ErrorStatus;
 import com.example.ohmobackend.apiPayload.exception.handler.GroupHandler;
+import com.example.ohmobackend.apiPayload.exception.handler.MemberHandler;
 import com.example.ohmobackend.converter.GroupConverter;
 import com.example.ohmobackend.converter.MemberGroupConverter;
 import com.example.ohmobackend.domain.Group;
@@ -10,6 +11,7 @@ import com.example.ohmobackend.domain.MemberGroup;
 import com.example.ohmobackend.domain.enums.GroupRole;
 import com.example.ohmobackend.repository.GroupRepository;
 import com.example.ohmobackend.repository.MemberGroupRepository;
+import com.example.ohmobackend.repository.MemberRepository;
 import com.example.ohmobackend.web.dto.groupDto.GroupRequestDto;
 import com.example.ohmobackend.web.dto.groupDto.GroupResponseDto;
 import com.example.ohmobackend.web.dto.memberGroupDto.MemberGroupResponseDto;
@@ -25,6 +27,7 @@ public class GroupCommandServiceImpl implements GroupCommandService {
 
     final GroupRepository groupRepository;
     final MemberGroupRepository memberGroupRepository;
+    final MemberRepository memberRepository;
     final GroupValidator groupValidator;
 
     @Override
@@ -119,5 +122,26 @@ public class GroupCommandServiceImpl implements GroupCommandService {
 
         currentManager.updateRole(GroupRole.MEMBER);
         targetMemberGroup.updateRole(GroupRole.MANAGER);
+    }
+
+    @Override
+    @Transactional
+    public void inviteMember(Member member, GroupRequestDto.InviteMemberRequestDto requestDto) {
+        Group group = groupRepository.findById(requestDto.getGroupId())
+                .orElseThrow(() -> new GroupHandler(ErrorStatus.GROUP_NOT_FOUND));
+
+        MemberGroup requester = groupValidator.validateMemberGroup(member, group);
+        if (requester.getRole() != GroupRole.MANAGER) {
+            throw new GroupHandler(ErrorStatus.GROUP_NOT_MANAGER);
+        }
+
+        Member targetMember = memberRepository.findById(requestDto.getTargetMemberId())
+                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+
+        groupValidator.validateExistMember(targetMember, group);
+        groupValidator.validateGroupCount(group);
+
+        MemberGroup newMemberGroup = MemberGroupConverter.toMemberGroupEntity(targetMember, group, GroupRole.MEMBER);
+        memberGroupRepository.save(newMemberGroup);
     }
 }

@@ -94,6 +94,13 @@ public class GroupController {
         return ApiResponse.onSuccess(SuccessStatus.GROUP_TRANSFER_MANAGER_OK, null);
     }
 
+    @PostMapping("/invite")
+    @Operation(summary = "멤버 초대 API", description = "방장이 멤버 ID로 특정 멤버를 그룹에 초대합니다.")
+    public ApiResponse<Object> inviteMember(@AuthUser Member member, @RequestBody GroupRequestDto.InviteMemberRequestDto request) {
+        groupCommandService.inviteMember(member, request);
+        return ApiResponse.onSuccess(SuccessStatus.GROUP_INVITE_MEMBER_OK, null);
+    }
+
     @GetMapping(value = "/{groupId}/subscribe", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     @Operation(summary = "일정 구독 API", description = "해당 그룹의 일정 변경 사항을 실시간으로 수신합니다.")
     public SseEmitter subscribe(

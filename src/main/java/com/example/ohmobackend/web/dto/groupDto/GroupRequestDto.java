@@ -75,4 +75,14 @@ public class GroupRequestDto {
         private Long targetMemberGroupId;
     }
 
+    @Getter
+    @Setter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class InviteMemberRequestDto {
+        private Long groupId;
+        private Long targetMemberId;
+    }
+
 }

@@ -13,4 +13,5 @@ public interface GroupCommandService {
     public void leaveGroup(Member member, GroupRequestDto.LeaveGroupRequestDto requestDto);
     public void transferManager(Member member, GroupRequestDto.TransferManagerRequestDto requestDto);
     public void kickMember(Member member, GroupRequestDto.KickMemberRequestDto requestDto);
+    public void inviteMember(Member member, GroupRequestDto.InviteMemberRequestDto requestDto);
 }
