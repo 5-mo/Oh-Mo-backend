@@ -9,6 +9,7 @@ import org.springframework.data.repository.query.Param;
 import jakarta.persistence.LockModeType;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -66,4 +67,7 @@ public interface RoutineRepository extends JpaRepository<Routine, Long> {
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("SELECT r FROM Routine r WHERE r.id = :id")
     Optional<Routine> findByIdWithLock(@Param("id") Long id);
+
+    @Query("SELECT r FROM Routine r JOIN FETCH r.schedule s WHERE s.alarmTime = :alarmTime AND r.date = :date AND s.group IS NOT NULL")
+    List<Routine> findGroupRoutinesWithAlarm(@Param("alarmTime") LocalTime alarmTime, @Param("date") LocalDate date);
 }

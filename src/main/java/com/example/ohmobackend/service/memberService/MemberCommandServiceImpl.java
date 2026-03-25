@@ -96,4 +96,9 @@ public class MemberCommandServiceImpl implements MemberCommandService {
         String fileName = "profile/" + email + "_" + System.currentTimeMillis();
         return fileUploadService.upload(profileImage, fileName);
     }
+
+    @Override
+    public void updateFcmToken(Member member, String fcmToken) {
+        member.updateFcmToken(fcmToken);
+    }
 }

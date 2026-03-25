@@ -12,4 +12,5 @@ public interface MemberCommandService {
     public void updatePassword(Member member, MemberRequestDto.UpdatePasswordDto request);
     public void deleteMemberProfileImageFromS3(Member member);
     public String uploadProfileImageToS3(MultipartFile profileImage, String email);
+    public void updateFcmToken(Member member, String fcmToken);
 }

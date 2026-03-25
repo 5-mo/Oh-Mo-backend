@@ -10,6 +10,7 @@ import com.example.ohmobackend.repository.MemberGroupRepository;
 import com.example.ohmobackend.repository.RoutineRepository;
 import com.example.ohmobackend.repository.ScheduleAssigneeRepository;
 import com.example.ohmobackend.repository.TodoRepository;
+import com.example.ohmobackend.service.FcmService;
 import com.example.ohmobackend.service.ScheduleChangeEvent;
 import com.example.ohmobackend.web.dto.groupScheduleDto.GroupScheduleRequestDto;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +28,7 @@ public class AssigneeCommandServiceImpl implements AssigneeCommandService {
     private final MemberGroupRepository memberGroupRepository;
     private final ScheduleAssigneeRepository scheduleAssigneeRepository;
     private final ApplicationEventPublisher eventPublisher;
+    private final FcmService fcmService;
 
     public void addTodoScheduleAssignee(GroupScheduleRequestDto.TodoScheduleAssigneeRequestDto requestDto, Member member) {
         Todo todo = todoRepository.findWithScheduleAndGroupById(requestDto.getTodoId())
@@ -51,6 +53,10 @@ public class AssigneeCommandServiceImpl implements AssigneeCommandService {
         ScheduleAssignee scheduleAssignee = ScheduleConverter.todoScheduleAssigneeToEntity(memberGroup, todo);
         scheduleAssigneeRepository.save(scheduleAssignee);
         eventPublisher.publishEvent(new ScheduleChangeEvent(group.getId(), todo.getDate(), ScheduleEventType.TODO_ASSIGNEE_UPDATED));
+
+        fcmService.sendNotification(memberGroup.getMember().getFcmToken(),
+                "담당자로 지정됐어요",
+                group.getGroupName() + "의 " + schedule.getContent() + " 일정 담당자로 지정됐습니다.");
     }
 
     public void addRoutineScheduleAssignee(GroupScheduleRequestDto.RoutineScheduleAssigneeRequestDto requestDto, Member member) {
@@ -75,6 +81,10 @@ public class AssigneeCommandServiceImpl implements AssigneeCommandService {
         ScheduleAssignee scheduleAssignee = ScheduleConverter.routineScheduleAssigneeToEntity(memberGroup, routine);
         scheduleAssigneeRepository.save(scheduleAssignee);
         eventPublisher.publishEvent(new ScheduleChangeEvent(group.getId(), routine.getDate(), ScheduleEventType.ROUTINE_ASSIGNEE_UPDATED));
+
+        fcmService.sendNotification(memberGroup.getMember().getFcmToken(),
+                "담당자로 지정됐어요",
+                group.getGroupName() + "의 " + schedule.getContent() + " 일정 담당자로 지정됐습니다.");
     }
 
     public void updateAssigneeStatus(Long assigneeId, Member member) {

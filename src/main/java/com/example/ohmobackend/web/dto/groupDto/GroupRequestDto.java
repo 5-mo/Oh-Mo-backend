@@ -1,5 +1,6 @@
 package com.example.ohmobackend.web.dto.groupDto;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 public class GroupRequestDto {
@@ -81,7 +82,9 @@ public class GroupRequestDto {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class InviteMemberRequestDto {
+        @NotNull
         private Long groupId;
+        @NotNull
         private Long targetMemberId;
     }
 

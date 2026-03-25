@@ -9,12 +9,16 @@ import com.example.ohmobackend.domain.Notice;
 import com.example.ohmobackend.repository.GroupRepository;
 import com.example.ohmobackend.repository.MemberGroupRepository;
 import com.example.ohmobackend.repository.NoticeRepository;
+import com.example.ohmobackend.service.FcmService;
 import com.example.ohmobackend.web.dto.noticeDto.NoticeRequestDto;
 import com.example.ohmobackend.web.dto.noticeDto.NoticeResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -23,6 +27,7 @@ public class NoticeCommandServiceImpl implements NoticeCommandService {
     private final GroupRepository groupRepository;
     private final NoticeRepository noticeRepository;
     private final MemberGroupRepository memberGroupRepository;
+    private final FcmService fcmService;
 
     @CacheEvict(value = "noticesByMonth", allEntries = true)
     public NoticeResponseDto.NoticeDto addNotice(NoticeRequestDto.AddNoticeDto requestDto, Member member) {
@@ -33,6 +38,14 @@ public class NoticeCommandServiceImpl implements NoticeCommandService {
 
         Notice notice = NoticeConverter.toNoticeEntity(requestDto, group);
         noticeRepository.save(notice);
+
+        String noticeBody = notice.getNotice().length() > 50
+                ? notice.getNotice().substring(0, 50) : notice.getNotice();
+        List<String> tokens = memberGroupRepository.findAllByGroup(group).stream()
+                .filter(mg -> !mg.getMember().getId().equals(member.getId()))
+                .map(mg -> mg.getMember().getFcmToken())
+                .collect(Collectors.toList());
+        fcmService.sendNotifications(tokens, group.getGroupName() + " 공지사항", noticeBody);
 
         NoticeResponseDto.NoticeDto noticeDto = NoticeConverter.toNoticeDto(notice);
         return noticeDto;

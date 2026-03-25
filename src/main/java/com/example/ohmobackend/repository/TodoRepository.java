@@ -10,6 +10,7 @@ import org.springframework.data.repository.query.Param;
 import jakarta.persistence.LockModeType;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -63,4 +64,7 @@ public interface TodoRepository extends JpaRepository<Todo, Long> {
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("SELECT t FROM Todo t WHERE t.id = :id")
     Optional<Todo> findByIdWithLock(@Param("id") Long id);
+
+    @Query("SELECT t FROM Todo t JOIN FETCH t.schedule s WHERE s.alarmTime = :alarmTime AND s.date = :date AND s.group IS NOT NULL")
+    List<Todo> findGroupTodosWithAlarm(@Param("alarmTime") LocalTime alarmTime, @Param("date") LocalDate date);
 }
