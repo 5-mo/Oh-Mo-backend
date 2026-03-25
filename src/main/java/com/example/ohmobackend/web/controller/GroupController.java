@@ -12,6 +12,7 @@ import com.example.ohmobackend.web.dto.groupDto.GroupResponseDto;
 import com.example.ohmobackend.web.dto.memberGroupDto.MemberGroupResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
+import jakarta.validation.Valid;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
@@ -96,7 +97,7 @@ public class GroupController {
 
     @PostMapping("/invite")
     @Operation(summary = "멤버 초대 API", description = "방장이 멤버 ID로 특정 멤버를 그룹에 초대합니다.")
-    public ApiResponse<Object> inviteMember(@AuthUser Member member, @RequestBody GroupRequestDto.InviteMemberRequestDto request) {
+    public ApiResponse<Object> inviteMember(@AuthUser Member member, @Valid @RequestBody GroupRequestDto.InviteMemberRequestDto request) {
         groupCommandService.inviteMember(member, request);
         return ApiResponse.onSuccess(SuccessStatus.GROUP_INVITE_MEMBER_OK, null);
     }

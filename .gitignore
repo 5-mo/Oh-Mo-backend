@@ -39,3 +39,6 @@ out/
 
 ### mac OS ###
 .DS_Store
+
+### Firebase ###
+src/main/resources/firebase-service-account.json

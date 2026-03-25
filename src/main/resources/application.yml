@@ -86,6 +86,9 @@ management:
       slo:
         http.server.requests: 100ms, 200ms, 300ms, 400ms, 500ms, 600ms, 800ms, 1s
 
+firebase:
+  service-account-path: classpath:firebase-service-account.json
+
 cloud:
   aws:
     s3:

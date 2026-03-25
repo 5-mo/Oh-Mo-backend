@@ -15,6 +15,9 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @DynamicUpdate
+@Table(name = "member_group", uniqueConstraints = {
+        @UniqueConstraint(columnNames = {"member_id", "group_id"})
+})
 public class MemberGroup extends BaseEntity {
 
     @Id

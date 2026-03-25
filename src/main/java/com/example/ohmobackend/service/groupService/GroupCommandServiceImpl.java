@@ -12,6 +12,7 @@ import com.example.ohmobackend.domain.enums.GroupRole;
 import com.example.ohmobackend.repository.GroupRepository;
 import com.example.ohmobackend.repository.MemberGroupRepository;
 import com.example.ohmobackend.repository.MemberRepository;
+import com.example.ohmobackend.service.FcmService;
 import com.example.ohmobackend.web.dto.groupDto.GroupRequestDto;
 import com.example.ohmobackend.web.dto.groupDto.GroupResponseDto;
 import com.example.ohmobackend.web.dto.memberGroupDto.MemberGroupResponseDto;
@@ -29,6 +30,7 @@ public class GroupCommandServiceImpl implements GroupCommandService {
     final MemberGroupRepository memberGroupRepository;
     final MemberRepository memberRepository;
     final GroupValidator groupValidator;
+    final FcmService fcmService;
 
     @Override
     public GroupResponseDto.GroupDto addGroup(Member member, GroupRequestDto.AddGroupRequestDto requestDto) {
@@ -127,7 +129,7 @@ public class GroupCommandServiceImpl implements GroupCommandService {
     @Override
     @Transactional
     public void inviteMember(Member member, GroupRequestDto.InviteMemberRequestDto requestDto) {
-        Group group = groupRepository.findById(requestDto.getGroupId())
+        Group group = groupRepository.findByIdWithLock(requestDto.getGroupId())
                 .orElseThrow(() -> new GroupHandler(ErrorStatus.GROUP_NOT_FOUND));
 
         MemberGroup requester = groupValidator.validateMemberGroup(member, group);
@@ -143,5 +145,9 @@ public class GroupCommandServiceImpl implements GroupCommandService {
 
         MemberGroup newMemberGroup = MemberGroupConverter.toMemberGroupEntity(targetMember, group, GroupRole.MEMBER);
         memberGroupRepository.save(newMemberGroup);
+
+        fcmService.sendNotification(targetMember.getFcmToken(),
+                "그룹에 초대됐어요",
+                group.getGroupName() + " 그룹에 초대됐습니다.");
     }
 }

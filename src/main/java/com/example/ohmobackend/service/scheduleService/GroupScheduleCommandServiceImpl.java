@@ -9,6 +9,7 @@ import com.example.ohmobackend.converter.TodoConverter;
 import com.example.ohmobackend.domain.*;
 import com.example.ohmobackend.domain.enums.ScheduleType;
 import com.example.ohmobackend.repository.*;
+import com.example.ohmobackend.service.FcmService;
 import com.example.ohmobackend.service.ScheduleChangeEvent;
 import com.example.ohmobackend.web.dto.groupScheduleDto.GroupScheduleRequestDto;
 import com.example.ohmobackend.web.dto.routineDto.RoutineResponseDto;
@@ -39,6 +40,7 @@ public class GroupScheduleCommandServiceImpl implements GroupScheduleCommandServ
     final private ScheduleRepository scheduleRepository;
     final private ApplicationEventPublisher eventPublisher;
     final private NlpApiClient nlpApiClient;
+    final private FcmService fcmService;
 
     public List<RoutineResponseDto.RoutineDto> addGroupRoutine(GroupScheduleRequestDto.GroupScheduleAddRequestDto request, Member member) {
         Group group = groupScheduleQueryService.getGroup(request.getGroupId());
@@ -60,6 +62,14 @@ public class GroupScheduleCommandServiceImpl implements GroupScheduleCommandServ
         routineRepository.saveAll(routineList);
 
         eventPublisher.publishEvent(new ScheduleChangeEvent(group.getId(), request.getDate(), ScheduleEventType.ROUTINE_CREATED));
+
+        List<String> tokens = memberGroupRepository.findAllByGroup(group).stream()
+                .filter(mg -> !mg.getMember().getId().equals(member.getId()))
+                .map(mg -> mg.getMember().getFcmToken())
+                .collect(Collectors.toList());
+        fcmService.sendNotifications(tokens, "새 일정이 추가됐어요",
+                group.getGroupName() + "에 " + schedule.getContent() + " 일정이 추가됐습니다.");
+
         return routineList.stream()
                 .map(RoutineConverter::toRoutineDto)
                 .collect(Collectors.toList());
@@ -75,6 +85,14 @@ public class GroupScheduleCommandServiceImpl implements GroupScheduleCommandServ
         Todo todo = todoRepository.save(TodoConverter.toEntity(schedule));
 
         eventPublisher.publishEvent(new ScheduleChangeEvent(group.getId(), schedule.getDate(), ScheduleEventType.TODO_CREATED));
+
+        List<String> tokens = memberGroupRepository.findAllByGroup(group).stream()
+                .filter(mg -> !mg.getMember().getId().equals(member.getId()))
+                .map(mg -> mg.getMember().getFcmToken())
+                .collect(Collectors.toList());
+        fcmService.sendNotifications(tokens, "새 일정이 추가됐어요",
+                group.getGroupName() + "에 " + schedule.getContent() + " 일정이 추가됐습니다.");
+
         return TodoConverter.toTodoDto(todo);
     }
 
@@ -88,6 +106,14 @@ public class GroupScheduleCommandServiceImpl implements GroupScheduleCommandServ
         scheduleRepository.save(schedule);
         Todo todo = todoRepository.save(TodoConverter.toEntity(schedule));
         eventPublisher.publishEvent(new ScheduleChangeEvent(group.getId(), request.getDate(), ScheduleEventType.TODO_CREATED));
+
+        List<String> tokens = memberGroupRepository.findAllByGroup(group).stream()
+                .filter(mg -> !mg.getMember().getId().equals(member.getId()))
+                .map(mg -> mg.getMember().getFcmToken())
+                .collect(Collectors.toList());
+        fcmService.sendNotifications(tokens, "새 일정이 추가됐어요",
+                group.getGroupName() + "에 " + schedule.getContent() + " 일정이 추가됐습니다.");
+
         return TodoConverter.toTodoDto(todo);
     }
 

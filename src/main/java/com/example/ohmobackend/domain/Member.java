@@ -36,6 +36,8 @@ public class Member extends BaseEntity {
     @Column(name = "profile_image_url")
     private String profileImageUrl;
 
+    private String fcmToken;
+
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
     private List<MemberCategory> userCategoryList = new ArrayList<>();
 
@@ -65,5 +67,9 @@ public class Member extends BaseEntity {
 
     public void updatePassword(String newPassword) {
         this.password = newPassword;
+    }
+
+    public void updateFcmToken(String fcmToken) {
+        this.fcmToken = fcmToken;
     }
 }

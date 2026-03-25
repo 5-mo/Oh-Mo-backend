@@ -44,4 +44,9 @@ public class MemberRequestDto {
         private String code;
         private String newPassword;
     }
+
+    @Getter
+    public static class UpdateFcmTokenRequestDto {
+        private String fcmToken;
+    }
 }

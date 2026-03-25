@@ -114,4 +114,12 @@ public class MemberController {
         authService.resetPassword(request);
         return ApiResponse.onSuccess(SuccessStatus.PASSWORD_RESET_OK, null);
     }
+
+    @PatchMapping("/fcm-token")
+    @Operation(summary = "FCM 토큰 등록 API", description = "푸시 알림을 위한 FCM 토큰을 등록합니다.")
+    public ApiResponse<Void> updateFcmToken(@AuthUser Member member,
+                                             @RequestBody MemberRequestDto.UpdateFcmTokenRequestDto request) {
+        memberCommandService.updateFcmToken(member, request.getFcmToken());
+        return ApiResponse.onSuccess(SuccessStatus.FCM_TOKEN_UPDATE_OK, null);
+    }
 }
