@@ -23,6 +23,7 @@ public class RoutineConverter {
                 .date(routine.getDate())
                 .status(routine.isStatus())
                 .week(routine.getWeek())
+                .repeatWeek(routine.getSchedule().getRepeatWeek())
                 .build();
     }
 }

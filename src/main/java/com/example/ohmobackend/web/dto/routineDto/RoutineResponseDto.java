@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.util.Set;
 
 public class RoutineResponseDto {
 
@@ -19,5 +20,6 @@ public class RoutineResponseDto {
         private LocalDate date;
         private boolean status;
         private DayOfWeek week;
+        private Set<DayOfWeek> repeatWeek;
     }
 }
