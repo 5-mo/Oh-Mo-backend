@@ -22,14 +22,4 @@ EXPOSE 8080
 
 # root 대신 nobody 권한으로 실행
 USER nobody
-ENTRYPOINT [                                                \
-    "java",                                                 \
-    "-XX:MetaspaceSize=128m",                               \
-    "-XX:MaxMetaspaceSize=192m",                            \
-    "-Xms256m",                                             \
-    "-Xmx384m",                                             \
-    "-Djava.security.egd=file:/dev/./urandom",              \
-    "-Dsun.net.inetaddr.ttl=0",                             \
-    "-jar",                                                 \
-    "app.jar"              \
-]
+ENTRYPOINT ["java", "-jar", "app.jar"]
