@@ -37,7 +37,7 @@ public class FcmService {
         }
     }
 
-    public void sendInvitationNotification(String fcmToken, String groupName, Long invitationId) {
+    public void sendInvitationNotification(String fcmToken, long groupId, String groupName, Long invitationId) {
         if (fcmToken == null || fcmToken.isBlank()) {
             return;
         }
@@ -53,6 +53,8 @@ public class FcmService {
                             .setBody(groupName + " 그룹에 초대됐습니다.")
                             .build())
                     .putData("type", FcmNotificationType.GROUP_INVITATION.name())
+                    .putData("groupId", String.valueOf(groupId))
+                    .putData("groupName", groupName)
                     .putData("invitationId", String.valueOf(invitationId))
                     .build();
             FirebaseMessaging.getInstance().send(message);

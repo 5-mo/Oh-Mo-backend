@@ -157,7 +157,7 @@ public class GroupCommandServiceImpl implements GroupCommandService {
                 .build();
         GroupInvitation savedInvitation = groupInvitationRepository.save(invitation);
 
-        fcmService.sendInvitationNotification(targetMember.getFcmToken(), group.getGroupName(), savedInvitation.getId());
+        fcmService.sendInvitationNotification(targetMember.getFcmToken(), group.getId(), group.getGroupName(), savedInvitation.getId());
     }
 
     @Override
