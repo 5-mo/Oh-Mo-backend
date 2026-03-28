@@ -96,10 +96,31 @@ public class GroupController {
     }
 
     @PostMapping("/invite")
-    @Operation(summary = "멤버 초대 API", description = "방장이 멤버 ID로 특정 멤버를 그룹에 초대합니다.")
+    @Operation(summary = "멤버 초대 API", description = "방장이 이메일로 특정 멤버를 그룹에 초대합니다. 초대받은 멤버에게 FCM 알림이 전송됩니다.")
     public ApiResponse<Object> inviteMember(@AuthUser Member member, @Valid @RequestBody GroupRequestDto.InviteMemberRequestDto request) {
         groupCommandService.inviteMember(member, request);
         return ApiResponse.onSuccess(SuccessStatus.GROUP_INVITE_MEMBER_OK, null);
+    }
+
+    @GetMapping("/invite")
+    @Operation(summary = "받은 초대 목록 조회 API", description = "현재 로그인한 멤버가 받은 대기 중인 초대 목록을 조회합니다.")
+    public ApiResponse<List<GroupResponseDto.InvitationDto>> getInvitations(@AuthUser Member member) {
+        List<GroupResponseDto.InvitationDto> invitations = groupQueryService.getInvitations(member);
+        return ApiResponse.onSuccess(SuccessStatus.GROUP_INVITATION_LIST_OK, invitations);
+    }
+
+    @PostMapping("/invite/accept")
+    @Operation(summary = "그룹 초대 수락 API", description = "초대받은 멤버가 초대를 수락하면 그룹에 추가됩니다.")
+    public ApiResponse<Object> acceptInvitation(@AuthUser Member member, @Valid @RequestBody GroupRequestDto.InvitationActionRequestDto request) {
+        groupCommandService.acceptInvitation(member, request);
+        return ApiResponse.onSuccess(SuccessStatus.GROUP_INVITATION_ACCEPT_OK, null);
+    }
+
+    @PostMapping("/invite/reject")
+    @Operation(summary = "그룹 초대 거절 API", description = "초대받은 멤버가 초대를 거절합니다.")
+    public ApiResponse<Object> rejectInvitation(@AuthUser Member member, @Valid @RequestBody GroupRequestDto.InvitationActionRequestDto request) {
+        groupCommandService.rejectInvitation(member, request);
+        return ApiResponse.onSuccess(SuccessStatus.GROUP_INVITATION_REJECT_OK, null);
     }
 
     @GetMapping(value = "/{groupId}/subscribe", produces = MediaType.TEXT_EVENT_STREAM_VALUE)

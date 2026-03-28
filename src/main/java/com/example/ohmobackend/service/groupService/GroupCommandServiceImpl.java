@@ -6,9 +6,11 @@ import com.example.ohmobackend.apiPayload.exception.handler.MemberHandler;
 import com.example.ohmobackend.converter.GroupConverter;
 import com.example.ohmobackend.converter.MemberGroupConverter;
 import com.example.ohmobackend.domain.Group;
+import com.example.ohmobackend.domain.GroupInvitation;
 import com.example.ohmobackend.domain.Member;
 import com.example.ohmobackend.domain.MemberGroup;
 import com.example.ohmobackend.domain.enums.GroupRole;
+import com.example.ohmobackend.repository.GroupInvitationRepository;
 import com.example.ohmobackend.repository.GroupRepository;
 import com.example.ohmobackend.repository.MemberGroupRepository;
 import com.example.ohmobackend.repository.MemberRepository;
@@ -29,6 +31,7 @@ public class GroupCommandServiceImpl implements GroupCommandService {
     final GroupRepository groupRepository;
     final MemberGroupRepository memberGroupRepository;
     final MemberRepository memberRepository;
+    final GroupInvitationRepository groupInvitationRepository;
     final GroupValidator groupValidator;
     final FcmService fcmService;
 
@@ -137,17 +140,55 @@ public class GroupCommandServiceImpl implements GroupCommandService {
             throw new GroupHandler(ErrorStatus.GROUP_NOT_MANAGER);
         }
 
-        Member targetMember = memberRepository.findById(requestDto.getTargetMemberId())
+        Member targetMember = memberRepository.findByEmail(requestDto.getTargetEmail())
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
         groupValidator.validateExistMember(targetMember, group);
         groupValidator.validateGroupCount(group);
 
-        MemberGroup newMemberGroup = MemberGroupConverter.toMemberGroupEntity(targetMember, group, GroupRole.MEMBER);
-        memberGroupRepository.save(newMemberGroup);
+        if (groupInvitationRepository.existsByGroupAndInvitedMember(group, targetMember)) {
+            throw new GroupHandler(ErrorStatus.GROUP_ALREADY_INVITED);
+        }
 
-        fcmService.sendNotification(targetMember.getFcmToken(),
-                "그룹에 초대됐어요",
-                group.getGroupName() + " 그룹에 초대됐습니다.");
+        GroupInvitation invitation = GroupInvitation.builder()
+                .group(group)
+                .invitedMember(targetMember)
+                .invitedBy(member)
+                .build();
+        GroupInvitation savedInvitation = groupInvitationRepository.save(invitation);
+
+        fcmService.sendInvitationNotification(targetMember.getFcmToken(), group.getGroupName(), savedInvitation.getId());
+    }
+
+    @Override
+    @Transactional
+    public void acceptInvitation(Member member, GroupRequestDto.InvitationActionRequestDto requestDto) {
+        GroupInvitation invitation = groupInvitationRepository.findById(requestDto.getInvitationId())
+                .orElseThrow(() -> new GroupHandler(ErrorStatus.GROUP_INVITATION_NOT_FOUND));
+
+        if (!invitation.getInvitedMember().getId().equals(member.getId())) {
+            throw new GroupHandler(ErrorStatus.GROUP_INVITATION_NOT_FOUND);
+        }
+
+        Group group = invitation.getGroup();
+        groupValidator.validateExistMember(member, group);
+        groupValidator.validateGroupCount(group);
+
+        MemberGroup newMemberGroup = MemberGroupConverter.toMemberGroupEntity(member, group, GroupRole.MEMBER);
+        memberGroupRepository.save(newMemberGroup);
+        groupInvitationRepository.delete(invitation);
+    }
+
+    @Override
+    @Transactional
+    public void rejectInvitation(Member member, GroupRequestDto.InvitationActionRequestDto requestDto) {
+        GroupInvitation invitation = groupInvitationRepository.findById(requestDto.getInvitationId())
+                .orElseThrow(() -> new GroupHandler(ErrorStatus.GROUP_INVITATION_NOT_FOUND));
+
+        if (!invitation.getInvitedMember().getId().equals(member.getId())) {
+            throw new GroupHandler(ErrorStatus.GROUP_INVITATION_NOT_FOUND);
+        }
+
+        groupInvitationRepository.delete(invitation);
     }
 }

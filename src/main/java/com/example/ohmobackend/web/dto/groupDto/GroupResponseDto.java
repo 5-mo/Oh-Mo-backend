@@ -36,4 +36,16 @@ public class GroupResponseDto {
         private List<MemberGroupResponseDto.MemberGroupInfoDto> memberGroupInfos;
     }
 
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class InvitationDto {
+        private Long invitationId;
+        private Long groupId;
+        private String groupName;
+        private String groupColor;
+        private String invitedByNickname;
+    }
+
 }

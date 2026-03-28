@@ -4,8 +4,10 @@ import com.example.ohmobackend.apiPayload.code.status.ErrorStatus;
 import com.example.ohmobackend.apiPayload.exception.handler.GroupHandler;
 import com.example.ohmobackend.converter.GroupConverter;
 import com.example.ohmobackend.domain.Group;
+import com.example.ohmobackend.domain.GroupInvitation;
 import com.example.ohmobackend.domain.Member;
 import com.example.ohmobackend.domain.MemberGroup;
+import com.example.ohmobackend.repository.GroupInvitationRepository;
 import com.example.ohmobackend.repository.GroupRepository;
 import com.example.ohmobackend.repository.MemberGroupRepository;
 import com.example.ohmobackend.web.dto.groupDto.GroupRequestDto;
@@ -24,6 +26,7 @@ public class GroupQueryServiceImpl implements GroupQueryService {
 
     private final GroupRepository groupRepository;
     private final MemberGroupRepository memberGroupRepository;
+    private final GroupInvitationRepository groupInvitationRepository;
     private final GroupValidator groupValidator;
 
     public GroupResponseDto.GroupMembersDto getGroupMembers(Long groupId, Member member) {
@@ -54,5 +57,19 @@ public class GroupQueryServiceImpl implements GroupQueryService {
 
         groupValidator.validateMemberGroup(member, group);
         groupRepository.delete(group);
+    }
+
+    @Override
+    public List<GroupResponseDto.InvitationDto> getInvitations(Member member) {
+        List<GroupInvitation> invitations = groupInvitationRepository.findAllByInvitedMember(member);
+        return invitations.stream()
+                .map(invitation -> GroupResponseDto.InvitationDto.builder()
+                        .invitationId(invitation.getId())
+                        .groupId(invitation.getGroup().getId())
+                        .groupName(invitation.getGroup().getGroupName())
+                        .groupColor(invitation.getGroup().getGroupColor())
+                        .invitedByNickname(invitation.getInvitedBy().getNickname())
+                        .build())
+                .collect(Collectors.toList());
     }
 }

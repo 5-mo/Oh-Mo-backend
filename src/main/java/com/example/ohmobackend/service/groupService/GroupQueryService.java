@@ -9,7 +9,7 @@ import java.util.List;
 public interface GroupQueryService {
 
     public GroupResponseDto.GroupMembersDto getGroupMembers(Long groupId, Member member);
-
     public List<GroupResponseDto.GroupDto> getGroups(Member member);
     public void deleteGroup(Member member, GroupRequestDto.DeleteGroupRequestDto request);
+    public List<GroupResponseDto.InvitationDto> getInvitations(Member member);
 }
