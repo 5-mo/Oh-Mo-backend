@@ -2,6 +2,7 @@ package com.example.ohmobackend.service;
 
 import com.example.ohmobackend.domain.Routine;
 import com.example.ohmobackend.domain.Todo;
+import com.example.ohmobackend.domain.enums.FcmNotificationType;
 import com.example.ohmobackend.repository.RoutineRepository;
 import com.example.ohmobackend.repository.ScheduleAssigneeRepository;
 import com.example.ohmobackend.repository.TodoRepository;
@@ -37,7 +38,7 @@ public class AlarmSchedulerService {
             List<String> tokens = scheduleAssigneeRepository.findAllByTodo(todo).stream()
                     .map(sa -> sa.getMemberGroup().getMember().getFcmToken())
                     .toList();
-            fcmService.sendNotifications(tokens, "일정 알림 ⏰", content + " 일정이 예정되어 있습니다.");
+            fcmService.sendNotifications(tokens, "일정 알림 ⏰", content + " 일정이 예정되어 있습니다.", FcmNotificationType.SCHEDULE_ALARM);
         }
 
         List<Routine> routines = routineRepository.findGroupRoutinesWithAlarm(now, today);
@@ -46,7 +47,7 @@ public class AlarmSchedulerService {
             List<String> tokens = scheduleAssigneeRepository.findAllByRoutine(routine).stream()
                     .map(sa -> sa.getMemberGroup().getMember().getFcmToken())
                     .toList();
-            fcmService.sendNotifications(tokens, "일정 알림 ⏰", content + " 일정이 예정되어 있습니다.");
+            fcmService.sendNotifications(tokens, "일정 알림 ⏰", content + " 일정이 예정되어 있습니다.", FcmNotificationType.SCHEDULE_ALARM);
         }
     }
 }

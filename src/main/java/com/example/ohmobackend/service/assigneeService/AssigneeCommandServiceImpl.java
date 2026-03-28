@@ -10,6 +10,7 @@ import com.example.ohmobackend.repository.MemberGroupRepository;
 import com.example.ohmobackend.repository.RoutineRepository;
 import com.example.ohmobackend.repository.ScheduleAssigneeRepository;
 import com.example.ohmobackend.repository.TodoRepository;
+import com.example.ohmobackend.domain.enums.FcmNotificationType;
 import com.example.ohmobackend.service.FcmService;
 import com.example.ohmobackend.service.ScheduleChangeEvent;
 import com.example.ohmobackend.web.dto.groupScheduleDto.GroupScheduleRequestDto;
@@ -56,7 +57,8 @@ public class AssigneeCommandServiceImpl implements AssigneeCommandService {
 
         fcmService.sendNotification(memberGroup.getMember().getFcmToken(),
                 "담당자로 지정됐어요",
-                group.getGroupName() + "의 " + schedule.getContent() + " 일정 담당자로 지정됐습니다.");
+                group.getGroupName() + "의 " + schedule.getContent() + " 일정 담당자로 지정됐습니다.",
+                FcmNotificationType.ASSIGNEE_ADDED);
     }
 
     public void addRoutineScheduleAssignee(GroupScheduleRequestDto.RoutineScheduleAssigneeRequestDto requestDto, Member member) {
@@ -84,7 +86,8 @@ public class AssigneeCommandServiceImpl implements AssigneeCommandService {
 
         fcmService.sendNotification(memberGroup.getMember().getFcmToken(),
                 "담당자로 지정됐어요",
-                group.getGroupName() + "의 " + schedule.getContent() + " 일정 담당자로 지정됐습니다.");
+                group.getGroupName() + "의 " + schedule.getContent() + " 일정 담당자로 지정됐습니다.",
+                FcmNotificationType.ASSIGNEE_ADDED);
     }
 
     public void updateAssigneeStatus(Long assigneeId, Member member) {

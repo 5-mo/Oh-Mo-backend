@@ -9,6 +9,7 @@ import com.example.ohmobackend.converter.TodoConverter;
 import com.example.ohmobackend.domain.*;
 import com.example.ohmobackend.domain.enums.ScheduleType;
 import com.example.ohmobackend.repository.*;
+import com.example.ohmobackend.domain.enums.FcmNotificationType;
 import com.example.ohmobackend.service.FcmService;
 import com.example.ohmobackend.service.ScheduleChangeEvent;
 import com.example.ohmobackend.web.dto.groupScheduleDto.GroupScheduleRequestDto;
@@ -68,7 +69,8 @@ public class GroupScheduleCommandServiceImpl implements GroupScheduleCommandServ
                 .map(mg -> mg.getMember().getFcmToken())
                 .collect(Collectors.toList());
         fcmService.sendNotifications(tokens, "새 일정이 추가됐어요",
-                group.getGroupName() + "에 " + schedule.getContent() + " 일정이 추가됐습니다.");
+                group.getGroupName() + "에 " + schedule.getContent() + " 일정이 추가됐습니다.",
+                FcmNotificationType.SCHEDULE_ADDED);
 
         return routineList.stream()
                 .map(RoutineConverter::toRoutineDto)
@@ -91,7 +93,8 @@ public class GroupScheduleCommandServiceImpl implements GroupScheduleCommandServ
                 .map(mg -> mg.getMember().getFcmToken())
                 .collect(Collectors.toList());
         fcmService.sendNotifications(tokens, "새 일정이 추가됐어요",
-                group.getGroupName() + "에 " + schedule.getContent() + " 일정이 추가됐습니다.");
+                group.getGroupName() + "에 " + schedule.getContent() + " 일정이 추가됐습니다.",
+                FcmNotificationType.SCHEDULE_ADDED);
 
         return TodoConverter.toTodoDto(todo);
     }
@@ -112,7 +115,8 @@ public class GroupScheduleCommandServiceImpl implements GroupScheduleCommandServ
                 .map(mg -> mg.getMember().getFcmToken())
                 .collect(Collectors.toList());
         fcmService.sendNotifications(tokens, "새 일정이 추가됐어요",
-                group.getGroupName() + "에 " + schedule.getContent() + " 일정이 추가됐습니다.");
+                group.getGroupName() + "에 " + schedule.getContent() + " 일정이 추가됐습니다.",
+                FcmNotificationType.SCHEDULE_ADDED);
 
         return TodoConverter.toTodoDto(todo);
     }

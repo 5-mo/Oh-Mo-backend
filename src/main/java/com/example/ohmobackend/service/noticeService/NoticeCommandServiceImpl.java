@@ -9,6 +9,7 @@ import com.example.ohmobackend.domain.Notice;
 import com.example.ohmobackend.repository.GroupRepository;
 import com.example.ohmobackend.repository.MemberGroupRepository;
 import com.example.ohmobackend.repository.NoticeRepository;
+import com.example.ohmobackend.domain.enums.FcmNotificationType;
 import com.example.ohmobackend.service.FcmService;
 import com.example.ohmobackend.web.dto.noticeDto.NoticeRequestDto;
 import com.example.ohmobackend.web.dto.noticeDto.NoticeResponseDto;
@@ -45,7 +46,7 @@ public class NoticeCommandServiceImpl implements NoticeCommandService {
                 .filter(mg -> !mg.getMember().getId().equals(member.getId()))
                 .map(mg -> mg.getMember().getFcmToken())
                 .collect(Collectors.toList());
-        fcmService.sendNotifications(tokens, group.getGroupName() + " 공지사항", noticeBody);
+        fcmService.sendNotifications(tokens, group.getGroupName() + " 공지사항", noticeBody, FcmNotificationType.NOTICE);
 
         NoticeResponseDto.NoticeDto noticeDto = NoticeConverter.toNoticeDto(notice);
         return noticeDto;
