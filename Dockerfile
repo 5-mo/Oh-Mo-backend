@@ -12,7 +12,7 @@ COPY . /build
 RUN ./gradlew build -x test --parallel
 
 # APP
-FROM eclipse-temurin:17-jre-jammy
+FROM eclipse-temurin:17-jdk-jammy
 WORKDIR /app
 
 # 빌더 이미지에서 jar 파일만 복사
