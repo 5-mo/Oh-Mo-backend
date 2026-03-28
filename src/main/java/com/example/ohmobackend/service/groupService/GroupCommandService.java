@@ -14,4 +14,6 @@ public interface GroupCommandService {
     public void transferManager(Member member, GroupRequestDto.TransferManagerRequestDto requestDto);
     public void kickMember(Member member, GroupRequestDto.KickMemberRequestDto requestDto);
     public void inviteMember(Member member, GroupRequestDto.InviteMemberRequestDto requestDto);
+    public void acceptInvitation(Member member, GroupRequestDto.InvitationActionRequestDto requestDto);
+    public void rejectInvitation(Member member, GroupRequestDto.InvitationActionRequestDto requestDto);
 }

@@ -85,7 +85,17 @@ public class GroupRequestDto {
         @NotNull
         private Long groupId;
         @NotNull
-        private Long targetMemberId;
+        private String targetEmail;
+    }
+
+    @Getter
+    @Setter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class InvitationActionRequestDto {
+        @NotNull
+        private Long invitationId;
     }
 
 }

@@ -65,6 +65,9 @@ public enum SuccessStatus implements BaseCode {
     GROUP_TRANSFER_MANAGER_OK(HttpStatus.OK, "GROUP_2007", "방장 넘기기가 완료되었습니다."),
     GROUP_KICK_MEMBER_OK(HttpStatus.OK, "GROUP_2008", "그룹 멤버 강퇴가 완료되었습니다."),
     GROUP_INVITE_MEMBER_OK(HttpStatus.OK, "GROUP_2009", "그룹 멤버 초대가 완료되었습니다."),
+    GROUP_INVITATION_LIST_OK(HttpStatus.OK, "GROUP_2010", "초대 목록 조회가 완료되었습니다."),
+    GROUP_INVITATION_ACCEPT_OK(HttpStatus.OK, "GROUP_2011", "그룹 초대를 수락했습니다."),
+    GROUP_INVITATION_REJECT_OK(HttpStatus.OK, "GROUP_2012", "그룹 초대를 거절했습니다."),
 
     // 공지사항 관련
     GROUP_NOTICE_REGISTER_OK(HttpStatus.OK, "GROUP_2001", "그룹 공지사항 등록이 완료되었습니다."),

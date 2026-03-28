@@ -64,6 +64,8 @@ public enum ErrorStatus implements BaseErrorCode {
     GROUP_MANAGER_CANNOT_LEAVE(HttpStatus.BAD_REQUEST, "GROUP4005", "그룹 매니저는 다른 멤버가 있을 경우 그룹을 나갈 수 없습니다."),
     GROUP_NOT_MANAGER(HttpStatus.BAD_REQUEST, "GROUP4006", "그룹 매니저만 방장을 넘길 수 있습니다."),
     GROUP_CANNOT_KICK_MANAGER(HttpStatus.BAD_REQUEST, "GROUP4007", "매니저는 강퇴할 수 없습니다."),
+    GROUP_INVITATION_NOT_FOUND(HttpStatus.BAD_REQUEST, "GROUP4008", "초대를 찾을 수 없습니다."),
+    GROUP_ALREADY_INVITED(HttpStatus.BAD_REQUEST, "GROUP4009", "이미 초대된 멤버입니다."),
 
     // 루틴
     ROUTINE_NOT_FOUND(HttpStatus.BAD_REQUEST, "ROUTINE4001", "루틴을 찾을 수 없습니다."),
