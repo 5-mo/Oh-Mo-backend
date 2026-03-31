@@ -22,4 +22,11 @@ EXPOSE 8080
 
 # root 대신 nobody 권한으로 실행
 USER nobody
-ENTRYPOINT ["java", "-jar", "app.jar"]
+ENTRYPOINT ["java", \
+  "-Xms128m", \
+  "-Xmx256m", \
+  "-XX:MaxMetaspaceSize=160m", \
+  "-XX:ReservedCodeCacheSize=96m", \
+  "-XX:+HeapDumpOnOutOfMemoryError", \
+  "-XX:HeapDumpPath=/app/heap-dump.hprof", \
+  "-jar", "app.jar"]
