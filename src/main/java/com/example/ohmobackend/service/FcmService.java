@@ -6,7 +6,10 @@ import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.Message;
 import com.google.firebase.messaging.Notification;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.event.TransactionPhase;
+import org.springframework.transaction.event.TransactionalEventListener;
 
 import java.util.List;
 
@@ -37,6 +40,7 @@ public class FcmService {
         }
     }
 
+    @Async("fcmExecutor")
     public void sendInvitationNotification(String fcmToken, long groupId, String groupName, Long invitationId) {
         if (fcmToken == null || fcmToken.isBlank()) {
             return;
@@ -63,6 +67,13 @@ public class FcmService {
         }
     }
 
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+    @Async("fcmExecutor")
+    public void handleFcmNotificationEvent(FcmNotificationEvent event) {
+        sendNotifications(event.getTokens(), event.getTitle(), event.getBody(), event.getType());
+    }
+
+    @Async("fcmExecutor")
     public void sendNotifications(List<String> fcmTokens, String title, String body, FcmNotificationType type) {
         if (fcmTokens == null || fcmTokens.isEmpty()) {
             return;
