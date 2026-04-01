@@ -40,7 +40,7 @@ public class FcmService {
         }
     }
 
-    @Async("fcmExecutor")
+    @Async
     public void sendInvitationNotification(String fcmToken, long groupId, String groupName, Long invitationId) {
         if (fcmToken == null || fcmToken.isBlank()) {
             return;
@@ -68,12 +68,12 @@ public class FcmService {
     }
 
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
-    @Async("fcmExecutor")
+    @Async
     public void handleFcmNotificationEvent(FcmNotificationEvent event) {
         sendNotifications(event.getTokens(), event.getTitle(), event.getBody(), event.getType());
     }
 
-    @Async("fcmExecutor")
+    @Async
     public void sendNotifications(List<String> fcmTokens, String title, String body, FcmNotificationType type) {
         if (fcmTokens == null || fcmTokens.isEmpty()) {
             return;
