@@ -32,6 +32,7 @@ class WebSecurityConfig {
                 .authorizeHttpRequests((auth) -> auth // 인증, 인가 설정
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers("/api/member/signup").permitAll()
+                        .requestMatchers("/api/group//**").permitAll()
                         .requestMatchers("/api/member/login").permitAll()
                         .requestMatchers("/api/member/reissue").permitAll()
                         .requestMatchers("/api/member/password/find").permitAll()
