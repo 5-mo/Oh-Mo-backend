@@ -22,7 +22,7 @@ public class MemberController {
     private final MemberCommandService memberCommandService;
     private final AuthService authService;
 
-    @PostMapping(value = "/signup", consumes = "multipart/form-data")
+    @PostMapping("/signup")
     @Operation(summary = "이메일 회원 가입 API", description = "이메일 회원 가입 API 입니다.")
     public ApiResponse<MemberResponseDto.MemberInfoResponseDto> signup(
             @RequestPart("request") MemberRequestDto.SignupRequestDto request,
