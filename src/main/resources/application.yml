@@ -46,10 +46,6 @@ spring:
           starttls:
             enable: true
 
-logging:
-  level:
-    p6spy: warn
-
 jwt:
   secret: ${JWT_SECRET_KEY}
 
