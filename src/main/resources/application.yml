@@ -87,9 +87,6 @@ management:
       tag:
         application: ${SPRING_APPLICATION_NAME:ohmo}
 
-firebase:
-  service-account-path: classpath:firebase-service-account.json
-
 cloud:
   aws:
     s3:
