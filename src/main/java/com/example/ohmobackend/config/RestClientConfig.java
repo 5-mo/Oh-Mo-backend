@@ -18,4 +18,14 @@ public class RestClientConfig {
         factory.setReadTimeout(readTimeout);
         return new RestTemplate(factory);
     }
+
+    @Bean
+    public RestTemplate sendGridRestTemplate(
+            @Value("${sendgrid.connect-timeout}") int connectTimeout,
+            @Value("${sendgrid.read-timeout}") int readTimeout) {
+        SimpleClientHttpRequestFactory factory = new SimpleClientHttpRequestFactory();
+        factory.setConnectTimeout(connectTimeout);
+        factory.setReadTimeout(readTimeout);
+        return new RestTemplate(factory);
+    }
 }
